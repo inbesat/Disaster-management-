@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>SafeSphere — Every Second Saves Lives</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Poppins";
+        src: url("assets/fonts/Poppins-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Poppins";
+        src: url("assets/fonts/Poppins-ExtraBold.ttf") format("truetype");
+        font-weight: 800;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Inter";
+        src: url("assets/fonts/Inter-Variable.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("assets/fonts/JetBrainsMono-Variable.ttf") format("truetype");
+        font-weight: 100 900;
+        font-style: normal;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0a0f1a;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Inter", system-ui, sans-serif;
+        color: #f1f5f9;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* ---------------- persistent background stack ---------------- */
+      #bgBase {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(1200px 760px at 50% 42%, #0b1f3a 0%, #0a0f1a 68%, #070c14 100%);
+      }
+      #bgGlow {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(900px 620px at 50% 46%, rgba(37, 99, 235, 0.22) 0%, rgba(37, 99, 235, 0) 62%);
+        opacity: 0.34;
+      }
+      #gridOverlay {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px);
+        background-size: 26px 26px;
+        opacity: 0.8;
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(1400px 900px at 50% 50%, transparent 55%, rgba(2, 6, 17, 0.55) 100%);
+      }
+
+      /* ---------------- shared bits ---------------- */
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* ---------------- Scene 1 : Incident Detected ---------------- */
+      #s1 {
+        display: block;
+      }
+      .s1-tag {
+        position: absolute;
+        top: 74px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 24px;
+        letter-spacing: 0.18em;
+        color: #c9d6ec;
+        text-transform: uppercase;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        border-radius: 8px;
+        padding: 10px 22px;
+        background: rgba(11, 17, 32, 0.72);
+      }
+      #s1-live {
+        left: 72px;
+      }
+      #s1-live .dot {
+        display: inline-block;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #ef4444;
+        margin-right: 12px;
+        vertical-align: middle;
+        box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);
+      }
+      #s1-ts {
+        right: 72px;
+      }
+      #s1-map {
+        position: absolute;
+        inset: 0;
+      }
+      #s1-svg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      #radarBox {
+        position: absolute;
+        left: 610px;
+        top: 196px;
+        width: 700px;
+        height: 700px;
+        border-radius: 50%;
+        overflow: hidden;
+        opacity: 0;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, rgba(10, 15, 26, 0) 72%);
+      }
+      #radarWedge {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg, rgba(96, 165, 250, 0.5) 0deg, rgba(96, 165, 250, 0.16) 52deg, transparent 74deg);
+      }
+      #s1-stamp {
+        position: absolute;
+        left: 72px;
+        bottom: 132px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 46px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: #f1f5f9;
+      }
+      #s1-badge {
+        position: absolute;
+        left: 76px;
+        bottom: 66px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        color: #0a0f1a;
+        background: #f59e0b;
+        border-radius: 8px;
+        padding: 10px 24px;
+      }
+      #s1-coords {
+        position: absolute;
+        right: 72px;
+        bottom: 84px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 22px;
+        color: #c9d6ec;
+        letter-spacing: 0.06em;
+        text-align: right;
+      }
+      #s1-coords .lbl {
+        color: #64748b;
+        font-size: 17px;
+        display: block;
+        margin-bottom: 6px;
+        letter-spacing: 0.2em;
+      }
+
+      /* ---------------- Scene 2 : Command Center ---------------- */
+      #s2 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+      }
+      #s2-title {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-size: 96px;
+        line-height: 1.02;
+        letter-spacing: -0.015em;
+        color: #f1f5f9;
+        text-align: center;
+      }
+      #s2-sub {
+        margin-top: 26px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 22px;
+        letter-spacing: 0.34em;
+        color: #94a3b8;
+        text-transform: uppercase;
+      }
+      .s2-kpis {
+        display: flex;
+        gap: 34px;
+        margin-top: 74px;
+      }
+      .kpi-card {
+        width: 400px;
+        height: 190px;
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: linear-gradient(180deg, #0f1d38 0%, #0b1120 100%);
+        padding: 30px 34px;
+        position: relative;
+        overflow: hidden;
+      }
+      .kpi-card .kpi-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+      }
+      .kpi-card .kpi-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 20px;
+        letter-spacing: 0.14em;
+        color: #94a3b8;
+        text-transform: uppercase;
+      }
+      .ring {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 4px solid currentColor;
+        box-shadow: 0 0 16px currentColor;
+      }
+      .kpi-card .kpi-value {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 64px;
+        line-height: 1;
+        color: #f1f5f9;
+      }
+      .kpi-card .kpi-foot {
+        margin-top: 16px;
+        font-size: 20px;
+        color: #c9d6ec;
+      }
+      #kpi-1 .ring {
+        color: #f59e0b;
+      }
+      #kpi-2 .ring {
+        color: #3b82f6;
+      }
+      #kpi-3 .ring {
+        color: #34d399;
+      }
+      #s2-feed {
+        position: absolute;
+        left: 340px;
+        right: 340px;
+        bottom: 74px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        border-radius: 14px;
+        background: rgba(11, 17, 32, 0.78);
+        padding: 22px 30px;
+      }
+      #s2-feed .pulse {
+        flex: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 0 0 14px rgba(239, 68, 68, 0.85);
+      }
+      #s2-feed .feed-lbl {
+        flex: none;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 20px;
+        letter-spacing: 0.14em;
+        color: #94a3b8;
+      }
+      #s2-feed-text {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 24px;
+        color: #e2e8f0;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .caret {
+        flex: none;
+        width: 12px;
+        height: 30px;
+        background: #34d399;
+        margin-left: 4px;
+        border-radius: 2px;
+      }
+
+      /* ---------------- Scene 3 : AI Triage ---------------- */
+      #s3 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #s3-head {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        margin-bottom: 56px;
+      }
+      #s3-head .h-main {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 44px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: #f1f5f9;
+      }
+      #s3-head .h-sub {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 22px;
+        letter-spacing: 0.2em;
+        color: #94a3b8;
+        border-left: 1px solid rgba(148, 163, 184, 0.35);
+        padding-left: 26px;
+      }
+      .s3-chain {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+      }
+      .agent-node {
+        position: relative;
+        z-index: 2;
+        width: 360px;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: #0b1120;
+        padding: 26px 28px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        opacity: 0.22;
+      }
+      .agent-node .n-dot {
+        flex: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #f59e0b;
+        box-shadow: 0 0 14px rgba(245, 158, 11, 0.7);
+      }
+      .agent-node .n-name {
+        font-size: 28px;
+        font-weight: 600;
+        color: #f1f5f9;
+      }
+      .agent-node .n-lbl {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 17px;
+        letter-spacing: 0.1em;
+        color: #94a3b8;
+        margin-top: 4px;
+      }
+      .connector {
+        position: relative;
+        z-index: 1;
+        flex: none;
+        width: 120px;
+        height: 4px;
+        margin-top: 48px;
+        background: #2563eb;
+        transform-origin: 0% 50%;
+        opacity: 0;
+      }
+      #s3-pred {
+        margin-top: 52px;
+        width: 980px;
+        border-radius: 18px;
+        border: 1px solid rgba(249, 115, 22, 0.55);
+        background: linear-gradient(180deg, rgba(249, 115, 22, 0.14) 0%, rgba(11, 17, 32, 0.9) 100%);
+        padding: 34px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      #s3-pred .p-lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 30px;
+        letter-spacing: 0.2em;
+        color: #f1f5f9;
+      }
+      #s3-pred .p-val {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 42px;
+        letter-spacing: 0.02em;
+        color: #fb923c;
+      }
+      #s3-plan {
+        margin-top: 48px;
+        display: flex;
+        align-items: center;
+        width: 980px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 28px;
+        color: #e2e8f0;
+        border-top: 1px solid rgba(148, 163, 184, 0.2);
+        padding-top: 40px;
+      }
+      #s3-plan .plan-prefix {
+        flex: none;
+        color: #34d399;
+        letter-spacing: 0.18em;
+        font-size: 20px;
+        margin-right: 24px;
+      }
+
+      /* ---------------- Scene 4 : One Alert, Nine Channels ---------------- */
+      #s4 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #s4-title {
+        margin-top: 92px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-size: 78px;
+        letter-spacing: -0.01em;
+        color: #f1f5f9;
+        text-align: center;
+      }
+      .s4-chips {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        margin-top: 40px;
+      }
+      .s4-chips-row {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+      }
+      .channel-chip {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 23px;
+        letter-spacing: 0.04em;
+        color: #c9d6ec;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        border-radius: 999px;
+        padding: 14px 30px;
+        opacity: 0;
+        background: transparent;
+      }
+      #s4-phone {
+        position: absolute;
+        top: 392px;
+        left: 760px;
+        width: 400px;
+        height: 440px;
+        border-radius: 44px;
+        border: 3px solid rgba(148, 163, 184, 0.5);
+        background: #0b1120;
+        overflow: hidden;
+        box-shadow: 0 30px 70px rgba(2, 6, 17, 0.6);
+        padding: 20px 18px 0;
+        opacity: 0;
+      }
+      #s4-phone .ph-notch {
+        width: 130px;
+        height: 26px;
+        border-radius: 999px;
+        background: #0a0f1a;
+        margin: 0 auto 16px;
+      }
+      #s4-phone .ph-hdr {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      #s4-phone .ph-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        flex: none;
+      }
+      #s4-phone .ph-app {
+        font-size: 19px;
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+      #s4-phone .ph-map {
+        margin-top: 18px;
+        height: 210px;
+        border-radius: 16px;
+        background: radial-gradient(200px 120px at 40% 40%, rgba(37, 99, 235, 0.25) 0%, rgba(11, 17, 32, 0) 70%),
+          #0a0f1a;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        position: relative;
+      }
+      #s4-phone .ph-map .ph-pin {
+        position: absolute;
+        left: 58%;
+        top: 44%;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 0 0 16px rgba(239, 68, 68, 0.9);
+      }
+      #s4-notify {
+        margin-top: 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid rgba(239, 68, 68, 0.45);
+        border-radius: 14px;
+        background: rgba(127, 29, 29, 0.35);
+        padding: 16px 20px;
+        opacity: 0;
+      }
+      #s4-notify .n-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #ef4444;
+        flex: none;
+      }
+      #s4-notify .n-txt {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 19px;
+        color: #fecaca;
+        letter-spacing: 0.04em;
+      }
+      #s4-banner {
+        position: absolute;
+        left: 380px;
+        top: 838px;
+        width: 1160px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+        border: 1px solid rgba(239, 68, 68, 0.55);
+        box-shadow: 0 26px 60px rgba(127, 29, 29, 0.4);
+        padding: 30px 42px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        opacity: 0;
+      }
+      #s4-banner .b-bar {
+        flex: none;
+        width: 10px;
+        height: 84px;
+        border-radius: 6px;
+        background: #f87171;
+      }
+      #s4-banner .b-lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 22px;
+        letter-spacing: 0.22em;
+        color: #fca5a5;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      #s4-banner .b-txt {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 30px;
+        letter-spacing: 0.02em;
+        color: #ffffff;
+        line-height: 1.25;
+      }
+      #s4-banner .b-call {
+        margin-left: auto;
+        text-align: right;
+        flex: none;
+      }
+      #s4-banner .b-call .num {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 34px;
+        color: #ffffff;
+      }
+      #s4-banner .b-call .lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 17px;
+        letter-spacing: 0.14em;
+        color: #fca5a5;
+        margin-top: 6px;
+      }
+      #s4-delivered {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 30px;
+        text-align: center;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 25px;
+        color: #34d399;
+        letter-spacing: 0.04em;
+        opacity: 0;
+      }
+
+      /* ---------------- Scene 5 : Field Responder + Outro ---------------- */
+      #s5 {
+        display: block;
+      }
+      #phone-field {
+        position: absolute;
+        left: 250px;
+        top: 200px;
+        width: 430px;
+        height: 660px;
+        border-radius: 46px;
+        border: 3px solid rgba(148, 163, 184, 0.5);
+        background: #0b1120;
+        overflow: hidden;
+        box-shadow: 0 30px 70px rgba(2, 6, 17, 0.6);
+        padding: 22px 20px;
+        opacity: 0;
+      }
+      #phone-field .ph-hdr {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      #phone-field .ph-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        flex: none;
+      }
+      #phone-field .ph-app {
+        font-size: 19px;
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+      #task-card {
+        margin-top: 26px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        border-radius: 18px;
+        background: #0a0f1a;
+        padding: 28px 24px;
+      }
+      #task-card .task-row {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+      }
+      #task-check {
+        flex: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        border: 3px solid #64748b;
+        background: transparent;
+        position: relative;
+        margin-top: 2px;
+      }
+      #task-check svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+      }
+      #task-card .task-t {
+        font-size: 27px;
+        font-weight: 700;
+        color: #f1f5f9;
+        line-height: 1.15;
+      }
+      #task-card .task-s {
+        display: block;
+        margin-top: 8px;
+        font-size: 19px;
+        color: #94a3b8;
+      }
+      #task-status {
+        display: inline-block;
+        margin-top: 22px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 18px;
+        letter-spacing: 0.14em;
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.5);
+        border-radius: 999px;
+        padding: 8px 18px;
+      }
+      #rescued-chip {
+        margin-top: 26px;
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        font-size: 24px;
+        letter-spacing: 0.1em;
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.55);
+        background: rgba(16, 185, 129, 0.12);
+        border-radius: 999px;
+        padding: 12px 26px;
+        opacity: 0;
+      }
+      #s5-side {
+        position: absolute;
+        left: 780px;
+        top: 300px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-size: 74px;
+        line-height: 1.08;
+        color: #f1f5f9;
+        width: 820px;
+      }
+      #s5-side .m-sub {
+        display: block;
+        margin-top: 26px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: 0.18em;
+        color: #94a3b8;
+        text-transform: uppercase;
+      }
+
+      /* ---------------- Outro logo slam ---------------- */
+      #logo-slam {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(1200px 760px at 50% 46%, #0d2145 0%, #0a0f1a 70%, #070c14 100%);
+        opacity: 0;
+      }
+      .brand-mark {
+        width: 210px;
+        height: 210px;
+        margin-bottom: 44px;
+      }
+      #s5-wordmark {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-size: 150px;
+        letter-spacing: 0.02em;
+        color: #f8fafc;
+        line-height: 1;
+      }
+      #s5-tagline {
+        margin-top: 40px;
+        font-size: 40px;
+        font-weight: 600;
+        color: #c9d6ec;
+        letter-spacing: 0.01em;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-uv6p" id="root" data-composition-id="safesphere" data-start="0" data-duration="20" data-width="1920" data-height="1080">
+      <!-- persistent background (untimed) -->
+      <div data-hf-id="hf-6icv" id="bgBase"></div>
+      <div data-hf-id="hf-3d1f" id="bgGlow"></div>
+      <div data-hf-id="hf-nuer" id="gridOverlay"></div>
+      <div data-hf-id="hf-h7i3" id="vignette"></div>
+
+      <!-- ============ Scene 1 : Incident Detected [0 - 2.6] ============ -->
+      <section data-hf-id="hf-lsri" id="s1" class="clip" data-start="0" data-duration="2.6" data-track-index="0">
+        <div data-hf-id="hf-ihci" id="s1-live" class="s1-tag"><span data-hf-id="hf-9gry" class="dot"></span>Live Feed · Patna EOC</div>
+        <div data-hf-id="hf-i0vh" id="s1-ts" class="s1-tag">REC <span data-hf-id="hf-msnj" id="s1-clock">09:41:02</span></div>
+
+        <div data-hf-id="hf-zxhk" id="s1-map">
+          <svg data-hf-id="hf-vny4" id="s1-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+            <g data-hf-id="hf-eo5v" id="s1-routes" opacity="0.18">
+              <path data-hf-id="hf-md2f" d="M0 690 Q 320 640 610 668 T 1260 640 T 1920 672" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="2 18" />
+              <path data-hf-id="hf-dtqt" d="M0 770 Q 420 730 900 764 T 1920 748" stroke="#475569" stroke-width="2" fill="none" stroke-dasharray="2 16" />
+              <path data-hf-id="hf-3zn3" d="M540 1080 Q 560 760 720 560 T 1080 240" stroke="#475569" stroke-width="2" fill="none" stroke-dasharray="2 16" />
+            </g>
+            <polygon data-hf-id="hf-lket" id="floodPoly" fill="rgba(239, 68, 68, 0.16)" stroke="#f59e0b" stroke-width="5" stroke-linejoin="round" points="430,600 616,548 822,596 1036,522 1286,574 1504,508 1620,566 1620,690 1380,742 1110,688 830,742 640,700 430,700" />
+            <g data-hf-id="hf-y66m" id="polyGlow">
+              <polygon data-hf-id="hf-z14d" fill="rgba(239, 68, 68, 0.30)" points="430,600 616,548 822,596 1036,522 1286,574 1504,508 1620,566 1620,690 1380,742 1110,688 830,742 640,700 430,700" />
+            </g>
+            <line data-hf-id="hf-623p" x1="1160" y1="600" x2="1160" y2="880" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 10" />
+            <circle data-hf-id="hf-zoqo" id="patnaPin" cx="1160" cy="598" r="13" fill="#ef4444" stroke="#f1f5f9" stroke-width="4" />
+            <circle data-hf-id="hf-lfvn" id="patnaRing" cx="1160" cy="598" r="13" fill="none" stroke="#ef4444" stroke-width="3" opacity="0.7" />
+          </svg>
+        </div>
+
+        <div data-hf-id="hf-tsqi" id="radarBox"><div data-hf-id="hf-0cs8" id="radarWedge" data-layout-allow-overflow=""></div></div>
+
+        <div data-hf-id="hf-2gk1" id="s1-stamp">FLOOD RISK — PATNA (GANGA)</div>
+        <div data-hf-id="hf-nssu" id="s1-badge">WATCH</div>
+        <div data-hf-id="hf-z7nw" id="s1-coords">
+          <span data-hf-id="hf-e18p" class="lbl">MONITOR</span>
+          25.5941° N · 85.1376° E
+        </div>
+      </section>
+
+      <!-- ============ Scene 2 : Command Center [2.6 - 7.2] ============ -->
+      <section data-hf-id="hf-6x7s" id="s2" class="clip" data-start="2.6" data-duration="4.6" data-track-index="1">
+        <h2 data-hf-id="hf-fx94" id="s2-title">EVERY SECOND SAVES LIVES.</h2>
+        <div data-hf-id="hf-ys5x" id="s2-sub">Patna District · EOC Live</div>
+        <div data-hf-id="hf-lqpt" class="s2-kpis">
+          <div data-hf-id="hf-89h9" id="kpi-1" class="kpi-card">
+            <div data-hf-id="hf-agko" class="kpi-top">
+              <span data-hf-id="hf-sppd" class="kpi-label">Active Alerts</span>
+              <span data-hf-id="hf-ohjn" class="ring"></span>
+            </div>
+            <div data-hf-id="hf-cv4y" class="kpi-value">08</div>
+            <div data-hf-id="hf-25cv" class="kpi-foot">2 critical · 3 watch</div>
+          </div>
+          <div data-hf-id="hf-c7la" id="kpi-2" class="kpi-card">
+            <div data-hf-id="hf-8sbk" class="kpi-top">
+              <span data-hf-id="hf-ibxb" class="kpi-label">Rescue Teams</span>
+              <span data-hf-id="hf-qib7" class="ring"></span>
+            </div>
+            <div data-hf-id="hf-jq6q" class="kpi-value">286</div>
+            <div data-hf-id="hf-9x5w" class="kpi-foot">Dispatched · Zone 7</div>
+          </div>
+          <div data-hf-id="hf-g5pb" id="kpi-3" class="kpi-card">
+            <div data-hf-id="hf-7leh" class="kpi-top">
+              <span data-hf-id="hf-9zli" class="kpi-label">Shelters</span>
+              <span data-hf-id="hf-q406" class="ring"></span>
+            </div>
+            <div data-hf-id="hf-pekq" class="kpi-value">974</div>
+            <div data-hf-id="hf-e4p0" class="kpi-foot">12,400 capacity</div>
+          </div>
+        </div>
+        <div data-hf-id="hf-wjcn" id="s2-feed">
+          <span data-hf-id="hf-a8ns" class="pulse"></span>
+          <span data-hf-id="hf-ooge" class="feed-lbl">LIVE</span>
+          <span data-hf-id="hf-8w0i" id="s2-feed-text"></span>
+          <span data-hf-id="hf-uuxe" class="caret"></span>
+        </div>
+      </section>
+
+      <!-- ============ Scene 3 : AI Triage [7.2 - 11.2] ============ -->
+      <section data-hf-id="hf-17fz" id="s3" class="clip" data-start="7.2" data-duration="4.0" data-track-index="2">
+        <div data-hf-id="hf-ktpi" id="s3-head">
+          <span data-hf-id="hf-dmlb" class="h-main">AI TRIAGE</span>
+          <span data-hf-id="hf-78vo" class="h-sub">LANGGRAPH · 3 AGENTS</span>
+        </div>
+        <div data-hf-id="hf-ad66" class="s3-chain">
+          <div data-hf-id="hf-ta94" id="node-1" class="agent-node">
+            <span data-hf-id="hf-cxkj" class="n-dot"></span>
+            <span data-hf-id="hf-uckh"><span data-hf-id="hf-p40z" class="n-name">Flood Analyst</span><span data-hf-id="hf-x8vz" class="n-lbl">STAGE 1 · DETECT</span></span>
+          </div>
+          <div data-hf-id="hf-wlzf" id="conn-1" class="connector"></div>
+          <div data-hf-id="hf-1y4z" id="node-2" class="agent-node">
+            <span data-hf-id="hf-yrtf" class="n-dot"></span>
+            <span data-hf-id="hf-l73p"><span data-hf-id="hf-mh6z" class="n-name">Shelter Manager</span><span data-hf-id="hf-pqss" class="n-lbl">STAGE 2 · PLAN</span></span>
+          </div>
+          <div data-hf-id="hf-lqhs" id="conn-2" class="connector"></div>
+          <div data-hf-id="hf-y00y" id="node-3" class="agent-node">
+            <span data-hf-id="hf-ydie" class="n-dot"></span>
+            <span data-hf-id="hf-me0s"><span data-hf-id="hf-doec" class="n-name">Evacuation Planner</span><span data-hf-id="hf-wb5d" class="n-lbl">STAGE 3 · EXECUTE</span></span>
+          </div>
+        </div>
+        <div data-hf-id="hf-p1h9" id="s3-pred">
+          <span data-hf-id="hf-qbv9" class="p-lbl">AI PREDICTION —</span>
+          <span data-hf-id="hf-j7yn" class="p-val">96% confidence</span>
+        </div>
+        <div data-hf-id="hf-gjl5" id="s3-plan">
+          <span data-hf-id="hf-2bdy" class="plan-prefix">PLAN</span>
+          <span data-hf-id="hf-b060" id="s3-plan-text"></span>
+          <span data-hf-id="hf-ltg6" class="caret"></span>
+        </div>
+      </section>
+
+      <!-- ============ Scene 4 : One Alert, Nine Channels [11.2 - 15.6] ============ -->
+      <section data-hf-id="hf-cnja" id="s4" class="clip" data-start="11.2" data-duration="4.4" data-track-index="3">
+        <h3 data-hf-id="hf-iwjh" id="s4-title">ONE ALERT. NINE CHANNELS.</h3>
+        <div data-hf-id="hf-qr7b" class="s4-chips">
+          <div data-hf-id="hf-1x1g" class="s4-chips-row">
+            <span data-hf-id="hf-c9zl" id="chip-1" class="channel-chip">FM Radio</span>
+            <span data-hf-id="hf-0l6t" id="chip-2" class="channel-chip">SMS</span>
+            <span data-hf-id="hf-uaur" id="chip-3" class="channel-chip">WhatsApp</span>
+            <span data-hf-id="hf-wl5w" id="chip-4" class="channel-chip">Web Push</span>
+            <span data-hf-id="hf-f7wt" id="chip-5" class="channel-chip">TV</span>
+          </div>
+          <div data-hf-id="hf-ulks" class="s4-chips-row">
+            <span data-hf-id="hf-sxmd" id="chip-6" class="channel-chip">Loudspeaker</span>
+            <span data-hf-id="hf-wc8e" id="chip-7" class="channel-chip">Cell Broadcast</span>
+            <span data-hf-id="hf-atjm" id="chip-8" class="channel-chip">IVRS Call</span>
+            <span data-hf-id="hf-r8lx" id="chip-9" class="channel-chip">Sirens</span>
+          </div>
+        </div>
+
+        <div data-hf-id="hf-470n" id="s4-phone">
+          <div data-hf-id="hf-eni1" class="ph-notch"></div>
+          <div data-hf-id="hf-7h7d" class="ph-hdr">
+            <span data-hf-id="hf-mgj9" class="ph-mark"></span>
+            <span data-hf-id="hf-r2yr" class="ph-app">SafeSphere Citizen</span>
+          </div>
+          <div data-hf-id="hf-p645" class="ph-map"><span data-hf-id="hf-2knj" class="ph-pin"></span></div>
+          <div data-hf-id="hf-zh86" id="s4-notify">
+            <span data-hf-id="hf-xz7d" class="n-dot"></span>
+            <span data-hf-id="hf-9bje" class="n-txt">1 emergency alert · 09:41:07</span>
+          </div>
+        </div>
+
+        <div data-hf-id="hf-6m3v" id="s4-banner">
+          <span data-hf-id="hf-oqtp" class="b-bar"></span>
+          <div data-hf-id="hf-yeow">
+            <div data-hf-id="hf-6mon" class="b-lbl">Emergency Broadcast</div>
+            <div data-hf-id="hf-lday" class="b-txt">EVACUATE NOW — FLOOD in PATNA · Go to shelter · Call 1070</div>
+          </div>
+          <div data-hf-id="hf-ev2n" class="b-call">
+            <div data-hf-id="hf-5ovi" class="num">1070</div>
+            <div data-hf-id="hf-cvzt" class="lbl">NATIONAL HELPLINE</div>
+          </div>
+        </div>
+
+        <div data-hf-id="hf-8hvd" id="s4-delivered">Delivered: 12,400 citizens</div>
+      </section>
+
+      <!-- ============ Scene 5 : Field Responder + Outro [15.6 - 20.0] ============ -->
+      <section data-hf-id="hf-r0gk" id="s5" class="clip" data-start="15.6" data-duration="4.4" data-track-index="4">
+        <div data-hf-id="hf-6g9o" id="phone-field">
+          <div data-hf-id="hf-g1il" class="ph-hdr">
+            <span data-hf-id="hf-anah" class="ph-mark"></span>
+            <span data-hf-id="hf-xohm" class="ph-app">SafeSphere · Field Ops</span>
+          </div>
+          <div data-hf-id="hf-i1xt" id="task-card">
+            <div data-hf-id="hf-z1vw" class="task-row">
+              <span data-hf-id="hf-18ky" id="task-check">
+                <svg data-hf-id="hf-7g99" viewBox="0 0 40 40" fill="none">
+                  <path data-hf-id="hf-olue" d="M8 21 L17 30 L33 11" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div data-hf-id="hf-y7yw">
+                <span data-hf-id="hf-9lb0" class="task-t">Evacuate 240 residents</span>
+                <span data-hf-id="hf-er5s" class="task-s">Ganga floodplain · Zone 7</span>
+              </div>
+            </div>
+            <div data-hf-id="hf-ryq1" id="task-status">IN PROGRESS</div>
+          </div>
+          <div data-hf-id="hf-znq6" id="rescued-chip">26 rescued</div>
+        </div>
+
+        <div data-hf-id="hf-m1ll" id="s5-side">
+          FIELD TASK COMPLETE
+          <span data-hf-id="hf-riwj" class="m-sub">Evacuation priority · Auto-assigned</span>
+        </div>
+
+        <div data-hf-id="hf-zul2" id="logo-slam">
+          <svg data-hf-id="hf-uqjp" class="brand-mark" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs data-hf-id="hf-mh0t">
+              <lineargradient data-hf-id="hf-6tj3" id="m-fire" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop data-hf-id="hf-iuna" offset="0%" stop-color="#ef4444" />
+                <stop data-hf-id="hf-5uji" offset="100%" stop-color="#f97316" />
+              </lineargradient>
+              <lineargradient data-hf-id="hf-atql" id="m-rain" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop data-hf-id="hf-lnhq" offset="0%" stop-color="#3b82f6" />
+                <stop data-hf-id="hf-4q7t" offset="100%" stop-color="#60a5fa" />
+              </lineargradient>
+              <lineargradient data-hf-id="hf-8nrc" id="m-wave" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop data-hf-id="hf-9qbh" offset="0%" stop-color="#06b6d4" />
+                <stop data-hf-id="hf-kg6f" offset="100%" stop-color="#0ea5e9" />
+              </lineargradient>
+              <lineargradient data-hf-id="hf-l08x" id="m-wind" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop data-hf-id="hf-wrdq" offset="0%" stop-color="#64748b" />
+                <stop data-hf-id="hf-2khf" offset="100%" stop-color="#94a3b8" />
+              </lineargradient>
+              <clippath data-hf-id="hf-xxm9" id="m-clip">
+                <path data-hf-id="hf-au1s" d="M256 32C256 32 448 64 448 192C448 352 256 480 256 480C256 480 64 352 64 192C64 64 256 32 256 32Z" />
+              </clippath>
+            </defs>
+            <g data-hf-id="hf-4ldp" clip-path="url(#m-clip)">
+              <rect data-hf-id="hf-1bgv" x="0" y="0" width="256" height="256" fill="url(#m-fire)" />
+              <rect data-hf-id="hf-7npu" x="256" y="0" width="256" height="256" fill="url(#m-rain)" />
+              <rect data-hf-id="hf-d4z7" x="0" y="256" width="256" height="256" fill="url(#m-wave)" />
+              <rect data-hf-id="hf-52ah" x="256" y="256" width="256" height="256" fill="url(#m-wind)" />
+            </g>
+            <line data-hf-id="hf-4mmr" x1="256" y1="32" x2="256" y2="480" stroke="#0f172a" stroke-width="12" />
+            <line data-hf-id="hf-id18" x1="64" y1="256" x2="448" y2="256" stroke="#0f172a" stroke-width="12" />
+            <path data-hf-id="hf-qhay" d="M256 32C256 32 448 64 448 192C448 352 256 480 256 480C256 480 64 352 64 192C64 64 256 32 256 32Z" fill="none" stroke="#f8fafc" stroke-width="24" stroke-linejoin="round" />
+            <circle data-hf-id="hf-ajrp" cx="256" cy="256" r="80" fill="#0f172a" stroke="#f8fafc" stroke-width="12" />
+            <circle data-hf-id="hf-cn8z" cx="256" cy="225" r="24" fill="#f8fafc" />
+            <path data-hf-id="hf-y9ql" d="M196 305 C196 270 316 270 316 305 Z" fill="#f8fafc" />
+          </svg>
+          <div data-hf-id="hf-yvn1" id="s5-wordmark">SAFESPHERE</div>
+          <div data-hf-id="hf-jn0g" id="s5-tagline">No citizen left unwarned.</div>
+        </div>
+      </section>
+
+      <!-- ============ Audio ============ -->
+      <audio data-hf-id="hf-y4ja" id="music" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3" data-start="0" data-duration="20" data-track-index="10" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0},{&quot;t&quot;:0.4,&quot;v&quot;:0.3},{&quot;t&quot;:19.2,&quot;v&quot;:0.3},{&quot;t&quot;:19.9,&quot;v&quot;:0}]}]}">
+      </audio>
+      <audio data-hf-id="hf-1uyb" id="sfx-kpi-1" src="assets/sfx/interface/drop_001.ogg" data-start="4.39" data-duration="0.11" data-track-index="11" data-volume="0.55"></audio>
+      <audio data-hf-id="hf-o0g6" id="sfx-kpi-2" src="assets/sfx/interface/drop_002.ogg" data-start="5.34" data-duration="0.19" data-track-index="12" data-volume="0.55"></audio>
+      <audio data-hf-id="hf-vpxj" id="sfx-kpi-3" src="assets/sfx/interface/drop_003.ogg" data-start="6.0" data-duration="0.19" data-track-index="13" data-volume="0.55"></audio>
+      <audio data-hf-id="hf-o8fp" id="sfx-ai" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="9.29" data-duration="0.18" data-track-index="14" data-volume="0.6"></audio>
+      <audio data-hf-id="hf-udlh" id="sfx-chip-1" src="assets/sfx/interface/click_003.ogg" data-start="11.46" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-x031" id="sfx-chip-2" src="assets/sfx/interface/click_003.ogg" data-start="12.02" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-c6ie" id="sfx-chip-3" src="assets/sfx/interface/click_003.ogg" data-start="12.55" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-s2lc" id="sfx-push" src="assets/sfx/impact/impactMetal_light_002.ogg" data-start="13.11" data-duration="0.24" data-track-index="16" data-volume="0.65"></audio>
+      <audio data-hf-id="hf-ee6k" id="sfx-chip-4" src="assets/sfx/interface/click_003.ogg" data-start="13.64" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-td90" id="sfx-chip-5" src="assets/sfx/interface/click_003.ogg" data-start="14.2" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-jhxz" id="sfx-chip-6" src="assets/sfx/interface/click_003.ogg" data-start="14.73" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-vj3b" id="sfx-chip-7" src="assets/sfx/interface/click_003.ogg" data-start="15.2" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-1pq4" id="sfx-chip-8" src="assets/sfx/interface/click_003.ogg" data-start="15.26" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-v9b0" id="sfx-chip-9" src="assets/sfx/interface/click_003.ogg" data-start="15.32" data-duration="0.06" data-track-index="15" data-volume="0.45"></audio>
+      <audio data-hf-id="hf-i75r" id="sfx-task" src="assets/sfx/impact/impactGlass_light_001.ogg" data-start="16.38" data-duration="0.21" data-track-index="17" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-0hoy" id="sfx-bell" src="assets/sfx/impact/impactBell_heavy_000.ogg" data-start="17.47" data-duration="1.48" data-track-index="18" data-volume="0.85"></audio>
+    </div>
+
+    <script src="assets/music/audio-data.js"></script>
+    <script>
+      (function () {
+        var AD = window.__HF_AUDIO_DATA;
+        var tl = gsap.timeline({ paused: true });
+
+        /* ============ audio-reactive: per-frame sampling, 0-20s @30fps ============ */
+        var FPS = AD.fps || 30;
+        var N = Math.min(AD.totalFrames, Math.ceil(20 * FPS));
+        for (var f = 0; f < N; f++) {
+          (function (frame) {
+            tl.call(
+              function () {
+                var b = AD.frames[frame].bands;
+                var bass = b[0];
+                var low = b[1];
+                gsap.set("#bgGlow", { opacity: 0.3 + bass * 0.22 + low * 0.06 });
+                gsap.set("#polyGlow", { opacity: 0.12 + bass * 0.5 });
+              },
+              [],
+              frame / FPS
+            );
+          })(f);
+        }
+
+        /* ============ Scene 1 : Incident Detected [0 - 2.6] ============ */
+        // corner tags fade in
+        tl.fromTo("#s1-live", { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.1);
+        tl.fromTo("#s1-ts", { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.1);
+        // flood polygon + routes fade in
+        tl.fromTo("#s1-svg", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power1.out" }, 0.3);
+        // radar box + rotating sweep (one clean sweep)
+        tl.fromTo("#radarBox", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.3);
+        tl.fromTo("#radarWedge", { rotation: 0 }, { rotation: 360, duration: 2.3, ease: "none" }, 0.35);
+        // flood risk stamp
+        tl.fromTo("#s1-stamp", { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" }, 0.85);
+        // patna pin pulse (finite)
+        tl.fromTo(
+          "#patnaRing",
+          { scale: 1, opacity: 0.8 },
+          { scale: 2.6, opacity: 0, duration: 1.5, ease: "power2.out", repeat: 1 }
+        , 1.0);
+        // badge escalation WATCH -> WARNING at 1.40 (audio-coupled warning tick)
+        tl.call(function () { document.getElementById("s1-badge").textContent = "WARNING"; }, [], 1.4);
+        tl.to("#s1-badge", { backgroundColor: "#f97316", duration: 0.2 }, 1.4);
+        tl.fromTo("#s1-badge", { scale: 1.16 }, { scale: 1, duration: 0.4, ease: "back.out(2)" }, 1.4);
+        tl.to("#floodPoly", { attr: { stroke: "#f97316" }, duration: 0.4 }, 1.4);
+        // coords line
+        tl.fromTo("#s1-coords", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 1.55);
+        // timestamp ticks
+        (function () {
+          var t = 0.6;
+          var hh = 9;
+          var mm = 41;
+          var ss = 2;
+          while (t < 2.5) {
+            (function (tt, txt) {
+              tl.call(function () { document.getElementById("s1-clock").textContent = txt; }, [], tt);
+            })(t, ("0" + hh).slice(-2) + ":" + ("0" + mm).slice(-2) + ":" + ("0" + ss).slice(-2));
+            ss++;
+            if (ss > 59) { ss = 0; }
+            t += 0.6;
+          }
+        })();
+
+        /* ============ Scene 2 : Command Center [2.6 - 7.2] ============ */
+        // headline slam
+        tl.fromTo(
+          "#s2-title",
+          { opacity: 0, scale: 1.08, y: 14 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: "power3.out" },
+          2.72
+        );
+        tl.fromTo("#s2-sub", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 3.3);
+        // KPI cards on the beat grid (every-other beat for label readability)
+        // beat-grid: kpi 1 at 4.39s, kpi 2 at 5.34s, kpi 3 at 6.00s
+        tl.fromTo(
+          "#kpi-1",
+          { opacity: 0, y: 46 },
+          { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+          4.39
+        );
+        tl.fromTo(
+          "#kpi-2",
+          { opacity: 0, y: 46 },
+          { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+          5.34
+        );
+        tl.fromTo(
+          "#kpi-3",
+          { opacity: 0, y: 46 },
+          { opacity: 1, y: 0, duration: 0.42, ease: "power3.out" },
+          6.0
+        );
+        // live feed row types in
+        tl.fromTo("#s2-feed", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 6.42);
+        tl.fromTo("#s2-feed .caret", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 6.42);
+        (function () {
+          var el = document.getElementById("s2-feed-text");
+          var text = "Flood risk elevated to WARNING — Patna (Ganga)";
+          var n = text.length;
+          var start = 6.5;
+          var dur = 0.55;
+          for (var i = 1; i <= n; i++) {
+            (function (idx) {
+              tl.call(function () { el.textContent = text.slice(0, idx); }, [], start + (idx / n) * dur);
+            })(i);
+          }
+          // caret off after typing completes
+          tl.to("#s2-feed .caret", { opacity: 0, duration: 0.2 }, 7.02);
+        })();
+
+        /* ============ Scene 3 : AI Triage [7.2 - 11.2] ============ */
+        tl.fromTo("#s3-head", { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 7.3);
+        // agent nodes on the beat grid
+        // beat-grid: node 1 at 7.64s, node 2 at 8.19s, node 3 at 8.74s
+        tl.fromTo(
+          "#node-1",
+          { opacity: 0.22, y: 16 },
+          { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" },
+          7.64
+        );
+        tl.fromTo("#conn-1", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.25, ease: "power2.out" }, 7.9);
+        tl.fromTo(
+          "#node-2",
+          { opacity: 0.22, y: 16 },
+          { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" },
+          8.19
+        );
+        tl.fromTo("#conn-2", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.25, ease: "power2.out" }, 8.45);
+        tl.fromTo(
+          "#node-3",
+          { opacity: 0.22, y: 16 },
+          { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" },
+          8.74
+        );
+        // prediction card lands on the strong cue at 9.29s
+        // beat-locked: 9.29s
+        tl.fromTo(
+          "#s3-pred",
+          { opacity: 0, scale: 1.12, y: 26 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.42, ease: "power3.out" },
+          9.29
+        );
+        // plan line types out
+        (function () {
+          var el = document.getElementById("s3-plan-text");
+          var text = "Evacuate Ganga floodplain → Danapur shelter · 6 boats + 3 buses";
+          var n = text.length;
+          var start = 9.55;
+          var dur = 1.35;
+          for (var i = 1; i <= n; i++) {
+            (function (idx) {
+              tl.call(function () { el.textContent = text.slice(0, idx); }, [], start + (idx / n) * dur);
+            })(i);
+          }
+          tl.to("#s3-plan .caret", { opacity: 0, duration: 0.25 }, 10.96);
+        })();
+
+        /* ============ Scene 4 : One Alert, Nine Channels [11.2 - 15.6] ============ */
+        tl.fromTo(
+          "#s4-title",
+          { opacity: 0, scale: 1.07, y: 12 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.36, ease: "power3.out" },
+          11.24
+        );
+        // channel chips on the beat grid (non-text accents, every beat ok)
+        // beat-grid: chips 1-6 at 11.46/12.02/12.55/13.64/14.20/14.73s, chips 7-9 cascade on the 15.29s beat
+        var chipTimes = [11.46, 12.02, 12.55, 13.64, 14.2, 14.73, 15.2, 15.26, 15.32];
+        for (var c = 0; c < chipTimes.length; c++) {
+          (function (idx, t) {
+            tl.fromTo(
+              "#chip-" + (idx + 1),
+              { opacity: 0, scale: 0.86 },
+              { opacity: 1, scale: 1, duration: t > 15 ? 0.22 : 0.26, ease: "back.out(2.2)" },
+              t
+            );
+          })(c, chipTimes[c]);
+        }
+        // phone slides in
+        tl.fromTo("#s4-phone", { opacity: 0, x: 70 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 12.6);
+        // push notification arrives on the strong cue at 13.11s
+        // beat-locked: 13.11s
+        tl.fromTo(
+          "#s4-banner",
+          { opacity: 0, y: -20, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power3.out" },
+          13.11
+        );
+        tl.fromTo("#s4-notify", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, 13.16);
+        // delivered line
+        tl.fromTo("#s4-delivered", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 14.9);
+
+        /* ============ Scene 5 : Field Responder + Outro [15.6 - 20.0] ============ */
+        tl.fromTo("#phone-field", { opacity: 0, x: -70 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 15.7);
+        tl.fromTo("#s5-side", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 15.75);
+        // task flips DONE at 16.38 (beat-backed check + glass click)
+        tl.call(function () {
+          document.getElementById("task-status").textContent = "DONE";
+          document.getElementById("task-status").style.color = "#10b981";
+          document.getElementById("task-status").style.borderColor = "rgba(16,185,129,0.55)";
+        }, [], 16.38);
+        tl.to("#task-check", { borderColor: "#10b981", duration: 0.15 }, 16.38);
+        tl.to("#task-check svg", { opacity: 1, duration: 0.2, ease: "power1.out" }, 16.4);
+        tl.fromTo("#task-card", { scale: 1 }, { scale: 1.035, duration: 0.12, yoyo: true, repeat: 1 }, 16.38);
+        // rescued chip pops
+        tl.fromTo(
+          "#rescued-chip",
+          { opacity: 0, scale: 0.7 },
+          { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(2.4)" },
+          16.93
+        );
+        // phone + text clear for the logo cut
+        tl.to("#phone-field", { opacity: 0, duration: 0.1 }, 17.36);
+        tl.to("#s5-side", { opacity: 0, duration: 0.1 }, 17.36);
+        // logo slam on the strong cue at 17.47s
+        // beat-locked: 17.47s
+        tl.fromTo(
+          "#logo-slam",
+          { opacity: 0, scale: 1.12 },
+          { opacity: 1, scale: 1, duration: 0.42, ease: "power3.out" },
+          17.47
+        );
+        tl.fromTo("#s5-tagline", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 17.95);
+
+        window.__timelines["safesphere"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>

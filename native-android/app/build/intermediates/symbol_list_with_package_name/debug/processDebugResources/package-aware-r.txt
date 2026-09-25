@@ -3212,6 +3212,7 @@ drawable abc_textfield_search_material
 drawable abc_vector_test
 drawable avd_hide_password
 drawable avd_show_password
+drawable bg_action_icon
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl
@@ -3440,9 +3441,11 @@ id accessibility_custom_action_7
 id accessibility_custom_action_8
 id accessibility_custom_action_9
 id actionCard
+id actionChevron
 id actionDown
 id actionDownUp
 id actionIcon
+id actionSubtitle
 id actionTitle
 id actionUp
 id action_bar
@@ -3482,11 +3485,8 @@ id addResourceBtn
 id addShelterBtn
 id adjust_height
 id adjust_width
-id adminActionsRecyclerView
 id adminDashboardFragment
-id adminKpiRecyclerView
-id adminOpsRecyclerView
-id admin_toolbar
+id adminSubtitle
 id agentName
 id agentOrchestrationFragment
 id agentPipelineRecyclerView
@@ -3783,7 +3783,12 @@ id govEmailInput
 id govLoginBtn
 id govLoginFragment
 id govPasswordInput
-id gov_toolbar
+id govPrimaryActions
+id govSecondaryActions
+id govStatAlerts
+id govStatReports
+id govStatShelters
+id govSubtitle
 id gpsIcon
 id gpsRetryBtn
 id gpsStatusText
@@ -3842,7 +3847,6 @@ id kb_toolbar
 id knowledgeBaseFragment
 id kpiCard
 id kpiIcon
-id kpiRecyclerView
 id kpiTitle
 id kpiValue
 id labeled
@@ -4013,6 +4017,7 @@ id pooling_container_listener_holder_tag
 id position
 id postLayout
 id pressed
+id primaryActions
 id prioritySpinner
 id progress_circular
 id progress_horizontal
@@ -4022,11 +4027,9 @@ id publicMapView
 id publicOtpFragment
 id pushSwitch
 id quantityInput
-id quickActionsRecyclerView
 id quietHoursSwitch
 id radio
 id ratio
-id recentAlertsRecyclerView
 id rectangles
 id replayNext
 id replayPrev
@@ -4098,6 +4101,7 @@ id search_mag_icon
 id search_plate
 id search_src_text
 id search_voice_btn
+id secondaryActions
 id select_dialog_listview
 id selected
 id selection_type
@@ -4171,6 +4175,12 @@ id start
 id startHorizontal
 id startToEnd
 id startVertical
+id statAlerts
+id statHealth
+id statIcon
+id statLabel
+id statReports
+id statValue
 id staticLayout
 id staticPostLayout
 id statusChipGroup
@@ -4500,6 +4510,8 @@ layout item_service_card
 layout item_shelter_card
 layout item_shelter_list
 layout item_shelter_mgmt_card
+layout item_simple_action
+layout item_simple_stat
 layout item_sos_action
 layout item_sos_history_row
 layout item_source

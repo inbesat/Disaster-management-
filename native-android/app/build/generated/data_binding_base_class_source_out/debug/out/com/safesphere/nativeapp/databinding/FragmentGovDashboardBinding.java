@@ -4,13 +4,12 @@ package com.safesphere.nativeapp.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.safesphere.nativeapp.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -18,34 +17,42 @@ import java.lang.String;
 
 public final class FragmentGovDashboardBinding implements ViewBinding {
   @NonNull
-  private final CoordinatorLayout rootView;
+  private final LinearLayout rootView;
 
   @NonNull
-  public final MaterialToolbar govToolbar;
+  public final LinearLayout govPrimaryActions;
 
   @NonNull
-  public final RecyclerView kpiRecyclerView;
+  public final LinearLayout govSecondaryActions;
 
   @NonNull
-  public final RecyclerView quickActionsRecyclerView;
+  public final ItemSimpleStatBinding govStatAlerts;
 
   @NonNull
-  public final RecyclerView recentAlertsRecyclerView;
+  public final ItemSimpleStatBinding govStatReports;
 
-  private FragmentGovDashboardBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull MaterialToolbar govToolbar, @NonNull RecyclerView kpiRecyclerView,
-      @NonNull RecyclerView quickActionsRecyclerView,
-      @NonNull RecyclerView recentAlertsRecyclerView) {
+  @NonNull
+  public final ItemSimpleStatBinding govStatShelters;
+
+  @NonNull
+  public final TextView govSubtitle;
+
+  private FragmentGovDashboardBinding(@NonNull LinearLayout rootView,
+      @NonNull LinearLayout govPrimaryActions, @NonNull LinearLayout govSecondaryActions,
+      @NonNull ItemSimpleStatBinding govStatAlerts, @NonNull ItemSimpleStatBinding govStatReports,
+      @NonNull ItemSimpleStatBinding govStatShelters, @NonNull TextView govSubtitle) {
     this.rootView = rootView;
-    this.govToolbar = govToolbar;
-    this.kpiRecyclerView = kpiRecyclerView;
-    this.quickActionsRecyclerView = quickActionsRecyclerView;
-    this.recentAlertsRecyclerView = recentAlertsRecyclerView;
+    this.govPrimaryActions = govPrimaryActions;
+    this.govSecondaryActions = govSecondaryActions;
+    this.govStatAlerts = govStatAlerts;
+    this.govStatReports = govStatReports;
+    this.govStatShelters = govStatShelters;
+    this.govSubtitle = govSubtitle;
   }
 
   @Override
   @NonNull
-  public CoordinatorLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -70,32 +77,48 @@ public final class FragmentGovDashboardBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.gov_toolbar;
-      MaterialToolbar govToolbar = ViewBindings.findChildViewById(rootView, id);
-      if (govToolbar == null) {
+      id = R.id.govPrimaryActions;
+      LinearLayout govPrimaryActions = ViewBindings.findChildViewById(rootView, id);
+      if (govPrimaryActions == null) {
         break missingId;
       }
 
-      id = R.id.kpiRecyclerView;
-      RecyclerView kpiRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (kpiRecyclerView == null) {
+      id = R.id.govSecondaryActions;
+      LinearLayout govSecondaryActions = ViewBindings.findChildViewById(rootView, id);
+      if (govSecondaryActions == null) {
         break missingId;
       }
 
-      id = R.id.quickActionsRecyclerView;
-      RecyclerView quickActionsRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (quickActionsRecyclerView == null) {
+      id = R.id.govStatAlerts;
+      View govStatAlerts = ViewBindings.findChildViewById(rootView, id);
+      if (govStatAlerts == null) {
+        break missingId;
+      }
+      ItemSimpleStatBinding binding_govStatAlerts = ItemSimpleStatBinding.bind(govStatAlerts);
+
+      id = R.id.govStatReports;
+      View govStatReports = ViewBindings.findChildViewById(rootView, id);
+      if (govStatReports == null) {
+        break missingId;
+      }
+      ItemSimpleStatBinding binding_govStatReports = ItemSimpleStatBinding.bind(govStatReports);
+
+      id = R.id.govStatShelters;
+      View govStatShelters = ViewBindings.findChildViewById(rootView, id);
+      if (govStatShelters == null) {
+        break missingId;
+      }
+      ItemSimpleStatBinding binding_govStatShelters = ItemSimpleStatBinding.bind(govStatShelters);
+
+      id = R.id.govSubtitle;
+      TextView govSubtitle = ViewBindings.findChildViewById(rootView, id);
+      if (govSubtitle == null) {
         break missingId;
       }
 
-      id = R.id.recentAlertsRecyclerView;
-      RecyclerView recentAlertsRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (recentAlertsRecyclerView == null) {
-        break missingId;
-      }
-
-      return new FragmentGovDashboardBinding((CoordinatorLayout) rootView, govToolbar,
-          kpiRecyclerView, quickActionsRecyclerView, recentAlertsRecyclerView);
+      return new FragmentGovDashboardBinding((LinearLayout) rootView, govPrimaryActions,
+          govSecondaryActions, binding_govStatAlerts, binding_govStatReports,
+          binding_govStatShelters, govSubtitle);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

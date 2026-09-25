@@ -29,6 +29,7 @@ color textMuted
 color textOnPrimary
 color textPrimary
 color textSecondary
+drawable bg_action_icon
 drawable ic_add
 drawable ic_alerts
 drawable ic_analytics
@@ -60,7 +61,9 @@ drawable ic_sos
 drawable ic_upload
 drawable ic_users
 id actionCard
+id actionChevron
 id actionIcon
+id actionSubtitle
 id actionTitle
 id action_dashboard_to_ai
 id action_dashboard_to_alerts
@@ -77,11 +80,8 @@ id addFamilyBtn
 id addPhotoBtn
 id addResourceBtn
 id addShelterBtn
-id adminActionsRecyclerView
 id adminDashboardFragment
-id adminKpiRecyclerView
-id adminOpsRecyclerView
-id admin_toolbar
+id adminSubtitle
 id agentName
 id agentOrchestrationFragment
 id agentPipelineRecyclerView
@@ -235,7 +235,12 @@ id govEmailInput
 id govLoginBtn
 id govLoginFragment
 id govPasswordInput
-id gov_toolbar
+id govPrimaryActions
+id govSecondaryActions
+id govStatAlerts
+id govStatReports
+id govStatShelters
+id govSubtitle
 id gpsIcon
 id gpsRetryBtn
 id gpsStatusText
@@ -262,7 +267,6 @@ id kb_toolbar
 id knowledgeBaseFragment
 id kpiCard
 id kpiIcon
-id kpiRecyclerView
 id kpiTitle
 id kpiValue
 id languageValue
@@ -303,6 +307,7 @@ id otpLoginBtn
 id passwordInput
 id phoneInput
 id photoButton
+id primaryActions
 id prioritySpinner
 id promptChipGroup
 id promptChips
@@ -310,9 +315,7 @@ id publicMapView
 id publicOtpFragment
 id pushSwitch
 id quantityInput
-id quickActionsRecyclerView
 id quietHoursSwitch
-id recentAlertsRecyclerView
 id replayNext
 id replayPrev
 id replayStep
@@ -354,6 +357,7 @@ id safetyStatusCard
 id safetyStatusSubtitle
 id safetyStatusTitle
 id safetyStatusValue
+id secondaryActions
 id sendBtn
 id sendOtpBtn
 id servicesRecyclerView
@@ -391,6 +395,12 @@ id sosHistoryTitle
 id sos_toolbar
 id sourceText
 id sourcesRecyclerView
+id statAlerts
+id statHealth
+id statIcon
+id statLabel
+id statReports
+id statValue
 id statusChipGroup
 id statusClosed
 id statusContainer
@@ -505,6 +515,8 @@ layout item_service_card
 layout item_shelter_card
 layout item_shelter_list
 layout item_shelter_mgmt_card
+layout item_simple_action
+layout item_simple_stat
 layout item_sos_action
 layout item_sos_history_row
 layout item_source

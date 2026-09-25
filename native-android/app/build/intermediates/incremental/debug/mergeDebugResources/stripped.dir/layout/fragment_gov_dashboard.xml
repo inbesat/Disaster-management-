@@ -1,93 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/bgPrimary">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bgSecondary">
+        android:orientation="vertical"
+        android:background="@color/bgSecondary"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="20dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/gov_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="@string/nav_dashboard"
-            app:subtitle="District Admin • Patna"
-            style="@style/Widget.SafeSphere.Toolbar" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patna District"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <TextView
+            android:id="@+id/govSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Response overview"
+            android:textSize="14sp"
+            android:textColor="@color/textSecondary" />
+
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:padding="16dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- KPI Cards -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Key Metrics"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/textPrimary" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/kpiRecyclerView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginBottom="24dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:baselineAligned="false"
+                android:layout_marginBottom="28dp">
 
-            <!-- Quick Actions -->
+                <include layout="@layout/item_simple_stat"
+                    android:id="@+id/govStatAlerts" />
+
+                <include layout="@layout/item_simple_stat"
+                    android:id="@+id/govStatShelters" />
+
+                <include layout="@layout/item_simple_stat"
+                    android:id="@+id/govStatReports"
+                    android:layout_marginEnd="0dp" />
+
+            </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Quick Actions"
-                android:textSize="18sp"
+                android:text="Do this now"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="@color/textPrimary" />
+                android:textColor="@color/colorInfo"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="12dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/quickActionsRecyclerView"
+            <LinearLayout
+                android:id="@+id/govPrimaryActions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="2" />
+                android:orientation="vertical"
+                android:layout_marginBottom="28dp" />
 
-            <!-- Recent Alerts -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Recent Alerts"
-                android:textSize="18sp"
+                android:text="Response tools"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="@color/textPrimary" />
+                android:textColor="@color/textMuted"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="12dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recentAlertsRecyclerView"
+            <LinearLayout
+                android:id="@+id/govSecondaryActions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                android:orientation="vertical" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

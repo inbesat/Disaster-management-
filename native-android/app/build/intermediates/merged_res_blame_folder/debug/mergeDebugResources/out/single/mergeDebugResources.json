@@ -1,454 +1,474 @@
 [
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_dialog_compose_alert.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_compose_alert.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_analytics.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_analytics.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_launcher_foreground.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_bulk.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_bulk.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_shelter_mgmt_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_mgmt_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_citizen_dashboard.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_citizen_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_evac_map.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evac_map.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_evac_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_evac_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_overview.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_overview.xml"
     },
     {
         "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_gov_dashboard.xml.flat",
         "source": "com.safesphere.nativeapp-main-77:/layout/fragment_gov_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_overview.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_overview.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_mic.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_mic.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_field_home.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_field_home.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_field_home.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_field_home.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_dashboard.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_dashboard.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_brain.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_brain.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_decision_log.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_decision_log.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_dialog_compose_alert.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_compose_alert.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_evac_map.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evac_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_gov_dashboard.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_gov_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_agent_node.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_agent_node.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_triage_dashboard.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_triage_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_download.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_download.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_emergency_contact.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_emergency_contact.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_kb_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_kb_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_audit.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_audit.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/xml_data_extraction_rules.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/xml/data_extraction_rules.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_ai_planner.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_ai_planner.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_dashboard.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/menu_bottom_nav_menu.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/menu/bottom_nav_menu.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_report.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_report.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_district_config.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_district_config.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_field_map.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_field_map.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_bulk_action.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_bulk_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_shelters.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_shelters.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_inventory.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_inventory.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\color_bottom_nav_selector.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\color\\bottom_nav_selector.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/navigation_nav_graph.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/navigation/nav_graph.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_resources.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_resources.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_module_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_module_card.xml"
+        "merged": "com.safesphere.nativeapp-debug-75:/drawable_bg_action_icon.xml.flat",
+        "source": "com.safesphere.nativeapp-main-77:/drawable/bg_action_icon.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_service_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_service_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_edit.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_edit.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/color_bottom_nav_selector.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/color/bottom_nav_selector.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_alerts.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_alerts.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_users.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_users.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_report_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_report_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_dialog_add_shelter.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_add_shelter.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_family_circle.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_family_circle.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_public_alerts.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_alerts.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_nav_back.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_nav_back.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_sos.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_sos.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_agent_node.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_agent_node.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_family_member.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_family_member.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_sos_action.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_sos_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_source.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_source.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_sos.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_sos.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_dialog_bulk_action.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_bulk_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_command_center.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_command_center.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_alert_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_alert_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_family_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_family_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_user_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_user_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\navigation_nav_graph.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\navigation\\nav_graph.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_triage_dashboard.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_triage_dashboard.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_dialog_bulk_action.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_bulk_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_mitron_chat.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_mitron_chat.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_alert_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_alert_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_request_resources.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_request_resources.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_shelter_list.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_list.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_audit_logs.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_audit_logs.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\xml\\data_extraction_rules.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_delete.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_delete.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_shelter_mgmt_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_mgmt_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_sos_action.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_sos_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_download.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_download.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_evac_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_evac_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_agent_orchestration.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_agent_orchestration.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_upload.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_upload.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_evac_kanban.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evac_kanban.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_shelter_list.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_list.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_camera.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_camera.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_public_otp.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_otp.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_play.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_play.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_person.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_person.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\menu_bottom_nav_menu.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\menu\\bottom_nav_menu.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_alerts.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_alerts.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_more.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_more.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_nav_forward.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_nav_forward.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_kb_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_kb_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_shelter_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_users.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_users.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_agent_orchestration.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_agent_orchestration.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\mipmap-anydpi-v26\\ic_launcher.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_resource_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_resource_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_shelter_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_map.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_map.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_public_shelters.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_shelters.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_bot.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_bot.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_audit_log.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_audit_log.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_package.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_package.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_analytics.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_analytics.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_inventory.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_inventory.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_public_otp.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_otp.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_triage_report.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_triage_report.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_audit_logs.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_audit_logs.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_ai_planner.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_ai_planner.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_service_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_service_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_add.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_add.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_chat_message.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_chat_message.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_dialog_add_resource.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_add_resource.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_delete.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_delete.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_person.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_person.xml"
     },
     {
         "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_admin_dashboard.xml.flat",
         "source": "com.safesphere.nativeapp-main-77:/layout/fragment_admin_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_medical.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_medical.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_upload.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_upload.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_login.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_login.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_home.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_home.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_camera.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_camera.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_analytics.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_analytics.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_user_management.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_user_management.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_evacuations.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evacuations.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_activity_main.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/activity_main.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_sos.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_sos.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_public_map.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_dialog_add_shelter.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_add_shelter.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_brain.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_brain.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_public_map.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_map.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_live_feed.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_live_feed.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_nav_forward.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_nav_forward.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_audit.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_audit.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_medical.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_medical.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_analytics.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_analytics.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_user_management.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_user_management.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_evacuations.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evacuations.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_shelters_mgmt.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_shelters_mgmt.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_edit.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_edit.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_gov_login.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_gov_login.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_settings.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_settings.xml"
+        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_simple_action.xml.flat",
+        "source": "com.safesphere.nativeapp-main-77:/layout/item_simple_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_resources.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_resources.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_config.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_config.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_family_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_family_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_district_config.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_district_config.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_shelters_mgmt.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_shelters_mgmt.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_bulk_action.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_bulk_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_field_map.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_field_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_sos_history_row.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_sos_history_row.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_package.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_package.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_module_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_module_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_status_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_status_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_action_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_action_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_mic.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_mic.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_user_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_user_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_dialog_add_resource.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_add_resource.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_knowledge_base.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_knowledge_base.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_chat_message.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_chat_message.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_login.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_login.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_bulk_operations.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_bulk_operations.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_settings.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_settings.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_analytics.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_analytics.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_request_resources.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_request_resources.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_public_shelters.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_shelters.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_admin_dashboard.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_admin_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_nav_back.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_nav_back.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_source.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_source.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_sos.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_sos.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_status_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_status_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_analytics.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_analytics.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_triage.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_triage.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_mitron_chat.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_mitron_chat.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_system_health.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_system_health.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_triage.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_triage.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_district_config.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_district_config.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_kpi_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_kpi_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_bulk.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_bulk.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_alerts.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_alerts.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_report_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_report_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_timeline.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_timeline.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_play.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_play.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_shield.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_shield.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_home.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_home.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_public_alerts.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_alerts.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_bot.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_bot.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_send.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_send.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_citizen_dashboard.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_citizen_dashboard.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_decision_log.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_decision_log.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_map.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_forecast.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_forecast.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_admin_op.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_admin_op.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_alerts.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_alerts.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_resource_card.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_resource_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_forecast.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_forecast.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_bulk_operations.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_bulk_operations.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_evac_kanban.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evac_kanban.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_cc_live_feed.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_live_feed.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_send.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_send.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_system_health.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_system_health.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/xml_backup_rules.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/xml/backup_rules.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_shelter_update.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_shelter_update.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_audit_log.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_audit_log.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_item_family_member.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_family_member.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_command_center.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_command_center.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\layout_fragment_district_config.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_district_config.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_gov_login.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_gov_login.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-debug-75:\\drawable_ic_health.xml.flat",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\drawable\\ic_health.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_action_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_action_card.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_config.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_config.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_kpi_card.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_kpi_card.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_shelter_update.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_shelter_update.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_health.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_health.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_sos_history_row.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_sos_history_row.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_emergency_contact.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_emergency_contact.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_knowledge_base.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_knowledge_base.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_shield.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_shield.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_family_circle.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_family_circle.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_triage_report.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_triage_report.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_shelters.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_shelters.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_add.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_add.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_admin_op.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_admin_op.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_cc_timeline.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_timeline.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/layout_fragment_report.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_report.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-debug-75:/drawable_ic_more.xml.flat",
-        "source": "com.safesphere.nativeapp-main-77:/drawable/ic_more.xml"
+        "merged": "com.safesphere.nativeapp-debug-75:/layout_item_simple_stat.xml.flat",
+        "source": "com.safesphere.nativeapp-main-77:/layout/item_simple_stat.xml"
     }
 ]

@@ -1,306 +1,322 @@
 [
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_evac_kanban.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evac_kanban.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_knowledge_base.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_knowledge_base.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_request_resources.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_request_resources.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_resources.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_resources.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_kb_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_kb_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_report.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_report.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_sos_action.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_sos_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_forecast.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_forecast.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_triage.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_triage.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_public_map.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_map.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_family_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_family_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_family_circle.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_family_circle.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_alerts.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_alerts.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_evacuations.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evacuations.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_settings.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_settings.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\dialog_add_shelter.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_add_shelter.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_sos.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_sos.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_evac_kanban.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evac_kanban.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_public_map.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_report_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_report_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_shelter_mgmt_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_mgmt_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_login.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_login.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_alert_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_alert_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_district_config.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_district_config.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_audit_logs.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_audit_logs.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_action_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_action_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_family_member.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_family_member.xml"
+        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_simple_stat.xml",
+        "source": "com.safesphere.nativeapp-main-77:/layout/item_simple_stat.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_agent_node.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_agent_node.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_decision_log.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_decision_log.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/dialog_add_shelter.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_add_shelter.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_service_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_service_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_admin_op.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_admin_op.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_settings.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_settings.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_decision_log.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_decision_log.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_triage_report.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_triage_report.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/activity_main.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/activity_main.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_user_management.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_user_management.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_analytics.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_analytics.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_inventory.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_inventory.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_knowledge_base.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_knowledge_base.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_evac_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_evac_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_report.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_report.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_audit_logs.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_audit_logs.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_inventory.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_inventory.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_kpi_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_kpi_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_module_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_module_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_timeline.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_timeline.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_analytics.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_analytics.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_sos_action.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_sos_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_timeline.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_timeline.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_shelter_update.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_shelter_update.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_audit_log.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_audit_log.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_analytics.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_analytics.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_field_map.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_field_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\activity_main.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_bulk_action.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_bulk_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_bulk_action.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_bulk_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_action_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_action_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_field_home.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_field_home.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_family_circle.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_family_circle.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_source.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_source.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_user_management.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_user_management.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\dialog_bulk_action.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_bulk_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_public_alerts.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_alerts.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_ai_planner.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_ai_planner.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_district_config.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_district_config.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_overview.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_overview.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_resources.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_resources.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_admin_op.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_admin_op.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_field_home.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_field_home.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_family_member.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_family_member.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_ai_planner.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_ai_planner.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_kb_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_kb_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_emergency_contact.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_emergency_contact.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_mitron_chat.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_mitron_chat.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_shelter_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_audit_log.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_audit_log.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_public_otp.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_otp.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_triage_dashboard.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_triage_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_status_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_status_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_public_shelters.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_shelters.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_forecast.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_forecast.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_request_resources.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_request_resources.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_user_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_user_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_gov_dashboard.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_gov_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_source.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_source.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_evac_map.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_evac_map.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_shelters_mgmt.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_shelters_mgmt.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_public_otp.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_otp.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_resource_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_resource_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_shelter_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_agent_orchestration.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_agent_orchestration.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_sos_history_row.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_sos_history_row.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_chat_message.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_chat_message.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_system_health.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_system_health.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_report_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_report_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_public_alerts.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_public_alerts.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_gov_login.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_gov_login.xml"
+        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_simple_action.xml",
+        "source": "com.safesphere.nativeapp-main-77:/layout/item_simple_action.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_shelter_update.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_shelter_update.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_field_map.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_field_map.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_shelters.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_shelters.xml"
-    },
-    {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_triage_dashboard.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_triage_dashboard.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_bulk_operations.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_bulk_operations.xml"
     },
     {
         "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_admin_dashboard.xml",
         "source": "com.safesphere.nativeapp-main-77:/layout/fragment_admin_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/dialog_compose_alert.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_compose_alert.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_emergency_contact.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_emergency_contact.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_sos_history_row.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_sos_history_row.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\dialog_compose_alert.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_compose_alert.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_kpi_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_kpi_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_shelter_list.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_list.xml"
     },
     {
         "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_gov_dashboard.xml",
         "source": "com.safesphere.nativeapp-main-77:/layout/fragment_gov_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_triage_report.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_triage_report.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_family_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_family_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_evac_map.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evac_map.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_gov_login.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_gov_login.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_bulk_operations.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_bulk_operations.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_shelters.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_shelters.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_login.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_login.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_module_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_module_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_shelter_list.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_shelter_list.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_agent_orchestration.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_agent_orchestration.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_system_health.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_system_health.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_analytics.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_analytics.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/dialog_add_resource.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_add_resource.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_admin_dashboard.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_admin_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_command_center.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_command_center.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_district_config.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_district_config.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_citizen_dashboard.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_citizen_dashboard.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_user_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_user_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_district_config.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_district_config.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_agent_node.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_agent_node.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_service_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_service_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_resource_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_resource_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/dialog_bulk_action.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/dialog_bulk_action.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_triage.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_triage.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_mitron_chat.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_mitron_chat.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_alerts.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_alerts.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_evacuations.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_evacuations.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_shelter_mgmt_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_shelter_mgmt_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/item_evac_card.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/item_evac_card.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\dialog_add_resource.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\dialog_add_resource.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_public_shelters.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_public_shelters.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_alert_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_alert_card.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_overview.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_overview.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_citizen_dashboard.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_citizen_dashboard.xml"
     },
     {
-        "merged": "com.safesphere.nativeapp-mergeDebugResources-74:/layout/fragment_cc_live_feed.xml",
-        "source": "com.safesphere.nativeapp-main-77:/layout/fragment_cc_live_feed.xml"
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_cc_live_feed.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_cc_live_feed.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_command_center.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_command_center.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_sos.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_sos.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\fragment_shelters_mgmt.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\fragment_shelters_mgmt.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_status_card.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_status_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-mergeDebugResources-74:\\layout\\item_chat_message.xml",
+        "source": "C:\\Users\\Lenovo\\.gradle\\daemon\\8.14.3\\com.safesphere.nativeapp-main-77:\\layout\\item_chat_message.xml"
     }
 ]
