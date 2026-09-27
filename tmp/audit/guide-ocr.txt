@@ -1,0 +1,1778 @@
+﻿
+--- guide-01.png ---
+SafeSphere — Complete Codebase
+Viva Preparation
+One document covering everything in the repository: fu
+analysis, architecture, AI/LLM/RAG internals, database, alerting, offline design, na,..
+Android app, service worker, testing, dependencies, environment variables — plus a spoken-
+language viva guide with 15 anticipated panel questions and a glossary. Every claim cites a
+real file path. Verified against source on 20 Aug 2026.
+Team Prep Checklist
+Study approach: each person should be able to explain their own section AND the 60-second
+pitch (Section I) AND the full Viva Q&A (Section 18) — those two are everyone's job. Assign
+an owner per section, then drill the two "everyone" items together. Est. read times are rough
+averages.
+Section
+01
+02
+03
+04
+05
+06
+Title
+Project Overview (incl. 60-second pitch)
+Users & Roles
+Architecture & Walkthrough
+Tech Stack — What & Why
+Frontend Reference
+Backend & API Layer
+Suggested owner
+Est. read time
+5 min
+3 min
+IO min
+8 min
+8 min
+7 min
+
+--- guide-02.png ---
+07
+08
+09
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+110
+Database Design
+Al / LLM / RAG System
+ML Microservice
+Multi-ChanneI Alerting
+Offline-First Design
+Security & Roles
+Third-Party Services & Integrations
+Testing & CI/CD
+Native Android App
+Service Worker & PWA Internals
+Setup & Demo
+Anticipated Viva Q&A (1 5 questions)
+Dependency Inventory
+Environment Variables
+Known Gaps, Discrepancies & Assumptions
+Glossary
+page.tsx files
+412
+component files
+29
+DB migrations
+API route handlers
+137+
+unit tests
+61
+rule-based Al fallback rules
+7 min
+12 min
+4 min
+6 min
+6 min
+5 min
+5 min
+4 min
+5 min
+4 min
+6 min
+1 5 min
+4 min
+4 min
+6 min
+4 min
+33
+Prisma models
+23
+locales
+
+--- guide-03.png ---
+@ Project Overview
+Attribute
+Product
+name
+Repo
+Track
+Demo target
+Platforms
+Backend
+LLM
+gateway
+ML service
+Deployment
+Value
+SafeSphere
+(package
+Bharat Shakti Hackathon — "AI for Society"
+Patna, Bihar — flood-prone district; every demo flow is district-scoped
+Web PWA (Next.js) + Android (Capacitor webview + separate native Kotlin app in
+native-android/
+Supabase (PostgreSQL 1 5 + PostGIS + pgvector + Auth + Storage + Realtime)
+Groq OpenRouter (2 keys) Bluesminds fallback chain
+Python FastAPl + XGBoost (CZZZD)
+The 60-second pitch
+SafeSphere is an Al-powered disaster response platform for India. It predicts flood risk with
+an XGBoost model, plans the response through a multi-stage pipeline, and then reaches
+people over every channel that still works during a disaster — SMS, push, WhatsApp, in-app,
+and FM radio for people with no smartphone or internet. Three audiences: citizens (alerts,
+shelters, SOS, family circle), government responders (command center, Al planner, broadcast
+control), and field responders (offline-first field tools). In one line: na Next.js web app +
+Supabase + Python ML service + LLM fallback chain that turns weather data into district-
+scoped emergency action, delivered over every channel that still works in a flood."
+@ One-Page Cheat Sheet
+Skimmable in under 60 seconds. Full explanations live in the sections they point to.
+
+--- guide-04.png ---
+The 60-second pitch — SafeSphere is an Al-powered disaster response platform for India. It
+predicts flood risk with an XGBoost model, plans the response through a multi-stage pipeline,
+and then reaches people over every channel that still works during a disaster— SMS, push,
+WhatsApp, in-app, and FM radio for people with no smartphone or internet. Three audiences:
+citizens (alerts, shelters, SOS, family circle), government responders (command center, Al
+planner, broadcast control), and field responders (offline-first field tools). In one line: "a
+Next.js web app + Supabase + Python ML service + LLM fallback chain that tums weather
+data into district-scoped emergency action, delivered over every channel that still works in a
+flood."
+110
+page.tsx files
+412
+component files
+29
+DB migrations
+If you remember nothing else:
+API route handlers
+137+
+unit tests
+61
+rule-based Al fallback rules
+33
+Prisma models
+23
+locales
+• The "Al agents" are a deterministic LangGraph assembly line (predictor planner
+allocator validator communicator), not five LLMs — risk labels and plan validation
+are rule-based, so critical decisions like "evacuate" cannot be hallucinated (Section 8.1).
+• The LLM only powers conversational chat, behind a resilience chain: Groq OpenRouter
+(2 keys) Bluesminds on-device Gemma via WebLLM 61-rule static fallback. The
+alerting path never touches an LLM (Sections 8.2, 8.4).
+• Offline-first because connectivity is the first casualty — Dexie/lndexedDB + service worker
++ background sync let a field report succeed locally and reconcile later (Section I I).
+• District-scoped by design — every query and every AI answer is scoped to the caller's
+district it is both the security model and the product model
+(demo = Patna).
+• Whats real vs mocked (say this before asked): the web product, schema, deterministic
+pipeline, FM logic, and 137+ tests are real; embeddings without a key, the ML model
+
+--- guide-05.png ---
+artifact, Realtime transport, and most ingestion feeds are simulated or env-config only
+(Section 21).
+Users & Roles
+User
+Citizen
+Government
+responder
+Field
+responder
+Platform
+admin
+Guest
+Role in code
+(default; guest
+mode available)
+super_admin
+super _ admin
+What they see
+Alerts feed, shelters on a MapLibre map, SOS, family
+circle, evacuation routes, 23-language support —
+route groups
+Command center, AI planner chat, agent orchestration,
+resource inventory, FM broadcast queue + approvals,
+TTS voice preview -
+Lite/offline kits, reports, check-ins ¯
+User management, audit logs, system health, bulk
+operations, district config
+Full demo experience, zero signup — hackathon demos
+The role enum lives in
+@ Architecture & Walkthrough
+VERCEL / NEXT. JS 14
+app/ pages (110) + API routes (-70) + server actions (11)
+CITIZEN (PWA)
+GUEST (demo mode)
+middleware . ts
+l— libf
+agents/
+a i -bridge/
+rag/
+broadcast/
+cap/
+role gate (public / field_responder / district_ad
+LangGraph: —validat
+LLM chain + tools +
+cloud WebLLM Gemma
+61 -rule fallback
+embeddings + pgvector + chunker + ret rieval
+FM dispatch: CAP-RDS. FTP.Emai1.1VR
+Common Alerting Protocol builder /validator
+
+--- guide-06.png ---
+ttsf
+ElevenLabs —Azure—Google alert voices
+offline-sync/ Dexie IndexedDB + sync engine + conflict resolu
+security/
+map/
+real time/
+i18n/
+SUPABASE
+Postgres 15
++ postGIS
++ pgvector
++ Auth/RLS
+rate limit, RBAC, sanitize, OT P, data isolation
+-30 geospatial modules (routing, tiles, zones)
+Supabase transport + presence + conflict rules
+23 locales + AI alert translator
+I TWILIO
+I SMS/ WhatsApp I
+WEB PUSH I
+I TTS CHAI
+I ElevenLab
+(VAPID)
+ml_service/ FastAPI + XGB I
+/ health / predict (Bearer)
+lib/ml-client.ts (3s t/o) I
+One scenario traced end-to-end: "a flood alert reaches a citizen's phone"
+1 . Weather data arrives. Vercel cron hits
+I-ills rainfall from OpenWeatherMap (the only fully wired external
+feed)
+2. Risk is predicted. POSTS 4
+returns
+See Known Gaps (#6)
+3. An alert is created• (6-hour dedup) or an admin via
+row; channels from
+DEFAULT CHANNELS
+4. Channels fire.
+o SMS ¯
+service
+worker receives it with the tab closed
+o In-app a
+sync/ db . ts
+
+--- guide-07.png ---
+o FM radio (escalation) ¯ if an matches at severity
+(Section 1 0)
+5. Citizen sees it. Push banner; dashboard alert flood zones light up
+Offline? Already in
+on the map
+IndexedDB.
+How to explain this in a viva: "The whole system is one Next.js app talking to Supabase,
+with three satellite pieces: a Python ML service that predicts flood risk from 4 hydrology
+features, a chain of LLM providers for the Al planner chat, and a set of delivery
+channels that fire in parallel so an alert survives even if one channel is down. The
+critical insight: the alerting path is deterministic and rule-based, while the
+conversational Alis where the LLM lives — we never let an LLM decide whether to
+evacuate a district."
+Tech Stack — What & Why
+Technology
+Next.js 14 +
+React 18
+TypeScript 5
+Tailwind CSS
+MapLibre GL
+4.7 + react-
+map-gl 7.1
+What it is
+React framework
+with file-based
+routing & SSR
+Typed JS
+Utility-first CSS
+Open-source map
+renderer
+Used here for
+All pages, API routes
+* , server
+actions
+Everything
+All styling +
+CSS vars)
+All maps (flood zones,
+shelters, routes, fleet)
+Why over alternatives
+One codebase for server +
+client; secrets stay server-
+side;
+for speed
+Catches contract errors at
+build time; Prisma types
+flow into components
+Fast to build; is
+in
+unused
+unused
+No Mapbox token; offline
+tile caching
+Iib/map/offline-map-
+
+--- guide-08.png ---
+@turf/turf 7.4
+Supabase
+(PostgreSQL
+15)
+Prisma 6.19
+PostGlS
+pgvector
+LangChain +
+LangGraph
+LLM fallback
+chain
+XGBoost +
+FastAPl
+Twilio 6
+Web Push
+(VAPID)
+Dexie 4 + next-
+pwa/Workbox
+Geospatial math
+library
+Hosted Postgres
++ Auth + Storage
++ Realtime
+Type-safe ORM
+Postgres
+geospatial
+extension
+Postgres vector
+extension
+LLM
+orchestration +
+graph framework
+Groq
+OpenRouter
+Bluesminds
+Gradient-boosted
+trees + Python
+API framework
+SMS/WhatsApp
+API
+Browser push
+protocol
+IndexedDB
+wrapper + SW
+tooling
+Distances, buffers, nearest-
+shelter, coverage
+The whole backend
+All DB access
+server / prisma . ts
+lib/fm/find-
+Ä)) nearest
+shelter, hazard polygons
+Semantic SOP search (RAG,
+Section 8)
+Response pipeline
+lib/agents/graph.ts
+RAG chunking
+lib/agents/model-
+provider . ts
+¯ flood risk (4
+features 4 classes)
+Signature-verified
+webhooks
+worker/ index . j s
+Offline-first storage
+Small pure-JS geometry
+complementing PostGIS
+PostGIS and pgvector in
+one DB; free tier; Realtime
+Type safety across 33
+models;
+prisma generate
+migrations
+SQL-level spatial indexing
+— one indexed query, not a
+JS loop
+No separate vector DB;
+HNSW index beside the
+data
+Fixed, inspectable graph —
+auditable per-node state
+No single point of failure
+for the "AI advisor"
+Trees beat NNs on small
+tables; CPU training;
+interpretable importance
+Standard gov alerting
+channel; trial credits for
+demos
+Free; works with the tab
+closed
+Typed IndexedDB; per-
+route caching strategies
+
+--- guide-09.png ---
+Capacitor 8.5
+@mlc-ai/web-
+11m 0.2
+Web native
+wrapper
+In-browser LLM
+runtime
+shell
+vl
+Android
+On-device Gemma-2B fallback
+Iib/ai-bridge/webllm-
+provider . ts
+Instant APK from the
+same web code
+Al keeps working with
+zero connectivity
+The 4 most important choices, in prose
+1 • Next.js 14 with API routes + server actions. Everything — pages, REST endpoints, and form
+mutations — lives in one app --70 API routes keep secrets server-side and one auth
+handle form-style mutations without a separate API layer.
+2 • Supabase as Postgres + PostGlS + pgvector in one place. Deliberately no separate vector
+or spatial database. PostGlS gives FM-station coverage checks
+and flood-zone polygons; pgvector gives semantic search over SOP
+documents cosine One connection string, one
+backup, one migration pipeline — Prisma sees it all as ordinary models.
+3 . The LLM fallback chain• builds Groq (free) OpenRouter
+(primary) -4 OpenRouter (backup) Bluesminds, probing each with a I-token request and
+caching health with a TTL wraps the same idea with
+During development we actually hit a 404'd model and a zero-credit key —
+the incidents are documented in the file header. A disaster tool whose Al dies when one API
+key runs out is useless.
+4 • XGBoost + FastAPl microservice. Flood risk is a small tabular problem: 4 engineered
+Trees train in seconds on a laptop, need no GPU, and expose feature
+importances — defensible: an officer can see why a district moved to "High". Bearer-key
+timeout.
+
+--- guide-10.png ---
+How to explain this in a viva: "We picked the stack for three reasons: one language
+across the whole product, one database that does relational + spatial + vector work,
+and zero single points of failure in the Al path. The ML service is deliberately separate
+from the web app because it needs its own model lifecycle — retraining and versioning
+— and the LLM chain exists because a disaster response tool that dies when one API
+key runs out is useless."
+Frontend Reference
+Route map (110 12
+Route group
+root
+(gov)
+(app)
+Top-level
+Purpose
+Landing, portal
+Citizen-facing
+content
+Authentication
+Logged-in shell
+Field-responder
+tools
+District/super
+admin
+Government
+dashboard
+Citizen app
+(mobile-first)
+Utility
+Representative pages
+landing, alerts, shelters, SOS, family, gov info
+login, register, otp, role picker
+settings (ai, notifications, map, privacy, org, integrations,
+shift-schedule), directory, family, SOS, shelters
+offline kits, lite mode, reports, check-ins
+command center, resources, alerts, evacuations, FM
+broadcast queue, TTS voice preview, users, audit, bulk ops,
+system health, analytics
+AI planner, agent orchestration, triage, inventory, knowledge
+base
+dashboard, emergency, lite, profile-setup
+
+--- guide-11.png ---
+Ul stack
+Concern
+Styling
+Components
+Icons /
+Animation
+Tables /
+Charts
+Forms /
+Validation
+Toasts /
+Markdown
+QR / Theme
+Technology
+Tailwind CSS 3.4 + CSS variables (DaisyUl unused)
+shadcn/ui convention — 4 primitives vendored:
+slot
+react-hook-form
+zod
+@hookform/resolvers
+gfm
+Evidence
+package. j son
+components/ui/
+package. j son
+package. j son
+package. j son
+Component inventory (28 subdirectories, -••412 files under
+Organized by domain: (broadcast queue/monitor/history, FM station manager, TTS
+voice preview, users, audit, analytics, system health), (agent configuration panel,
+orchestration (planner, triage, inventory, knowledge base),
+(map shells, layer toggles, offline tiles), (the 4 shadcn primitives), plus alerts,
+shelters, resources, evacuations, sos, family, chat, settings and shared layout widgets. Map-
+heavy screens load via
+Hooks (25 hooks + 6 hook test files)
+planner),
+(keep screen on during ops), (battery-aware behavior),
+(mobile SOS trigger), plus offline/sync, notification settings, language,
+theme and map-settings hooks. State is React context + hooks — deliberately no external
+store.
+
+--- guide-12.png ---
+Mapping & GIS
+Concern
+Renderer
+Draw /
+Geometry
+Layers
+Offline tiles
+Routing
+Technology
+MapLibre GL +
+flood zones, hazard zones,
+shelters, road closures, evacuation
+routes, fleet
+Dexie tile store +
+protocol
+OSRM public + optional
+GraphHopper / openrouteservice
+Evidence
+modules,
+map-layers. ts
+clustering. ts
+route . ts
+i18n — 23 languages
+Custom lightweight il 8n (no 23 locales — English + 22 Eighth-Schedule Indian
+languages — lazy-loaded via / Alerts get
+translated for SMS by •
+Backend & API Layer
+routes by group handlers under
+Group
+Al & agents
+Routes
+rag/ search
+Purpose
+Multi-agent pipeline, streaming chat
+(Al SDK v7 ML
+prediction, RAG
+
+--- guide-13.png ---
+Alerts
+Broadcast/FM
+CAP
+Citizen
+Data ingestion
+Maps
+Resources
+Push/SMS/WhatsApp
+alerts/create
+alerts/feed
+alerts/ preferences
+alerts/ audit
+alerts/ audio/ *
+broadcast/fm/dispatch
+cap/ generate
+shelters/nearest
+shelters/ routes
+evacuations/ plans
+missing-persons
+crowdsourced/ report
+(Vercel cron,
+retention
+map/ road-closures
+map/ measurements
+resources/ inventory
+resources/ requests
+resources/ allocate
+allocations/optimize
+webhooks/ sms
+webhooks/whatsapp
+whatsapp/inbound
+sms/commands
+t t s/ generate
+Alert lifecycle, preference routing, TTS
+audio
+FM dispatch, rule auto-trigger,
+approval workflow, station CRUD
+Common Alerting Protocol documents
+SOS events, family circle, nearest
+shelter, evacuation
+Weather/hydrology ingestion, audio
+cleanup
+GeoJSON export, layer data
+Inventory + allocation optimizer
+Iib/allocation/optimizer . ts
+VAPID push; Twilio inbound with
+signature verification
+Alert voice generation
+
+--- guide-14.png ---
+System
+Settings, demo reset, APK download
+health
+Server actions 1 1 files)
+Middleware (ÄD
+• Cookie-based session/role gate: cookies•
+"public"
+PUBLIC ROLE -
+GOV ROLES PROTECTED PATHS DASHBOARD PATHS
+strict admin-route enforcement; 403 page; district crossover guard.
+Auth lib/security/otp.ts
+• OTP-first, via the GetOTP provider.
+• Demo bypass: seeded demo OTP + guest mode
+optional — fully usable in demo mode.
+How to explain this in a viva: "One app, one middleware, one auth model. API routes are
+the integration layer — they keep secrets on the server and apply the same role checks
+as the pages — while server actions handle the form-level mutations. Everything is
+cookie-session based with an OTP path, and a guest-mode cookie lets panels click
+through the entire product without signup."
+@ Database Design
+Platform
+• Supabase PostgreSQL 15 with extensions
+
+--- guide-15.png ---
+prisma 6.19.3; connection (pooler) + = (migrate/studio)
+per
+All 33 models, by logical cluster
+Cluster
+Users &
+identity
+Disaster
+intelligence
+Response
+planning
+Alerts &
+broadcast
+Al & chat
+Operations
+Models
+CrowdsourcedReport
+CasualtyRecord
+CapAlert
+ToolCa11Log
+What it's for
+Who's using the app; family circle for
+SOS; VAPID subscriptions pruned by
+server/ services/ push-
+notifier . ts
+Everything the system knows: weather
+in, predictions, SOP docs for RAG,
+closures, citizen reports
+What we'll do, with what, who's
+missing — feeds the agent pipeline
+Delivery layer; FM rules + approvals
+CAP docs; TTS audio in
+Conversation persistence + audit trail
+of every Al tool call
+Immutable admin-action trail
+README says "28 models" — the actual schema has 33. Say 33 if asked.
+Migrations supabase/migrations/0001-0029
+• 0002 PostGlS, 0003 pgvector, RLS policies in 0017/0020/0022, role CHECK constraint in
+0023.
+
+--- guide-16.png ---
+missing Migration is absent (0017 0019) — verify continuity before
+production.
+Why PostGlS and pgvector were necessary, not optional
+• PostGlS answers genuinely spatial questions at SQL speed: "which FM stations'
+polygons In JS this would mean loading every geometry
+into memory.
+• pgvector keeps embeddings next tothe source documents instead of a second vector DB
+— retrieval and source-of-truth are the same row.
+How to explain this in a viva: "We chose one database that does three jobs — relational,
+spatial, and vector — because disaster response is a coordination problem and forcing
+joins across three databases during a flood would be a nightmare. PostGlS answers
+'who covers what area' at SQL speed and pgvector lets us do document search without
+a second vector store. Both decisions were about operational simplicity under stress.'
+Al / LLM / RAG System
+8.1 What "multi-agent" means here — no jargon
+Imagine an assembly line, not a team of genius robots. A box comes in labeled "district =
+Patna, disaster = flood, rainfall = 21 0 mm". Five workers stand in a line, each doing one
+simple job:
+1. Worker 1 (predictor) stamps a risk label: SAFE / WATCH / HIGH / CRITICAL.
+2. Worker 2 (planner) writes the plan: evacuate these blocks, open these shelters.
+3. Worker 3 (allocator) decides which boats, buses, and kits go where.
+4. Worker 4 (validator) checks the plan isn't nonsense.
+5. Worker 5 (communicator) runs only after a human approves — it fires the alerts.
+That assembly line is a LangGraph — a graph where each node is one worker and you can
+inspect the state at every step. In code: defines
+
+--- guide-17.png ---
+predictorNode
+plannerNode
+allocator Node
+validatorNode
+invoked externally once approval happens
+with
+END
+allocating
+pending_approval
+communicating
+resolved
+The README describes named LLM agents — Flood Analyst, Shelter Manager,
+Honesty note
+Resource Coordinator, Evacuation Planner, Communications Officer. The code implements the
+same concepts as deterministic rule-based nodes
+risk is computed by keyword/feature matching, not by an LLM. The LLM's job is the
+conversational planner chat and its tools. Own this decision in a
+viva: deterministic logic cant hallucinate a risk label; the LLM is layered where open-ended
+reasoning is actually needed.
+Worker (code name)
+predictorNode
+nodes . ts
+(same file)
+allocatorNode
+lib/agents/nodes/action-
+nodes . ts
+(same file)
+API_
+triggered)
+8.2 Provider chain (resilience core)
+Receives
+Event:
+district,
+disaster
+type,
+rainfall,
+river level
+Risk label
++ district
+context
+Plan
+Allocation
+Approved
+plan
+Decides
+Risk label
+Emergency plan: actions,
+shelters, evacuation steps
+Resources/fleet per task
+Plan feasible? (
+Fire SMS / push / in-app alerts
+Hands off
+Stamped
+state
+planner
+Plan
+allocator
+Allocation *
+validator
+Approved plan
+communicator
+Channels
+(Section 10)
+Layer
+File
+Details
+
+--- guide-18.png ---
+Al SDK v7 +
+LangChain
+Emergency-
+planner
+chain
+Agent graph
+models
+Streaming
+chat
+provider . ts
+Probe-based (I -token) health check with TTL cache;
+Groq OpenRouter primary OpenRouter backup
+Bluesminds; Al SDK v7 fix; leaked-key
+regression tests
+model
+-anthropic/ claude-sonnet-latest
+tools: flood, shelters, resources,
+evacuation, emergency plans
+8.3 RAG — plain version, then the actual pipeline
+Plain version: RAG means "before the Al answers, go fetch the actual documents that contain
+the answer and paste the relevant bits into the prompt." It's quoting from the handbook in
+front of it instead of reciting from memory.
+1 . Ingest PDFs — SOPS, NDMA guidelines, district DMPS -+ splits
+with (1 OOO-char chunks, 200-char overlap); PDFs via
+pdf-parse
+1 536-dim,
+2. Embed —
+Iib/ rag/ embeddings . ts
+LRU-cached.
+without a key — demo still works, semantic search degrades
+Mock fallback
+to keyword.
+See Known Gaps (#5)
+3. Store - vectors + text in a column; queries
+optional
+cosine
+¯ two-tier search (vector first, keyword fallback)
+4. Retrieve
+so retrieval never returns empty.
+5. Inject — retrieved SOP text dropped into prompts as
+app/api/chat/ route . ts
+8.4 Offline / local Al (AIBridge, Phase 9)
+
+--- guide-19.png ---
+routes cloud on-device webLLM Gemma-2B
+• connectivity monitor Supabase heartbeat;
+confidence scoring token estimation worker
+provider
+• Legacy
+model download + integrity into Dexie table
+8.5 Five likely viva questions about the Al layer
+Q. Why not just call one LLM directly instead of LangGraph?
+The response-planning flow must be auditable and deterministic in its critical decisions.
+LangGraph gives a fixed pipeline where every node is a single job, state is inspectable at
+each step, and — crucially — risk labels and plan validation are rule-based, so no LLM
+can hallucinate "evacuate" or "all clear". The LLM is reserved for open-ended chat where
+tools keep it grounded in DB facts.
+Q. How do you prevent the Al from hallucinating wrong emergency advice?
+Four layers: (1) the chat model must call tools to see real data; (2) RAG context is
+injected via
+so answers quote documents; (3) every response is
+district-scoped by
+lib/security/tool-logger . ts
+Q. What happens if all your LLM providers are down at once?
+The chain steps down Groq -9 OpenRouter Bluesminds, then AIBridge hands off to
+on-device Gemma via WebLLM, then to the 61 -rule fallback. The alerting path never
+depends on an LLM at all — it's deterministic
+Only conversational chat degrades.
+Q. Why XGBoost for flood prediction and not a neural network?
+Flood risk from hydrology is a small tabular problem — 4 engineered features,
+thousands of rows at most. Boosted trees train in seconds on CPU, need no GPU or big
+
+--- guide-20.png ---
+dataset, and give interpretable feature importances — "why did the district go to High?"
+is answerable with tree models, not with a neural net.
+Q. How does RAG know which documents are relevant to a query?
+Every chunk is embedded to 1 536 dimensions; the query is embedded the same way;
+pgvector returns nearest chunks by cosine similarity HNSW). Top-k chunks feed
+the prompt; without keys, keyword search takes over
+so retrieval never fails silently.
+How to explain this in a viva: "We built the Al as a layered system. The response
+pipeline is a deterministic LangGraph — think assembly line, not autonomous agents —
+because safety-critical decisions like 'evacuate' must be explainable and can never be
+hallucinated. The LLM is used where open-ended reasoning is needed, grounded by
+RAG over SOP documents and forced through tools that can only see real database
+data. Every layer has a fallback, down to a rule-based engine, so the system degrades
+gracefully instead of dying."
+ML Microservice ( )
+— the trained model artifact is not committed
+is
+See Known Gaps (#6)
+only), and without the service running, falls back to mock labels.
+Details in Section 21 .
+File
+api.py
+Role
+features:
+returns class + probabilities;
+Low/ Medium/ High/ Critical
+RISK LABELS -
+XGBoost 4-class classifier; early-abort; saves
+flood_xgboos t_model . pkl
+fastapi, uvicorn, pandas, numpy, scikit-learn, xgboost, pydantic, joblib, pypdf,
+openai, httpx
+
+--- guide-21.png ---
+ml models/
+Training corpus: N50 PDFs (CWC, IMD, NDMA, NDRF, flood reports),
+decks
+only ¯ model artifact expected at runtime
+not committed
+maps
+MUIti-Channel Alerting
+Why five channels instead of one
+The audience during a Bihar flood: someone with a smartphone and data (push + app),
+someone with only a basic phone (SMS), someone using WhatsApp as their only internet app
+(WhatsApp), and a whole village with no phone at all (FM radio). One channel = guaranteed
+partial reach. The alert engine (Ä) fans out rather than
+picks one: 6-hour dedup, templated copy
+and regional-language SMS translation
+lib/il 8n/ai-translator . ts
+Channels
+Channel
+SMS
+WhatsApp
+Web Push
+In-app
+Implementation
+lib/sms/twilio-webhook.ts
+app/api/whatsapp/inbound
+server/ services/ push-notifier . ts
+worker/ index . j s
++ Dexie cache
+Notes
+Signature-verified inbound; SMS
+commands
+Command-driven inbound
+VAPID; subscription pruning;
+periodic background sync
+Offline-capable
+
+--- guide-22.png ---
+FM radio
+The FM radio path (the unusual one)
+See below
+normalizes risk labels
+1 . Trigger —
+or into a severity tier
+matches the best (exact district first, then catch-all
+2. Human gate - if is off, an lands in the
+admin queue; - unactioned requests auto-
+approve after 3 minutes (lazily via in a real flood you'd rather
+broadcast than wait.
+3. CAP document ¯ + generate Common
+Alerting Protocol XML; makes it idempotent;
+validates;
+4• Dispatch ¯ finds covering stations via PostGlS
+chain
+to IVR phone calls when no digital path succeeds. Max 3
+attempts, 2-minute backoff; = dry-run report.
+5. Station side — CAP API call, RDS text FTP drop
+or email to the studio inbox every recorded
+the audit trail; human-
+in
+readable dispatch reports via /
+Alert voice (TTS, Phase 2)
+• Chain: ElevenLabs Azure Neural Google Cloud
+; mono
+MP3 128 kbps, 20 s timeout,
+Templates + languages: audio in Supabase
+bucket retention cron
+app/api/cron/audio-retention
+Iib/audio/alert-announcer . ts
+
+--- guide-23.png ---
+How to explain this in a viva: "One channel is a decision to fail. We fan alerts out to
+SMS, push, WhatsApp, in-app, and FM radio — and the FM path is the only one that
+reaches people with no phone at all. It's a real pipeline: rule-based trigger, CAP alert
+generation, a strategy chain from a station's CAP API down to FTP and email, then IVR
+escalation if all digital paths fail. There's a human approval step that auto-approves
+after three minutes — in a flood, 'broadcast now, ask forgiveness later' is the correct
+bias."
+@ Offline-First Design
+Why offline, in plain terms
+A flood doesn't knock out power and towers later— it knocks them out first. The people who
+most need the system have the worst connectivity. So the app is offline-first by design: a
+shell
+with all operational data mirrored into Dexie/lndexedDB.
+Dexie schema - database "'2
+Table
+'lid, district"
+mapTiles
+gemmaModeI
+Trace: a citizen report submitted with no signal
+Contents
+Operational data mirrored for offline
+lib/offline-sync/db . ts
+use
+Sync bookkeeping + Al chat history
+Cached map tiles for
+rendering
+Downloaded WebLLM model binary +
+integrity info
+
+--- guide-24.png ---
+I . The field responder opens the in lite mode. With
+(or the AIBridge connectivity monitor detecting a dead Supabase heartbeat —
+the app writes the report into Dexie immediately.
+The Ul never waits on the network.
+2. Background sync (registered in notices connectivity is back.
+3' drains the local queue to the server;
+resolves conflicts (timestamp-based last-write-wins) so
+offline and online edits don't silently lose data.
+4. The server records the the device gets the acknowledgment on
+the next sync pass.
+supporting pieces: (evicts before browser quota bites),
+(budgets), (Gemma model verification),
+(context builder for offline
+Al prompting).
+How to explain this in a viva: "We built the Ul to never depend on the network — writes
+go to IndexedDB first and sync in the background, and the service worker caches the
+app shell and API responses network-first. The reason is simple: we simulated the
+failure we're trying to fix. If the app needs internet to report a flood, it's useless exactly
+when it's needed most. Offline-first is the product's whole reason to exist, not a bolt-on."
+Security & Roles
+The story: citizen vs. government admin vs. guest
+can read alerts, shelters, SOS, family circle — but cannot reach admin
+A citizen
+rechecks the role server-side on every protected request
+(the cookie is a hint, the Supabase profile is the truth). All data is district-scoped via
+
+--- guide-25.png ---
+A government admin (Ä/=) gets the command center, FM
+controls, resources. The broadcast route is the strictest:
+and supports dry-runs. additionally gets
+user management and audit logs.
+A guest gets the cookie - full access to demo-
+scoped data with zero signup. Deliberate for the hackathon: panels click through the whole
+self-contained.
+Security controls, and why each matters for a disaster app specifically
+Control
+Rate limiting (in-memory
+sliding window,
+AI chat
+5/min/lP; broadcast 5/min)
+XSS sanitization + PII
+redaction
+Twilio webhook signature
+verification
+District data isolation
+Where
+lib/security/sanitize.ts
+lib/ sms/twilio-webhook. ts
+Iib/security/data-isolation.ts
+middleware. ts
+Why it matters here
+One misbehaving
+client must not
+take down the alert
+API — rate limits
+protect the channel
+Crowdsourced
+reports must never
+inject scripts into
+an admin's
+command center;
+victims' phone
+numbers never
+reach logs
+Only genuine Twilio
+calls may create
+alert actions
+Patna's data
+invisible to a Gaya
+admin — leaks
+during a disaster
+are operational
+failures
+
+--- guide-26.png ---
+Server-only secrets
+Cookie hardening
+Al tool-call audit log
+Cron bearer token
+CRON SECRET
+Spam filters
+lib/supabase/server . ts
+env vars +
+lib/security/tool-logger . ts
+Tool Call Log
+app/api/cron/ ingest/ route . ts
+lib/security/spam-check.ts
+The service-role
+key must never
+reach the client
+Session tokens not
+readable by scripts
+If the Al
+recommends
+something, there's
+a record of what
+data it used
+Nobody can trigger
+ingestion on
+demand
+Crowdsourced
+reports stay clean
+How to explain this in a viva: "Security here isn't about protecting credit cards, it's about
+protecting the channel. During a disaster the system is load-bearing: a DDoS, an
+injection attack, or a cross-district data leak is not a compliance incident, it's lives. So
+we rate-limit every sensitive endpoint, scope every query and every Al response to a
+district, verify webhook signatures, and audit every Al tool call — cheap controls that
+keep the platform trustworthy exactly when it must be."
+Third-Party Services & Integrations
+Service
+Supabase
+Twilio
+Use
+Postgres/PostGIS/pgvector,
+Auth, Storage, Realtime
+SMS + WhatsApp
+inbound/outbound
+Verified usage
+yes real
+migrations
+yes real
+lib/supabase/*
+A See Known Gaps (#7)
+lib/alerts/twilio-
+
+--- guide-27.png ---
+web-push (VAPID)
+ElevenLabs / Azure TTS
+/ Google TTS
+Nodemailer
+basic-ftp
+OpenRouter / Groq /
+Bluesminds
+DeepSeek
+WebLLM (@mlc-ai/web-
+11m)
+OSRM public /
+GraphHopper /
+openrouteservice
+GLOFAS (ECMWF CDS)
+OpenWeatherMap
+USGS / GDACS / EONET
+/ FIRMS / GWIS
+IMD / CWC / NASA
+POWER / SentinelHub /
+GEE / HDX / WorldPop /
+OpenCage / Novu /
+SerpAPl / NewsData /
+Notion / HF / Craw14Al /
+OpenTopoData /
+Browser notifications
+Alert voice
+Email strategy (FM studio)
+FTP strategy (FM)
+LLM chain
+RAG chat model (OpenAI-
+compatible base URL)
+On-device Gemma-2B
+Routing
+Global flood forecasts
+Rainfall ingestion
+Multi-hazard feeds
+Env-declared
+yes real
+lib/alerts/web-
+yes real
+yes real
+Iib/tts/providers.ts
+lib/broadcast/strategies/email-
+studio. ts
+yes real
+lib/broadcast/strategies/ftp-
+drop . ts
+yes real
+yes real
+client . ts
+yes real
+lib/ai/openrouter . ts
+lib/rag/openai-
+Iib/ai-bridge/webllm-
+provider . ts
+yes real
+lib/map/ routing. ts
+(OPENROUTE: 79
+refs, OSRM: 21 refs)
+partial
+— settings UI +
+partial
+lib/settings/ integrations-
+settings . ts
+lib/data-
+real
+ingestion/ fetcher . ts
+configured; no active adapter for most
+not wired into code paths (0 refs for
+most;
+env-only
+
+--- guide-28.png ---
+OpenAQ / REST
+Countries
+@ Testing & CI/CD
+Unit tests (Vitest 4.1)
+• 137+ tests across files) ¯ heavily covering: Al provider chain
+including leaked-key regression tests), AIBridge,
+broadcast/FM (dispatcher, auto-trigger, IVR fallback, RDS encoder, compliance), CAP
+builder/hash, security (rate-limit, rate-limiter, sanitize, otp, require-role, data-isolation),
+offline-sync (db, sync-engine, quota, eviction, conflict, model-integrity), il 8n, maps
+(routing, smart-routing, offline, citizen views), settings, allocation optimizer, crowdsourced
+accuracy, spam filters.
+E2E (Playwright)
+1 80 s timeout, Chromium, auto-starts (Z
+run dev
+7 flows ¯ guest command-center flood layer, public
+dashboard, alerts feed, Al planner chat, map shelters (+2).
+CI/CD & tooling
+Workflow
+APK
+build
+Cron
+Scripts
+File
+vercel.json
+Steps
+lint +
+Capacitor build, JDK 1 7, API 36; commits
+public/ safesphere . apk
+
+--- guide-29.png ---
+Al-assisted
+plugin package, Prettier + ESLint (eslint-config-next 14.235)' for Dexie
+tests.
+@ Native Android App( native-android/ )
+A second, fully native Kotlin client — built for offline-hardened field use, produced as
+by the Cl workflow. Package
+com. safesphere . nativeapp
+Layer
+Database
+Sync
+Seed
+data
+admin
+Ul — gov
+citizen
+Utilities
+Contents
+Room: 14 entities (Alert, AuditLog,
+DistrictConfig, Evacuation, FamilyMember, InventoryMovement, KnowledgeDoc, Report,
+Resource, RoadCIosure, Shelter, SosEvent, User) with matching DAOs + repositories
+¯ WorkManager-based sync to the backend
+AdminDashboard, Analytics, AuditLogs, BulkOperations, DistrictConfig, SystemHealth,
+UserManagement fragments
+AgentOrchestration, AiPIanner, Alerts, CommandCenter (overview/live-
+feed/resources/shelters/timeline/analytics), Evacuations (kanban + map),
+GovDashboard, Inventory, KnowledgeBase, SheltersMgmt, Triage
+CitizenDashboard, FamilyCircle, PublicAlerts, PublicShelters, Sos
++ bottom nav (46 layout XMLs)
+Related: (standalone PWA entry used by Capacitor),
+server
+(wake-lock, pwa-utils).
+
+--- guide-30.png ---
+E) Service Worker & PWA Internals
+— the custom worker in augments the generated Workbox worker.
+Offline Shell: cache document fallback routes to
+runtime caching for API routes is network-first (fresh alerts win, cache as
+backup).
+• Push receiver: VAPID push events surface as notifications
+provides the VAPID keys; sends + prunes
+subscriptions).
+• Background sync: periodic sync relays queued Dexie mutations to the server
+• In-browser Al: WebLLM Gemma-2B runs in
+model binary stored in Dexie with integrity checks.
+Setup & Demo
+Option A — Zero-setup Guest/Demo mode (best for the viva)
+l. Visit at
+2. Choose Guest / Demo mode - sets the cookie;
+admits guests with demo-scoped data.
+3. seeded Patna scenario from + reset anytime
+via
+lib/demo/reset-scenario.ts
+4. Al chat works with no LLM keys — the chain degrades to the rule-based fallback (correct,
+template-y answers).
+Option B — Full local run
+# 1 . Dependencies (prisma generate runs automatically post- install)
+npm install
+cp
+Environment —
+copy . env. example
+. env. local, fill in:
+SUPABASE URL/keys, DATABASE_URL + DIRECT_URL, and any LLM/Twi1io/VAPID keys you want live
+. env . example . env . local
+
+--- guide-31.png ---
+# 3. Database schema
+npx prisma migrate dev
+# 4. Seed demo data
+npm run demo: reset
+# applies migrations 0001-0029 (0018 is missing from the repo)
+# 5. ML service (optional —
+/api/predict falls back to mock labels if absent)
+cd ml service
+pip install -r requirements. txt
+uvicorn api:app -
+-host 127.0.0.1
+--port 8000
+# optional: python train_model.py to (re)train
+npm
+npm
+npm
+Run the app
+run dev
+Tests
+test
+run test:e2e
+# Next .js dev server (Turbopack)
+# Vitest (137+ unit tests)
+# Playwright critical-path suite
+What the demo depends on (and what happens when it's missing)
+Piece
+LLM keys
+OpenAI
+embedding key
+ML service
+(port 8000)
+Twilio / VAPID
+keys
+FM station
+endpoints
+If missing
+Chat falls back
+through the chain
+Mock vectors
+Mock/fallback labels
+SMS/push logged,
+not sent
+dry-run
+reports
+Degradation
+answers (correct, generic)
+RAG silently becomes keyword search
+3 s timeout
+fallback path
+Channel stubs keep the Ul flow intact
+testMode: true
+How to explain this in a viva: "The demo is designed to survive a live panel with zero API
+keys — guest mode seeds a full Patna scenario, and every external dependency
+degrades gracefully: the LLM chain bottoms out at a rule-based engine, RAG drops to
+keyword search without embedding keys, and the ML service's absence is handled by a
+
+--- guide-32.png ---
+fallback in the client bridge. We deliberately built the demo so the worst case is 'boring
+but correct' instead of 'broken'
+(D Anticipated Viva Q&A (1 5 questions)
+Q. "So what does your project actually do?
+Section 1 pitch, verbatim. One line: predict
+working channel, offline-first.
+Easy — improvise from the pitch
+plan -4 reach everyone through every
+Q. "Why not just call one LLM directly instead of LangGraph?"
+Needs memorizing — specific numbers/names involved
+Deterministic graph for safety-critical decisions (risk labels, plan validation) so they
+can't be hallucinated; state is inspectable at each node the
+LLM is layered only where open-ended reasoning is needed (chat + tools).
+Q. Follow-up: where is the human in this loop?
+The graph intentionally stops at
+documents this Human-in-the-Loop design
+("The graph intentionally stops at and exposes
+the fires alerts only after a commander
+approves. Nothing is broadcast without a human decision.
+Q. Follow-up: who decides the risk label — the LLM or the code?
+The code- computes the risk label by keyword/feature matching in
+not by an LLM call
+— the same input
+always yields the same label, which is exactly why it can be audited (see the Honesty
+note in Section 8.1).
+Q. NHow do you prevent the Al from hallucinating wrong emergency advice?"
+Needs memorizing — specific numbers/names involved
+Tools that can only see real DB data RAG context injected as
+
+--- guide-33.png ---
+call logged to
+Q. Follow-up: what if a tool finds no data — can the model invent numbers?
+Honest answer: the tools return real DB rows when they exist, but two tools explicitly fall
+back to hard-coded demo data on an empty or unreachable DB —
+returns a fixed CRITICAL / 120 mm mock
+and returns 3 mock shelters
+In the demo, the "real data" the model quotes can
+therefore itself be mock. The guards are that every tool call is logged to
+and the LLM never decides a risk label. Say this before the panel does.
+Q. Follow-up: can you audit what the model actually did?
+Yes — every tool call is recorded in the table
+Ä), and the deterministic pipeline state is inspectable at every node and stage
+(Section 8.1).
+Q. "What happens if all your LLM providers are down at once?"
+Needs memorizing — specific numbers/names involved
+Groq -+ OpenRouter -9 Bluesminds then on-device Gemma
+via WebLLM, then the 61 -rule fallback
+Alerting never depended on an LLM anyway.
+Q. Follow-up: what exactly does that 61 -rule fallback answer?
+Pre-written static responses keyed by trigger phrases — substring matching on a
+normalized prompt, e.g. 'flood" hits a step-by-step flood-safety checklist (move to high
+ground, don't walk or drive through flowing water, stay away from electricity, don't drink
+flood water). Unmatched prompts get a guided fallback pointing to the emergency
+helpline and the Resources tab — never a dead end (Ä
+fallback. ts
+Q. Follow-up: does an LLM outage ever block an alert?
+No — the alerting path is fully deterministic
+
+--- guide-34.png ---
+Section 1 0); only conversational chat degrades through the chain.
+Q. "Why XGBoost, not a neural network?" Easy - improvise from the pitch
+Small tabular problem (4 features), CPU training in seconds, interpretable feature
+importances — and defensible: an officer can see why a district escalated.
+Q. Follow-up: what's the model's accuracy / Fl score?
+Not determinable from this repo. prints test accuracy
+and a classification report to stdout at training time, but the metrics are not saved
+anywhere in the codebase. Before the viva: run
+the historical CSV, 2 20 rows) and note the printed "Test accuracy" and
+report.
+Q. Follow-up: what features does it use, and how explainable is it?
+Four engineered features:
+The training script prints feature
+importances, and the API returns class probabilities alongside the label
+¯ so "why did the district go to High?" is answerable.
+Q. "How does RAG know which documents are relevant?"
+Needs memorizing — specific numbers/names involved
+Cosine similarity over pgvector embeddings HNSW), top-k chunks injected into
+the prompt; keyword fallback if embeddings are unavailable
+lib/retrieval/retrieve.ts
+Q. Follow-up: what happens with no embedding key, or if the vector search fails?
+returns null without and retrieval then falls back to
+keyword search over title/content limit 4). If the vector
+query throws, the same keyword fallback catches it; if both fail, the call returns [l and
+returns — the planner still runs on tool data. Retrieval
+degrades gracefully, it never throws.
+
+--- guide-35.png ---
+Q. Follow-up: how many chunks actually go into the prompt?
+Top-k defaults to 3: uses and
+passes limit 3; documents are chunked at 1000 chars with
+200-char overlap
+Q. "What was the hardest technical decision in this project?" Easy - improvise from the pitch
+Honestly: deciding where the LLM should not be. The tempting hackathon move is to let
+the LLM do everything; we constrained it to chat and made the agent pipeline
+deterministic so critical decisions are auditable. Second-hardest: the multi-channel fan-
+out — coordinating CAP generation, five FM strategies, retries, and a human-in-the-loop
+approval gate into one flow
+Q. "What would you do differently with more time?"
+Needs memorizing — specific numbers/names involved
+Wire the declared-but-unused integrations (IMD/CWC feeds, GLOFAS adapter — env-
+config only today), commit the trained model artifact is just
+restore migration replace mock embeddings with a real key path, and move
+from in-memory rate limiting to a shared store (Redis) for multi-instance scaling.
+Q. "How does this scale beyond one district/demo dataset?" Easy - improvise from the pitch
+The schema is district-keyed and middleware scopes by district; PostGlS + pgvector
+scale with indexes. Real scaling work: shared rate limiting, filling in the ingestion
+adapter layer, and periodic ML retraining with more districts' data
+handles any row count 2 20).
+Q. "What's mocked/simulated vs actually real in this demo?" (be honest)
+Needs memorizing — specific numbers/names involved
+Real: the full web product, Prisma schema + migrations, the deterministic agent
+pipeline, FM dispatch logic (with TTS chain, Twilio + VAPID code paths,
+137+ unit tests. Simulated/mocked: risk labels without the ML service running;
+embeddings without a key (mock vectors); RLS is enforced application-side
+with SQL RLS policies in migrations but primarily
+exercised through the app; FM station endpoints and hydrology data are seeded/mock
+lib/fm/mock-stations . ts
+lib/mock-data/
+lib/demo/seeder . ts
+
+--- guide-36.png ---
+ingestion env keys (IMD, CWC, GLOFAS, FIRMS...) are configured but only OpenWeather
+Q. "Why is everything district-scoped?"
+Easy — improvise from the pitch
+Real emergency response is run by district authorities (DDMA structure); scoping every
+query and Al response by district is both the security model and
+the mental model of the product (demo = Patna).
+Q. "How did you test this?"
+Needs memorizing — specific numbers/names involved
+137+ Vitest unit tests across Playwright critical-path E2E
+an APK build pipeline for the Capacitor/native app.
+Q. "Why does the app work offline — that's unusual."
+Easy — improvise from the pitch
+Because connectivity is the first casualty of a disaster; Dexie/lndexedDB + service
+worker + background sync make writes succeed locally and
+reconcile later. If the app needed internet to report a flood, it would fail exactly when
+needed most.
+Q. "Your README says five Al agents — where are they?"
+Needs memorizing — specific numbers/names involved
+The five personas exist as pipeline stages, implemented as deterministic nodes
+(predictor/planner/allocator/validator/communicator) rather than autonomous LLM
+agents — an intentional reliability decision. The LLM powers the conversational planner
+instead. Say this before the panel asks — it's the project's best "we thought about this"
+story.
+Q. "Why FM radio broadcast?" Easy - improvise from the pitch
+The cheapest device that works in a flood is a transistor radio. FM reaches people with
+no phone, no data, and no electricity for charging — the segment every other channel
+misses. It's also the only channel with a real approval workflow (auto-approve after 3
+minutes), which makes a great human-in-the-loop story.
+
+--- guide-37.png ---
+Dependency Inventory
+Runtime dependencies
+Package
+next
+openai
+@langchain/core
+langgr aph
+textsplitters
+langchain
+@mlc-ai/web-llm
+@prisma/client
+openai
+@capacitor/core
+android
+cli
+next-pwa
+Version
+14.2.35
+A7.o.55
+A4.O.33 /
+A4.O.58
+I.x
+0.2.84
+%.19.3
+0.12.4/
+A2.112.1
+A8.5.o
+A4.7.1 / *7.1 .9
+.5.1 /
+A4.4.4 /
+A6.o.2 / A3.6.7
+9.0.5 / A6.2.o
+Purpose
+App Router framework
+AI SDK (streaming,
+tools)
+Provider + React
+helpers
+OpenAl client
+(RAG/chat)
+Agent graph + chunking
+On-device Gemma
+ORM
+Backend
+Android wrapper
+Maps
+Draw + geometry
+Offline IndexedDB
+Service worker
+SMS/WhatsApp +
+VAPID push
+FM email + FTP
+strategies
+
+--- guide-38.png ---
+gfm
+class-variance-authority
+merge
+daisyui
+Dev dependencies
+clsx
+tailwind-
+A8.21 .3 /
+A3.lO.l
+.30
+A7.84 / A5.7 /
+A4.4
+A2.6 / A1 0.1 /
+A4.O
+A4.2 / A2.3
+A5.5 / A2.4
+A2.5 / 0.4.6 /
+3.4/8
+A4.12.24
+Tables + charts
+Animation + icons
+Forms + validation
+Toasts + markdown
+QR generate + scan
+CSV + PDF ingestion
+Polling + theme +
+gestures
+UI utilities
+Styling
+Installed, unused
+unused
+(mapbox draw, node, nodemailer, papaparse, react, react-dom, web-push), 8,
+14285,
+@ Environment Variables C.env.example* -4 usage)
+Variable
+NEXT PUBLIC SUPABASE URL
+NEXT PUBLIC SUPABASE ANON
+SUPABASE SERVICE ROLE KEY
+Used?
+Yes
+KEY
+Notes
+Iib/supabase/client . ts
+(service role = server-
+only)
+
+--- guide-39.png ---
+OPENWEATHER API KEY
+GLOFAS CDS API KEY
+NASA API KEY
+GEE SERVICE ACCOUNT JSON
+SENTINELHUB *
+EONET API URL
+OPENROUTE API *
+BLUESMINDS API KEY
+REST COUNTRIES API KEY
+TWILIO FROM NUMBER
+NEXT PUBLIC VAPID PUBLIC KEY
+NEXT PUBLIC SITE URL
+ML SERVICE URL
+ELEVENLABS API KEY
+CRON SECRET
+Yes
+Yes /
+Partial
+No
+Partial
+No
+Yes
+No
+No
+Yes
+No
+Yes
+Yes
+No (0
+refs)
+Yes
+Prisma pooler + migrate pair
+fetcher.ts / settings Ul
+env-only
+configured; no active adapters
+env-only
+routing. ts
+env-only
+env-only
+provider . ts
+env-only
+lib/alerts/twilio-client.ts
+lib/alerts/web-push. ts
+env-only
+fetchers / cron auth / ml-client
+lib/tts/providers.ts
+
+--- guide-40.png ---
+Yes
+lib/broadcast/strategies/*
+@ Known Gaps, Discrepancies & Assumptions
+1 . README vs code — "Al agents": README describes five named LLM agents; code
+implements a deterministic LangGraph (predictor -+ planner allocator -4 validator
+communicator) with rule-based nodes. Chat uses the LLM + tools; the graph does not.
+2. Model count: README says 28 models; has 33'
+absent (0017-4 0019).
+3. Missing migration:
+4. Unused deps/keys:
+IMD/CWC/NASA/GEE/SentinelHub vars — declared, unreferenced.
+return mock
+5. Embedding fallback:
+vectors/results without keys — RAG silently degrades to keyword search.
+6. ML model artifact expected at runtime; holds
+7. Realtime: Supabase transport implemented; demo uses the mock transport — live
+collaboration requires disabled
+8. Rendering: PWA pages rely on client components + offline behavior is
+IndexedDB-based, not server-rendered.
+9• Role enum drift: tolerates a legacy role not present in the
+Prisma enum.
+10. Ingestion scope: only OpenWeather has an active adapter in
+Other feeds appear in settings IJI only.
+folder: contains only real ingestion lives in
+ingestion/
+12. ML training data: holds N50 PDFs + a notebook as the corpus; the model
+itself is trained offline
+
+--- guide-41.png ---
+@ Glossary
+Term
+RAG
+LLM
+LangGraph
+Agent
+RBAC
+RLS
+CAP
+RDS (radio)
+IVR
+PostGlS
+pgvector
+HNSW
+OSRM / GraphHopper /
+openrouteservice
+VAPID
+One-line meaning
+Retrieval-Augmented Generation — fetching relevant documents and
+pasting them into the LLM prompt before answering
+Large Language Model — the AI that generates text (here:
+Groq/OpenRouter/BIuesminds/DeepSeek)
+LangChain's graph framework for inspectable multi-step LLM/agent
+pipelines
+A pipeline stage with a job (in this codebase: deterministic nodes, not
+autonomous bots)
+Role-Based Access Control — permissions tied to roles (public,
+field_responder, district_admin, super_admin)
+Row-Level Security — Postgres policies limiting visible rows; here
+complemented by app-level
+Common Alerting Protocol — the XML standard format for emergency
+alerts
+Radio Data System — the text/data channel sent alongside FM audio
+rds-encoder . ts
+Interactive Voice Response — automated phone calls (FM escalation,
+fm-ivr-fallback.ts
+Postgres extension for geospatial types and queries (polygons,
+distances)
+Postgres extension for vector similarity search (cosine HNSW)
+Hierarchical Navigable Small World — graph index for fast approximate
+nearest-neighbor search
+Routing engines for directions and isochrones
+smart-routing. ts
+Voluntary Application Server Identification — the key protocol for Web
+Push
+
+--- guide-42.png ---
+PWA
+Service worker
+Dexie
+Workbox / next-pwa
+WebLLM
+XGBoost
+FastAPl
+OTP
+SOP
+Dedup
+SMS/WhatsApp
+webhooks
+TTS
+Capacitor
+CRON
+GeoJSON
+Room
+DAO
+SWR
+Progressive Web App — installable web app with service worker, offline
+support, push
+Background browser script for caching, syncing, and pushes
+Typed wrapper over IndexedDB for offline storage
+Libraries generating service-worker caching strategies
+— runs small LLMs (Gemma 2B) in the browser/on-
+@mlc-ai/web-llm
+device
+Gradient-boosted decision-tree library used by
+Python web framework hosting the ML model
+One-Time Password — the passwordless login method
+via GetOTp)
+Standard Operating Procedure — emergency documents ingested into
+RAG
+De-duplication — the 6-hour window preventing repeat alert spam
+Signature-verified inbound endpoints for text/WhatsApp commands
+Text-to-Speech — alert voice generation (ElevenLabs Azure
+Google)
+Tool that wraps the web app as a native Android app
+capacitor . config. ts
+Scheduled jobs — Vercel cron hits daily
+JSON format for map geometries (flood zones, shelters) used by
+MapLibre
+Android SQLite ORM used by the native Kotlin app
+Data Access Object — Room interface for table queries (14 DAOs in
+native app)
+Stale-While-RevaIidate — React data-fetching hook used for dashboard
+polling
+
+--- guide-43.png ---
+End of guide. All file paths relative to repository root • Verified against source on 20 Aug 2026.
+Anything you'll be quizzed on, verify against the cited files — the repo rewards reading it.

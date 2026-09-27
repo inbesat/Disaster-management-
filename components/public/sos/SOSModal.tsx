@@ -1,28 +1,6 @@
 "use client";
 
-// ---------------------------------------------------------------------
-// components/public/sos/SOSModal.tsx — Phase 5 · Steps 1–3 · the global
-// SOS trigger modal.
-//
-// A large bottom-sheet (Framer Motion) over a deeply darkened
-// bg-black/80 backdrop so nothing distracts mid-panic. It can be closed
-// by swiping the sheet down (drag="y" with an offset threshold), the X
-// button, tapping the backdrop, or pressing Escape. Opened from anywhere
-// via useSOS().open() — the BottomNav SOS tab is the primary trigger.
-//
-// Inside is the 3×2 grid of massive, touch-friendly tiles (min-h 120px):
-//   • I Need Rescue / Medical Emergency — red → arm the Step 3 countdown
-//     (SOSCountdown replaces the grid; closing mid-count sends nothing)
-//   • Need Food/Water   — amber    → mock submission + toast
-//   • Share Location    — blue     → native share / clipboard copy
-//   • Call Helpline     — gray     → <a href="tel:108">
-//   • I Am Safe         — green    → persists the safe status (reuses the
-//                                    same localStorage helpers as the
-//                                    alerts-page SafeStatusToggle)
-//
-// When a countdown completes, the SOS is confirmed → activateEmergency()
-// (Step 4) puts the whole app into Emergency Mode and closes the modal.
-// ---------------------------------------------------------------------
+// Citizen SOS actions. A report is acknowledged only after the server records it.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -40,13 +18,9 @@ import {
 import { showToast } from "@/components/ui/Toast";
 import { triggerHeavyHaptic, triggerLightHaptic } from "@/hooks/useHaptics";
 import { readCitizenLocation } from "@/hooks/useSafetyStatus";
-import { resolveCitizenMapView } from "@/lib/map/citizen-view";
 import { writeSafeStatus } from "@/lib/mock-data/public-alerts";
 import { useSOS } from "./SOSContext";
 import SOSCountdown from "./SOSCountdown";
-
-/** How long the mock "sending" spinner runs before the confirmation toast. */
-const SUBMIT_MS = 900;
 
 type SosActionKind =
   | "rescue"
@@ -113,12 +87,11 @@ const COUNTDOWN_LABELS: Record<"rescue" | "medical", string> = {
 };
 
 export default function SOSModal() {
-  const { isOpen, close, activateEmergency, startSharingLocation } = useSOS();
+  const { isOpen, close, activateEmergency } = useSOS();
   const [busy, setBusy] = useState<SosActionKind | null>(null);
   // Step 3 — a critical tile is armed and waiting out its countdown.
   const [pendingAction, setPendingAction] = useState<"rescue" | "medical" | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const timerRef = useRef<number | null>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   // Focus into the panel on open; restore focus to the trigger on close.
@@ -130,11 +103,6 @@ export default function SOSModal() {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      // Closing mid-submission cancels the pending mock broadcast.
-      if (timerRef.current !== null) {
-        window.clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
       setBusy(null);
       // Closing mid-countdown cancels it — nothing is sent.
       setPendingAction(null);
@@ -156,75 +124,108 @@ export default function SOSModal() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, close]);
 
-  // Clear any in-flight mock submission on unmount.
-  useEffect(
-    () => () => {
-      if (timerRef.current !== null) window.clearTimeout(timerRef.current);
+  const getLocation = useCallback(async (): Promise<{ lat: number; lng: number }> => {
+    if (navigator.geolocation) {
+      try {
+        const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 30000,
+          }),
+        );
+        return { lat: position.coords.latitude, lng: position.coords.longitude };
+      } catch {
+        // A recently saved GPS fix can still locate a caller when permission or signal fails.
+      }
+    }
+    const saved = readCitizenLocation();
+    if (
+      saved?.type === "gps" &&
+      Number.isFinite(saved.lat) &&
+      Number.isFinite(saved.lng) &&
+      Date.now() - Date.parse(saved.savedAt) <= 30 * 60 * 1000
+    ) {
+      return { lat: saved.lat, lng: saved.lng };
+    }
+    throw new Error("Location unavailable. Call your local emergency number now.");
+  }, []);
+
+  const submitReport = useCallback(
+    async (kind: "rescue" | "medical" | "food") => {
+      if (busy) return;
+      setBusy(kind);
+      triggerLightHaptic();
+      try {
+        const location = await getLocation();
+        const message =
+          kind === "medical"
+            ? "SOS — Medical emergency"
+            : kind === "food"
+              ? "Urgent food and water assistance requested"
+              : "SOS — Rescue assistance needed";
+        const response = await fetch("/api/sos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...location, message, requestType: kind }),
+        });
+        const result = (await response.json()) as { ok?: boolean; error?: string };
+        if (!response.ok || !result.ok) throw new Error(result.error || "Request not recorded.");
+        if (kind !== "food") {
+          activateEmergency();
+          triggerHeavyHaptic();
+        }
+        close();
+        showToast("success", {
+          title: kind === "food" ? "Food/water report recorded" : "SOS report recorded",
+          description: "Responder notification has not been confirmed. Call emergency services if in immediate danger.",
+        });
+      } catch (error) {
+        showToast("error", {
+          title: "Request not recorded",
+          description: error instanceof Error ? error.message : "Call your local emergency number now.",
+        });
+      } finally {
+        setBusy(null);
+      }
     },
-    [],
+    [activateEmergency, busy, close, getLocation],
   );
 
-  /** Mock submission for the amber request tile (food/water). */
-  const submitRequest = (kind: SosActionKind, title: string) => {
-    if (busy) return;
-    setBusy(kind);
-    triggerLightHaptic();
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null;
-      setBusy(null);
-      showToast("success", { title, description: "Command Center has been notified." });
-      triggerLightHaptic();
-    }, SUBMIT_MS);
-  };
-
-  /** Step 3 — countdown finished: the SOS is really sent → Emergency Mode. */
   const completeCountdown = useCallback(() => {
+    const kind = pendingAction;
     setPendingAction(null);
-    activateEmergency();
-    close();
-    triggerHeavyHaptic();
-    showToast("success", { title: "SOS sent", description: "Help is on the way." });
-  }, [activateEmergency, close]);
+    if (kind) void submitReport(kind);
+  }, [pendingAction, submitReport]);
 
-  /** Share the citizen's saved location + begin the live sharing session. */
   const shareLocation = async () => {
-    const view = resolveCitizenMapView(readCitizenLocation());
-    const coords = `${view.center.lat.toFixed(5)}, ${view.center.lng.toFixed(5)}`;
-    const text = `I'm safe here during the emergency — ${view.label} (${coords}).`;
     try {
-      if (typeof navigator !== "undefined" && navigator.share) {
+      const { lat, lng } = await getLocation();
+      const coords = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      const text = `My current emergency location: ${coords}.`;
+      if (navigator.share) {
         await navigator.share({ title: "My location", text });
-        showToast("success", { title: "Location shared", description: view.label });
+        showToast("success", { title: "Location shared", description: coords });
       } else {
         await navigator.clipboard.writeText(coords);
-        showToast("success", {
-          title: "Location copied",
-          description: `${view.label} — paste it anywhere to share.`,
-        });
+        showToast("success", { title: "Location copied", description: "Paste it into a message to share." });
       }
-    } catch {
-      // User cancelled the share sheet (or clipboard unavailable) — do nothing.
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      showToast("error", {
+        title: "Location not shared",
+        description: error instanceof Error ? error.message : "Location access is unavailable.",
+      });
     }
-    // Step 5 — regardless of the share-sheet outcome, start the persistent
-    // live-GPS session (LocationTracker bar with its 30-minute countdown).
-    startSharingLocation();
   };
 
-  /** "I Am Safe" — persists like the alerts-page toggle. */
   const markSafe = () => {
-    if (busy) return;
-    setBusy("safe");
+    writeSafeStatus();
     triggerLightHaptic();
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null;
-      setBusy(null);
-      writeSafeStatus();
-      showToast("success", {
-        title: "Marked Safe",
-        description: "Your status has been shared with registered family members.",
-      });
-      triggerLightHaptic();
-    }, SUBMIT_MS);
+    showToast("info", {
+      title: "Marked safe on this device",
+      description: "Family notification is not connected. Contact your family directly.",
+    });
   };
 
   const handleAction = (action: SosAction) => {
@@ -236,7 +237,7 @@ export default function SOSModal() {
         setPendingAction(action.kind);
         break;
       case "food":
-        submitRequest("food", "Food/water request sent");
+        void submitReport("food");
         break;
       case "share":
         void shareLocation();
@@ -374,7 +375,7 @@ export default function SOSModal() {
 
                 {/* Reassurance footer */}
                 <p className="px-5 pt-4 text-center text-[0.6875rem] text-[var(--dl-text-muted)]">
-                  Your SOS includes your saved location. Help is on the way.
+                  A request is recorded only after server confirmation. Call emergency services if in immediate danger.
                 </p>
               </>
             )}

@@ -25,10 +25,10 @@ export default function PublicSheltersPage() {
               </span>
               <div className="min-w-0">
                 <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
-                  Nearby Shelters & Help Centers
+                  Illustrative Shelters & Help Centers
                 </h1>
                 <p className="mt-2 max-w-xl text-base leading-relaxed text-slate-300 md:text-lg">
-                  Your quick-reference guide to the nearest safe shelters, NDRF units, hospitals, police stations, and fire stations. All distances and occupancy are live estimates.
+                  These listings are sample data. Distances, occupancy, operating status and contact details are unverified. Check official local sources before travelling or calling.
                 </p>
               </div>
             </div>
@@ -41,7 +41,7 @@ export default function PublicSheltersPage() {
               className="inline-flex items-center gap-2 rounded-[var(--dl-radius-lg)] border-2 border-[var(--dl-orange)] bg-[var(--dl-orange)]/10 px-6 py-4 text-base font-semibold text-[var(--dl-orange)] transition hover:bg-[var(--dl-orange)]/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dl-orange)]"
             >
               <Map className="h-5 w-5" aria-hidden />
-              Open Evacuation Map — Turn-by-Turn Navigation
+              Open Illustrative Map
             </Link>
           </div>
         </header>

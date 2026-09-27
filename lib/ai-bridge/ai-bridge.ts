@@ -82,10 +82,7 @@ export class AIBridge {
   }
 
   /** Phase 9: rule-based emergency answers when no model path is available. */
-  private async ruleFallback(
-    prompt: string,
-    context: ChatContext,
-  ): Promise<AIResponse> {
+  private async ruleFallback(prompt: string, context: ChatContext): Promise<AIResponse> {
     if (!this.fallback) return this.offlineReply();
     try {
       const res = await this.fallback.generateResponse(prompt, context);
@@ -126,10 +123,7 @@ export class AIBridge {
 
   private offlineReply(): AIResponse {
     return {
-      text:
-        "I'm offline and the local safety model isn't ready yet. " +
-        "Please reconnect to the internet, or start the local model download from " +
-        "Settings · Offline AI so emergency planning keeps working in blackouts.",
+      text: "AI assistant is temporarily unavailable. For emergencies, use the SOS button or call 108. Reconnect or prepare Offline AI in Settings.",
       mode: "error",
       durationMs: 0,
       error: true,

@@ -103,11 +103,13 @@ export default function CommandCenterClient({ sidebar, top }: CommandCenterClien
   const [mapState, setMapState] = useState<{
     center: { lat: number; lng: number };
     district: string | null;
+    place: string | null;
   }>(() => ({
     center: settings.defaultView.focusDistrict
       ? settings.defaultView.center
       : { lat: settings.defaultView.center.lat, lng: settings.defaultView.center.lng },
     district: settings.defaultView.focusDistrict,
+    place: null,
   }));
   const [evacRoute, setEvacRoute] = useState<{
     geometry: Feature<LineString>;
@@ -142,12 +144,12 @@ export default function CommandCenterClient({ sidebar, top }: CommandCenterClien
   );
 
   const handleMapStateChange = useCallback(
-    (state: { center: { lat: number; lng: number }; district: string | null }) =>
+    (state: { center: { lat: number; lng: number }; district: string | null; place: string | null }) =>
       setMapState(state),
     [],
   );
 
-  const focusLabel = mapState.district?.toUpperCase() ?? "GLOBAL";
+  const focusLabel = (mapState.place ?? mapState.district ?? "GLOBAL").toUpperCase();
 
   const controls = (
     <>

@@ -3,7 +3,6 @@ import { prisma } from "@/server/prisma";
 import { requireRole } from "@/lib/security/require-role";
 import { findStationsInRadius } from "@/lib/fm/find-stations";
 import { toCoords, type FmStationDTO } from "@/lib/fm/serialize";
-import { MOCK_FM_STATIONS } from "@/lib/fm/mock-stations";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +21,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   const { searchParams } = new URL(request.url);
-  const lat = Number(searchParams.get("lat"));
-  const lng = Number(searchParams.get("lng"));
-  const radius = Number(searchParams.get("radius")) || 50;
+  const latParam = searchParams.get("lat");
+  const lngParam = searchParams.get("lng");
+  const lat = Number(latParam);
+  const lng = Number(lngParam);
+  const radius = Number(searchParams.get("radius") ?? 50);
 
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+  if (!latParam || !lngParam || !Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180 || !Number.isFinite(radius) || radius <= 0 || radius > 500) {
     return NextResponse.json(
       { ok: false, error: "lat and lng query params are required." },
       { status: 400 },
@@ -64,16 +65,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       count: covering.length,
     });
   } catch (error: unknown) {
-    // DB unreachable — answer coverage from the seeded demo list so the
-    // "Test Coverage" tool still works before migrations are pushed.
     console.error("Failed to test FM coverage:", error);
-    const covering = findStationsInRadius(lat, lng, MOCK_FM_STATIONS, radius);
-    return NextResponse.json({
-      ok: true,
-      point: { lat, lng },
-      covering,
-      count: covering.length,
-      source: "mock",
-    });
+    return NextResponse.json({ ok: false, source: "unavailable", covering: [], count: 0, error: "FM coverage is unavailable" }, { status: 503 });
   }
 }

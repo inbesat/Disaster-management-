@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { safeLog } from "@/lib/logger";
 
-// ---------------------------------------------------------------------
-// /api/weather/forecast — 3-day citizen forecast for the WeatherCarousel.
-//
-// Aggregates OpenWeatherMap's free 5-day/3-hour endpoint into three daily
-// buckets (temp high, rain total, condition). Degrades to a deterministic
-// seeded mock (mirroring /api/weather) when the key is missing, invalid,
-// or the network fails — the widget never 500s or hangs.
-// ---------------------------------------------------------------------
+// Three-day forecast aggregated from OpenWeatherMap. Missing upstream data
+// is reported as unavailable, never replaced by plausible invented weather.
 
-type ForecastDay = {
+export type ForecastDay = {
   /** ISO date (yyyy-mm-dd). */
   date: string;
   tempHigh: number;
@@ -18,22 +12,6 @@ type ForecastDay = {
   /** Coarse bucket the UI maps to an icon. */
   condition: "rain" | "clouds" | "clear" | "storm";
 };
-
-function mockForecastFor(lat: number, lng: number): ForecastDay[] {
-  const seed = Math.abs(Math.sin(lat * 12.9898 + lng * 78.233) * 43758.5453);
-  return [0, 1, 2].map((i) => {
-    const s = (seed + i * 0.37) % 1;
-    const rain = i === 0 ? Math.round(s * 140) : s < 0.5 ? Math.round(s * 40) : 0;
-    const d = new Date();
-    d.setDate(d.getDate() + i);
-    return {
-      date: d.toISOString().slice(0, 10),
-      tempHigh: Math.round((28 + s * 8) * 10) / 10,
-      rainTotal: rain,
-      condition: rain > 90 ? "storm" : rain > 10 ? "rain" : s > 0.6 ? "clouds" : "clear",
-    };
-  });
-}
 
 /** Pick the dominant condition across a day's 3h buckets. */
 function aggregate(
@@ -67,7 +45,14 @@ function aggregate(
       date,
       tempHigh: e.high === -99 ? 0 : Math.round(e.high * 10) / 10,
       rainTotal,
-      condition: stormy || rainTotal > 90 ? "storm" : rainy || rainTotal > 2 ? "rain" : cloudy ? "clouds" : "clear",
+      condition:
+        stormy || rainTotal > 90
+          ? "storm"
+          : rainy || rainTotal > 2
+            ? "rain"
+            : cloudy
+              ? "clouds"
+              : "clear",
     });
     if (days.length === 3) break;
   }
@@ -81,17 +66,35 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const lat = Number(latParam);
   const lng = Number(lngParam);
-  if (!latParam || !lngParam || Number.isNaN(lat) || Number.isNaN(lng)) {
+  if (
+    !latParam ||
+    !lngParam ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    Math.abs(lat) > 90 ||
+    Math.abs(lng) > 180
+  ) {
     return NextResponse.json(
       { error: "Missing or invalid 'lat' / 'lng' query parameters." },
       { status: 400 },
     );
   }
 
-  // No key — deterministic mock so demos stay offline-safe.
+  // Do not invent forecast data when the service is not configured.
   if (!apiKey) {
-    safeLog("warn", "[forecast] OPENWEATHER_API_KEY not configured — serving mock forecast.");
-    return NextResponse.json({ ok: true, source: "mock", days: mockForecastFor(lat, lng) });
+    safeLog(
+      "warn",
+      "[forecast] OPENWEATHER_API_KEY not configured — forecast unavailable.",
+    );
+    return NextResponse.json(
+      {
+        ok: false,
+        source: "unavailable",
+        days: [],
+        error: "Live forecast is unavailable",
+      },
+      { status: 503 },
+    );
   }
 
   try {
@@ -104,14 +107,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     if (!response.ok) {
-      safeLog("warn", `[forecast] OpenWeatherMap ${response.status} — serving mock forecast.`);
-      return NextResponse.json({ ok: true, source: "mock", days: mockForecastFor(lat, lng) });
+      safeLog(
+        "warn",
+        `[forecast] OpenWeatherMap ${response.status} — forecast unavailable.`,
+      );
+      return NextResponse.json(
+        {
+          ok: false,
+          source: "unavailable",
+          days: [],
+          error: "Live forecast is unavailable",
+        },
+        { status: 503 },
+      );
     }
 
     const data = (await response.json()) as { list?: Parameters<typeof aggregate>[0] };
     const days = aggregate(data.list ?? []);
     if (days.length === 0) {
-      return NextResponse.json({ ok: true, source: "mock", days: mockForecastFor(lat, lng) });
+      return NextResponse.json(
+        {
+          ok: false,
+          source: "unavailable",
+          days: [],
+          error: "Live forecast is unavailable",
+        },
+        { status: 503 },
+      );
     }
 
     return NextResponse.json({
@@ -121,7 +143,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       location: { lat, lng },
     });
   } catch (error: unknown) {
-    safeLog("warn", `[forecast] fetch failed — serving mock (${String(error)}).`);
-    return NextResponse.json({ ok: true, source: "mock", days: mockForecastFor(lat, lng) });
+    safeLog("warn", `[forecast] fetch failed — forecast unavailable (${String(error)}).`);
+    return NextResponse.json(
+      {
+        ok: false,
+        source: "unavailable",
+        days: [],
+        error: "Live forecast is unavailable",
+      },
+      { status: 503 },
+    );
   }
 }

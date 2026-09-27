@@ -47,109 +47,13 @@ export type ResourceRequest = {
 };
 
 // ---------------------------------------------------------------------
-// Mock fallbacks — used whenever the database is unreachable / not pushed,
-// so the Resource Inventory demo never breaks (hackathon DB bypass).
-// Coordinates are real Patna-area lat/lng so they can sit on the map.
-// ---------------------------------------------------------------------
-const MOCK_INVENTORY: InventoryResource[] = [
-  {
-    id: "res-1",
-    name: "NDRF Rescue Boats",
-    category: "boat",
-    quantity: 12,
-    unit: "boats",
-    lat: 25.62,
-    lng: 85.14,
-    status: "available",
-    depotName: "Patna NDRF Depot",
-  },
-  {
-    id: "res-2",
-    name: "Medical First-Aid Kits",
-    category: "medical",
-    quantity: 200,
-    unit: "kits",
-    lat: 25.594,
-    lng: 85.132,
-    status: "deployed",
-    depotName: "Sadar Hospital Depot",
-  },
-  {
-    id: "res-3",
-    name: "Bottled Water Pallets",
-    category: "water",
-    quantity: 350,
-    unit: "pallets",
-    lat: 25.608,
-    lng: 85.12,
-    status: "available",
-    depotName: "Gandhi Maidan Store",
-  },
-  {
-    id: "res-4",
-    name: "Search & Rescue Teams",
-    category: "personnel",
-    quantity: 8,
-    unit: "teams",
-    lat: 25.63,
-    lng: 85.16,
-    status: "deployed",
-    depotName: "Danapur Unit",
-  },
-  {
-    id: "res-5",
-    name: "High-Power Generators",
-    category: "power",
-    quantity: 14,
-    unit: "units",
-    lat: 25.585,
-    lng: 85.1,
-    status: "maintenance",
-    depotName: "Rajendra Nagar Yard",
-  },
-];
-
-const MOCK_REQUESTS: ResourceRequest[] = [
-  {
-    id: "req-1",
-    requestedBy: "Kankarbagh Ward Officer",
-    category: "boat",
-    quantityNeeded: 6,
-    urgency: "critical",
-    lat: 25.604,
-    lng: 85.153,
-    status: "pending",
-  },
-  {
-    id: "req-2",
-    requestedBy: "Phaganpur Field Responder",
-    category: "medical",
-    quantityNeeded: 40,
-    urgency: "high",
-    lat: 25.63,
-    lng: 85.16,
-    status: "pending",
-  },
-  {
-    id: "req-3",
-    requestedBy: "Sonepur Relief Camp",
-    category: "food",
-    quantityNeeded: 120,
-    urgency: "low",
-    lat: 25.72,
-    lng: 85.19,
-    status: "pending",
-  },
-];
-
 /**
- * Fetch the full resource inventory. Falls back to 5 realistic mock items
- * (spread across available/deployed/maintenance) if the DB is unreachable.
+ * Fetch only stored resource inventory. Database failure is surfaced to callers.
  */
 export async function getInventory(): Promise<InventoryResource[]> {
   try {
     const rows = await prisma.resource.findMany({ orderBy: { createdAt: "desc" } });
-    if (!rows.length) return MOCK_INVENTORY;
+    if (!rows.length) return [];
     return rows.map((r) => ({
       id: r.id,
       name: r.name,
@@ -163,21 +67,20 @@ export async function getInventory(): Promise<InventoryResource[]> {
       createdAt: r.createdAt.toISOString(),
     }));
   } catch (error: unknown) {
-    console.warn("[resources] getInventory fell back to mock data.", error);
-    return MOCK_INVENTORY;
+    console.error("[resources] inventory unavailable", error);
+    throw new Error("Resource inventory is unavailable");
   }
 }
 
 /**
- * Fetch pending field resource requests. Falls back to 3 mock requests
- * if the DB is unreachable.
+ * Fetch only stored pending field resource requests.
  */
 export async function getPendingRequests(): Promise<ResourceRequest[]> {
   try {
     const rows = await prisma.resourceRequest.findMany({
       orderBy: { createdAt: "desc" },
     });
-    if (!rows.length) return MOCK_REQUESTS;
+    if (!rows.length) return [];
     return rows.map((r) => ({
       id: r.id,
       requestedBy: r.requestedBy,
@@ -190,8 +93,8 @@ export async function getPendingRequests(): Promise<ResourceRequest[]> {
       createdAt: r.createdAt.toISOString(),
     }));
   } catch (error: unknown) {
-    console.warn("[resources] getPendingRequests fell back to mock data.", error);
-    return MOCK_REQUESTS;
+    console.error("[resources] pending requests unavailable", error);
+    throw new Error("Resource requests are unavailable");
   }
 }
 
@@ -205,8 +108,7 @@ export type NewResourceRequest = {
 };
 
 /**
- * Create a new field resource request. Falls back to a mock success (with a
- * fake id) if the DB is unreachable, so the mobile demo always works.
+ * Create a field resource request and report whether it was saved.
  */
 export async function submitResourceRequest(
   input: NewResourceRequest,
@@ -218,16 +120,30 @@ export async function submitResourceRequest(
   if (!input.category || typeof input.category !== "string") {
     return { ok: false, id: "", error: "Category is required." };
   }
-  if (typeof input.quantity !== "number" || !Number.isFinite(input.quantity) || input.quantity < 0) {
+  if (
+    typeof input.quantity !== "number" ||
+    !Number.isFinite(input.quantity) ||
+    input.quantity < 0
+  ) {
     return { ok: false, id: "", error: "Invalid quantity." };
   }
   if (!input.urgency || !["low", "medium", "high", "critical"].includes(input.urgency)) {
     return { ok: false, id: "", error: "Invalid urgency level." };
   }
-  if (typeof input.lat !== "number" || !Number.isFinite(input.lat) || input.lat < -90 || input.lat > 90) {
+  if (
+    typeof input.lat !== "number" ||
+    !Number.isFinite(input.lat) ||
+    input.lat < -90 ||
+    input.lat > 90
+  ) {
     return { ok: false, id: "", error: "Invalid latitude." };
   }
-  if (typeof input.lng !== "number" || !Number.isFinite(input.lng) || input.lng < -180 || input.lng > 180) {
+  if (
+    typeof input.lng !== "number" ||
+    !Number.isFinite(input.lng) ||
+    input.lng < -180 ||
+    input.lng > 180
+  ) {
     return { ok: false, id: "", error: "Invalid longitude." };
   }
 
@@ -241,16 +157,14 @@ export async function submitResourceRequest(
         lat: input.lat,
         lng: input.lng,
         status: "pending",
-        notes: input.notes
-          ? sanitizeInput(String(input.notes)).slice(0, 2000)
-          : "",
+        notes: input.notes ? sanitizeInput(String(input.notes)).slice(0, 2000) : "",
       },
     });
     revalidatePath("/dispatch");
     return { ok: true, id: created.id };
   } catch (error: unknown) {
-    console.warn("[resources] submitResourceRequest fell back to mock success.", error);
-    return { ok: true, id: `mock-${Date.now()}` };
+    console.error("[resources] request could not be saved", error);
+    return { ok: false, id: "", error: "Resource request could not be saved" };
   }
 }
 
@@ -263,8 +177,7 @@ export type CsvResourceRow = {
 };
 
 /**
- * Bulk-import resources from a parsed CSV. Falls back to a mock success on DB
- * failure so the uploader demo always completes.
+ * Bulk-import resources from a parsed CSV. Database failures return ok=false.
  */
 export async function bulkImportResources(
   rows: CsvResourceRow[],
@@ -288,16 +201,15 @@ export async function bulkImportResources(
     revalidatePath("/inventory");
     return { ok: true, count: rows.length };
   } catch (error: unknown) {
-    console.warn("[resources] bulkImportResources fell back to mock success.", error);
-    return { ok: true, count: rows.length };
+    console.error("[resources] bulk import failed", error);
+    return { ok: false, count: 0 };
   }
 }
 
 /**
  * Approve a field request and (optionally) mark the sourcing resource as
  * deployed. Appends a movement-trail entry (Phase 12: depot → disaster site)
- * when both rows exist. Returns true on success — and also on mock fallback,
- * so the demo UI always reflects an approval. Never throws.
+ * when both rows exist. Returns true only after the approval is saved.
  */
 export async function approveRequest(
   requestId: string,
@@ -349,8 +261,8 @@ export async function approveRequest(
     revalidatePath("/dispatch");
     return true;
   } catch (error: unknown) {
-    console.warn("[resources] approveRequest fell back to mock success.", error);
-    return true;
+    console.error("[resources] approval failed", error);
+    return false;
   }
 }
 
@@ -374,7 +286,17 @@ export type UpdateResourceInput = NewResourceInput & { id: string };
 
 const MOCK_COORDINATES = { lat: 25.61, lng: 85.14 }; // Patna centre fallback.
 
-const VALID_CATEGORIES = ["boat", "medical", "water", "food", "personnel", "power", "shelter", "communication", "other"];
+const VALID_CATEGORIES = [
+  "boat",
+  "medical",
+  "water",
+  "food",
+  "personnel",
+  "power",
+  "shelter",
+  "communication",
+  "other",
+];
 const VALID_STATUSES = ["available", "deployed", "maintenance", "retired"];
 const MAX_NAME_LENGTH = 200;
 const MAX_RESOURCE_QUANTITY = 1000000;
@@ -389,13 +311,30 @@ function validateResourceInput(input: NewResourceInput): string | null {
   if (!input.category || !VALID_CATEGORIES.includes(input.category)) {
     return `Invalid category. Must be one of: ${VALID_CATEGORIES.join(", ")}`;
   }
-  if (typeof input.quantity !== "number" || !Number.isFinite(input.quantity) || input.quantity < 0 || input.quantity > MAX_RESOURCE_QUANTITY) {
+  if (
+    typeof input.quantity !== "number" ||
+    !Number.isFinite(input.quantity) ||
+    input.quantity < 0 ||
+    input.quantity > MAX_RESOURCE_QUANTITY
+  ) {
     return `Quantity must be between 0 and ${MAX_RESOURCE_QUANTITY}.`;
   }
-  if (input.lat !== undefined && (typeof input.lat !== "number" || !Number.isFinite(input.lat) || input.lat < -90 || input.lat > 90)) {
+  if (
+    input.lat !== undefined &&
+    (typeof input.lat !== "number" ||
+      !Number.isFinite(input.lat) ||
+      input.lat < -90 ||
+      input.lat > 90)
+  ) {
     return "Invalid latitude value.";
   }
-  if (input.lng !== undefined && (typeof input.lng !== "number" || !Number.isFinite(input.lng) || input.lng < -180 || input.lng > 180)) {
+  if (
+    input.lng !== undefined &&
+    (typeof input.lng !== "number" ||
+      !Number.isFinite(input.lng) ||
+      input.lng < -180 ||
+      input.lng > 180)
+  ) {
     return "Invalid longitude value.";
   }
   if (input.status && !VALID_STATUSES.includes(input.status)) {
@@ -405,8 +344,7 @@ function validateResourceInput(input: NewResourceInput): string | null {
 }
 
 /**
- * Create a single resource. Falls back to a mock id on DB failure so the Add
- * Resource form always "succeeds" during a demo without a live database.
+ * Create a resource and return its saved ID.
  */
 export async function addResource(
   input: NewResourceInput,
@@ -435,14 +373,14 @@ export async function addResource(
     revalidatePath("/inventory");
     return { ok: true, id: created.id };
   } catch (error: unknown) {
-    console.warn("[resources] addResource fell back to mock success.", error);
-    return { ok: true, id: `mock-${Date.now()}` };
+    console.error("[resources] resource could not be saved", error);
+    return { ok: false, id: "", error: "Resource could not be saved" };
   }
 }
 
 /**
  * Update a single resource. Returns false on failure (DB unavailable) so the
- * UI can surface it, but still reports success when the row is a mock.
+ * UI can surface the failure.
  */
 export async function updateResource(input: UpdateResourceInput): Promise<boolean> {
   const authError = await assertWriteAccess();
@@ -465,7 +403,9 @@ export async function updateResource(input: UpdateResourceInput): Promise<boolea
         status: input.status || undefined,
         lat: input.lat ?? MOCK_COORDINATES.lat,
         lng: input.lng ?? MOCK_COORDINATES.lng,
-        depotName: input.depotName ? sanitizeInput(input.depotName).slice(0, 200) : undefined,
+        depotName: input.depotName
+          ? sanitizeInput(input.depotName).slice(0, 200)
+          : undefined,
       },
     });
     revalidatePath("/inventory");
@@ -477,7 +417,7 @@ export async function updateResource(input: UpdateResourceInput): Promise<boolea
 }
 
 /**
- * Delete a single resource. Falls back to success if the id is a mock row.
+ * Delete a stored resource. Returns false if it cannot be removed.
  */
 export async function deleteResource(id: string): Promise<boolean> {
   const authError = await assertWriteAccess();
@@ -488,9 +428,7 @@ export async function deleteResource(id: string): Promise<boolean> {
     return true;
   } catch (error: unknown) {
     console.warn("[resources] deleteResource failed.", error);
-    // Mock rows (prefixed `mock-`/`res-`) don't exist in the DB — treat as
-    // removed so the demo table can clear an item without a live database.
-    return id.startsWith("mock-") || id.startsWith("res-");
+    return false;
   }
 }
 
@@ -526,66 +464,8 @@ export type NewMovementInput = {
   note?: string | null;
 };
 
-// Seeded trail so the movements feed is never empty during a DB-less demo.
-// Timestamps are minutes in the past so the relative-time labels read live.
-const MOCK_MOVEMENTS: ResourceMovement[] = [
-  {
-    id: "mov-1",
-    resourceId: "res-1",
-    resourceName: "NDRF Rescue Boats",
-    action: "dispatched",
-    fromLabel: "Patna NDRF Depot",
-    toLabel: "Kankarbagh Ward Office",
-    toLat: 25.604,
-    toLng: 85.153,
-    quantity: 6,
-    note: "Fulfils field request req-1",
-    createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-  },
-  {
-    id: "mov-2",
-    resourceId: "res-3",
-    resourceName: "Bottled Water Pallets",
-    action: "delivered",
-    fromLabel: "Gandhi Maidan Store",
-    toLabel: "Sonepur Relief Camp",
-    toLat: 25.72,
-    toLng: 85.19,
-    quantity: 120,
-    note: "Delivery confirmed by camp manager",
-    createdAt: new Date(Date.now() - 1000 * 60 * 47).toISOString(),
-  },
-  {
-    id: "mov-3",
-    resourceId: "res-2",
-    resourceName: "Medical First-Aid Kits",
-    action: "dispatched",
-    fromLabel: "Sadar Hospital Depot",
-    toLabel: "Phaganpur Field Post",
-    toLat: 25.63,
-    toLng: 85.16,
-    quantity: 40,
-    note: "Priority: high",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-  },
-  {
-    id: "mov-4",
-    resourceId: "res-5",
-    resourceName: "High-Power Generators",
-    action: "returned",
-    fromLabel: "Rajendra Nagar Yard",
-    toLabel: "Depot (maintenance)",
-    toLat: 25.585,
-    toLng: 85.1,
-    quantity: 2,
-    note: "Returned for servicing after deployment",
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
-  },
-];
-
 /**
- * Fetch the most recent resource movements. Falls back to the seeded trail
- * when the DB is unreachable or empty, so the feed always renders.
+ * Fetch the most recent stored resource movements.
  */
 export async function getResourceMovements(limit = 15): Promise<ResourceMovement[]> {
   try {
@@ -593,7 +473,7 @@ export async function getResourceMovements(limit = 15): Promise<ResourceMovement
       orderBy: { createdAt: "desc" },
       take: limit,
     });
-    if (!rows.length) return MOCK_MOVEMENTS;
+    if (!rows.length) return [];
     return rows.map((m) => ({
       id: m.id,
       resourceId: m.resourceId,
@@ -608,22 +488,18 @@ export async function getResourceMovements(limit = 15): Promise<ResourceMovement
       createdAt: m.createdAt.toISOString(),
     }));
   } catch (error: unknown) {
-    console.warn("[resources] getResourceMovements fell back to mock data.", error);
-    return MOCK_MOVEMENTS.slice(0, limit);
+    console.error("[resources] movements unavailable", error);
+    throw new Error("Resource movements are unavailable");
   }
 }
 
 /**
- * Record a resource movement (manual log / dispatch trail). Falls back to a
- * mock id when the DB is unreachable, so the form always "succeeds" during a
- * demo without a live database.
+ * Record a resource movement (manual log / dispatch trail).
  */
 const MOVEMENT_ACTIONS = ["dispatched", "delivered", "returned", "adjusted"];
 
 /**
- * Record a resource movement (manual log / dispatch trail). Falls back to a
- * mock id when the DB is unreachable, so the form always "succeeds" during a
- * demo without a live database.
+ * Record a resource movement (manual log / dispatch trail).
  */
 export async function logResourceMovement(
   input: NewMovementInput,
@@ -649,7 +525,7 @@ export async function logResourceMovement(
     revalidatePath("/dispatch");
     return { ok: true, id: created.id };
   } catch (error: unknown) {
-    console.warn("[resources] logResourceMovement fell back to mock success.", error);
-    return { ok: true, id: `mock-${Date.now()}` };
+    console.error("[resources] movement could not be saved", error);
+    return { ok: false, id: "" };
   }
 }

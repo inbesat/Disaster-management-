@@ -19,7 +19,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!rateResult.success) {
     return NextResponse.json(
       { error: "Too many requests. Please wait before trying again." },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((rateResult.resetTime - Date.now()) / 1000)) } },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rateResult.resetTime - Date.now()) / 1000)),
+        },
+      },
     );
   }
 
@@ -30,7 +35,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const saturationParam = request.nextUrl.searchParams.get("saturation");
   const typeParam = request.nextUrl.searchParams.get("disasterType");
 
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+  if (
+    !request.nextUrl.searchParams.has("lat") ||
+    !request.nextUrl.searchParams.has("lng") ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    Math.abs(lat) > 90 ||
+    Math.abs(lng) > 180
+  ) {
     return NextResponse.json(
       { error: "Missing or invalid 'lat' / 'lng' query parameters." },
       { status: 400 },
@@ -52,31 +64,52 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     ? { soilSaturation: Math.min(1, Math.max(0, saturation / 100)) }
     : undefined;
 
-  // -----------------------------------------------------------------------
-  // SHORT-CIRCUITED FOR DEMO: return instant "Safe" fallback without hitting
-  // the ML service at 127.0.0.1:8000 (which isn't running) or Prisma.
-  // This eliminates the 3-6 second timeout delay on every dashboard load.
-  //
-  // To restore live ML predictions, uncomment the block below and delete
-  // this early return.
-  // -----------------------------------------------------------------------
-  return NextResponse.json({
-    ok: true,
-    disasterType,
-    riskLevel: "Safe",
-    confidenceScore: 0,
-    source: "fallback",
-    lat,
-    lng,
-    predictedAt: new Date().toISOString(),
-  });
-
-  // --- ORIGINAL ML CALL (disabled for demo) ---
-  // try {
-  //   const prediction = await getFloodPrediction(lat, lng, rainfallMm, elevation, options);
-  //   return NextResponse.json({ ok: true, disasterType, ...prediction });
-  // } catch (error: unknown) {
-  //   console.error("ML prediction failed:", error);
-  //   return NextResponse.json({ error: "Failed to run ML prediction." }, { status: 500 });
-  // }
+  if (
+    typeParam &&
+    (!DISASTER_TYPES.includes(typeParam as DisasterType) || disasterType !== "flood")
+  ) {
+    return NextResponse.json(
+      { error: "A trained prediction model is only available for flood risk." },
+      { status: 422 },
+    );
+  }
+  if (
+    !Number.isFinite(elevation) ||
+    elevation < 0 ||
+    !Number.isFinite(rainfall) ||
+    rainfall < 0 ||
+    (saturationParam !== null &&
+      (!Number.isFinite(saturation) || saturation < 0 || saturation > 100))
+  ) {
+    return NextResponse.json(
+      { error: "Invalid rainfall, elevation or saturation." },
+      { status: 400 },
+    );
+  }
+  if (!request.nextUrl.searchParams.has("rainfall")) {
+    return NextResponse.json(
+      { error: "Measured 72-hour cumulative rainfall is required." },
+      { status: 400 },
+    );
+  }
+  try {
+    const prediction = await getFloodPrediction(lat, lng, rainfallMm, elevation, options);
+    return NextResponse.json({
+      ok: true,
+      disasterType,
+      ...prediction,
+      limitations:
+        "Experimental model; river trend and soil saturation may be estimated. Not an official warning.",
+    });
+  } catch {
+    return NextResponse.json(
+      {
+        ok: false,
+        source: "unavailable",
+        error:
+          "Flood prediction service is unavailable. Risk is unknown; consult official alerts.",
+      },
+      { status: 503 },
+    );
+  }
 }

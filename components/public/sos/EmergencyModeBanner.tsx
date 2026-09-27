@@ -129,7 +129,7 @@ export default function EmergencyModeBanner() {
                   strokeWidth={2.25}
                 />
                 <p className="text-[0.8125rem] font-black uppercase leading-tight tracking-wide text-white">
-                  Emergency Mode Active: Help is on the way.
+                  SOS report recorded. Dispatch is unconfirmed.
                 </p>
               </div>
 

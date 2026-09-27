@@ -23,15 +23,22 @@ export const DEFAULT_CHAT_ENDPOINT = "/api/chat";
 interface UiStreamPart {
   type?: string;
   text?: string;
+  delta?: string;
+  errorText?: string;
   error?: { message?: string };
 }
 
-function isErrorPart(part: UiStreamPart): part is UiStreamPart & { error: { message?: string } } {
+function isErrorPart(
+  part: UiStreamPart,
+): part is UiStreamPart & { error: { message?: string } } {
   return part.type === "error";
 }
 
 function isTextPart(part: UiStreamPart): part is UiStreamPart & { text: string } {
-  return part.type === "text" && typeof part.text === "string";
+  return (
+    (part.type === "text" && typeof part.text === "string") ||
+    (part.type === "text-delta" && typeof part.delta === "string")
+  );
 }
 
 /**
@@ -54,12 +61,21 @@ async function partFromLine(line: string): Promise<UiStreamPart | null> {
 async function readUIMessageText(res: Response): Promise<string> {
   const raw = await res.clone().text();
 
-  // Whole-body JSON array of parts (older/simple protocol).
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(raw) as UiStreamPart[];
-    if (Array.isArray(parsed)) return joinParts(parsed);
+    parsed = JSON.parse(raw);
   } catch {
-    // not JSON — fall through to line-by-line stream parse
+    /* Parse SSE below. */
+  }
+  if (Array.isArray(parsed)) return joinParts(parsed);
+  if (parsed && typeof parsed === "object") {
+    const payload = parsed as { error?: unknown; message?: string };
+    if (payload.error)
+      throw new Error(
+        typeof payload.error === "string" ? payload.error : "AI request failed",
+      );
+    if (typeof payload.message === "string") return payload.message;
+    throw new Error("Unrecognized AI response.");
   }
 
   // Line-oriented AI SDK v5+ stream: `data: {"type":"text","text":"..."}`.
@@ -88,8 +104,11 @@ function errorFromBody(res: Response, bodyText: string): string {
     const parsed = JSON.parse(bodyText) as ChatErrorBody;
     const err = parsed.error;
     if (err?.message) {
-      const head = err.kind === "not-configured" ? "AI provider not configured" : err.message;
-      const missing = err.missingKeys?.length ? ` Missing env keys: ${err.missingKeys.join(", ")}.` : "";
+      const head =
+        err.kind === "not-configured" ? "AI provider not configured" : err.message;
+      const missing = err.missingKeys?.length
+        ? ` Missing env keys: ${err.missingKeys.join(", ")}.`
+        : "";
       return `${head}.${missing}`;
     }
   } catch {
@@ -100,8 +119,14 @@ function errorFromBody(res: Response, bodyText: string): string {
 
 function joinParts(parts: UiStreamPart[]): string {
   const errorPart = parts.find(isErrorPart);
-  if (errorPart) return `[error] ${errorPart.error?.message ?? "upstream failure"}`;
-  return parts.filter(isTextPart).map((p) => p.text).join("");
+  if (errorPart)
+    throw new Error(
+      errorPart.errorText ?? errorPart.error?.message ?? "upstream failure",
+    );
+  return parts
+    .filter(isTextPart)
+    .map((p) => p.delta ?? p.text ?? "")
+    .join("");
 }
 
 export class CloudAIProvider implements AIProvider {
@@ -110,19 +135,17 @@ export class CloudAIProvider implements AIProvider {
       endpoint?: string;
       fetchImpl?: typeof fetch;
     } = {},
-  ) {}
+  ) {
+    this.doFetch = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
+  }
 
-  private doFetch: (input: string, init?: RequestInit) => Promise<Response> =
-    this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+  private doFetch: (input: string, init?: RequestInit) => Promise<Response>;
 
   getStatus(): ProviderStatus {
     return typeof navigator !== "undefined" && navigator.onLine ? "online" : "offline";
   }
 
-  async generateResponse(
-    prompt: string,
-    context: ChatContext,
-  ): Promise<AIResponse> {
+  async generateResponse(prompt: string, context: ChatContext): Promise<AIResponse> {
     const startedAt = Date.now();
     const endpoint = this.options.endpoint ?? DEFAULT_CHAT_ENDPOINT;
 
@@ -135,6 +158,7 @@ export class CloudAIProvider implements AIProvider {
       const res = await this.doFetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(60_000),
         body: JSON.stringify({
           messages,
           currentDistrict: context.currentDistrict,
@@ -153,8 +177,9 @@ export class CloudAIProvider implements AIProvider {
       }
 
       const text = await readUIMessageText(res);
+      if (!text.trim()) throw new Error("Cloud AI returned an empty response.");
       return {
-        text: text || "Cloud AI returned an empty response.",
+        text,
         mode: "cloud",
         durationMs: Date.now() - startedAt,
       };

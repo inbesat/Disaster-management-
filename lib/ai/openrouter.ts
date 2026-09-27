@@ -29,11 +29,11 @@ const GROQ_BASE = "https://api.groq.com/openai/v1";
 const BLUESMINDS_BASE = "https://api.bluesminds.com/v1";
 
 // Live model ids — verified against each provider's /models endpoint.
-const OPENROUTER_MODEL = "~anthropic/claude-sonnet-latest";
+const OPENROUTER_MODEL = "openrouter/free";
 // gpt-oss-120b: strong tool-calling on Groq's free tier (llama-3.3-70b-
 // versatile would stop right after a tool call instead of summarising).
 const GROQ_MODEL = "openai/gpt-oss-120b";
-const BLUESMINDS_MODEL = "meta/llama-3.1-8b-instruct";
+const BLUESMINDS_MODEL = "google/gemini-2.5-flash";
 
 // 15s — generous enough for a slow hall/airport wifi cold-start probe (an
 // 8s budget dropped healthy providers on marginal networks, which cascaded
@@ -51,7 +51,7 @@ const RESOLVER_TTL_MS = 60_000;
  */
 const PROBE_MAX_TOKENS = 2048;
 
-export type ProviderGroup = "groq" | "openrouter" | "bluesminds" | "auto";
+export type ProviderGroup = "groq" | "openrouter" | "bluesminds" | "huggingface" | "auto";
 
 /**
  * Why a provider probe/generation failed — lets the caller show a distinct
@@ -118,7 +118,13 @@ interface ProviderKeyConfig {
 
 /** Every provider key the chain can read — single source of truth. */
 export const PROVIDER_KEY_CONFIGS: ProviderKeyConfig[] = [
-  { keyEnvVar: "GROQ_API_KEY", name: "groq", group: "groq", baseURL: GROQ_BASE, modelId: GROQ_MODEL },
+  {
+    keyEnvVar: "GROQ_API_KEY",
+    name: "groq",
+    group: "groq",
+    baseURL: GROQ_BASE,
+    modelId: GROQ_MODEL,
+  },
   {
     keyEnvVar: "GROQ_API_KEY_BACKUP",
     name: "groq-backup",
@@ -140,7 +146,20 @@ export const PROVIDER_KEY_CONFIGS: ProviderKeyConfig[] = [
     baseURL: OPENROUTER_BASE,
     modelId: OPENROUTER_MODEL,
   },
-  { keyEnvVar: "BLUESMINDS_API_KEY", name: "bluesminds", group: "bluesminds", baseURL: BLUESMINDS_BASE, modelId: BLUESMINDS_MODEL },
+  {
+    keyEnvVar: "BLUESMINDS_API_KEY",
+    name: "bluesminds",
+    group: "bluesminds",
+    baseURL: BLUESMINDS_BASE,
+    modelId: BLUESMINDS_MODEL,
+  },
+  {
+    keyEnvVar: "HF_TOKEN",
+    name: "huggingface",
+    group: "huggingface",
+    baseURL: "https://router.huggingface.co/v1",
+    modelId: "openai/gpt-oss-120b",
+  },
 ];
 
 /**
@@ -156,7 +175,7 @@ const PLACEHOLDER_KEY_PATTERN =
 /** A usable key is longer than a placeholder — anything else is ignored. */
 export function hasKey(value: string | undefined): value is string {
   return Boolean(
-    value && value.length > 8 && !PLACEHOLDER_KEY_PATTERN.test(value),
+    value && value.trim().length > 8 && !PLACEHOLDER_KEY_PATTERN.test(value.trim()),
   );
 }
 
@@ -189,7 +208,9 @@ function logAiEnvStatusOnce(): void {
       parts.push(`${cfg.keyEnvVar}=ok`);
     }
   }
-  const usable = PROVIDER_KEY_CONFIGS.filter((cfg) => hasKey(process.env[cfg.keyEnvVar])).length;
+  const usable = PROVIDER_KEY_CONFIGS.filter((cfg) =>
+    hasKey(process.env[cfg.keyEnvVar]),
+  ).length;
   if (usable === 0) {
     console.error(
       `[ai-provider] env status → ${parts.join(" ")} — NO provider usable; chat will 503 until a real key is set in .env.local.`,
@@ -199,11 +220,9 @@ function logAiEnvStatusOnce(): void {
   }
 }
 
-function addCandidate(
-  candidates: ProviderCandidate[],
-  cfg: ProviderKeyConfig,
-): void {
-  const key = process.env[cfg.keyEnvVar] as string;
+function addCandidate(candidates: ProviderCandidate[], cfg: ProviderKeyConfig): void {
+  const key = process.env[cfg.keyEnvVar]!.trim();
+  const modelId = process.env[`${cfg.group.toUpperCase()}_MODEL`]?.trim() || cfg.modelId;
   candidates.push({
     name: cfg.name,
     group: cfg.group,
@@ -213,13 +232,17 @@ function addCandidate(
       apiKey: key,
       headers: {
         Authorization: `Bearer ${key}`,
-        "HTTP-Referer": "https://safesphere.vercel.app",
-        "X-Title": "SafeSphere"
-      }
-    }).chat(
-      cfg.modelId,
-    ),
-    probe: { baseURL: cfg.baseURL, model: cfg.modelId, apiKey: key, keyEnvVar: cfg.keyEnvVar },
+        "HTTP-Referer":
+          process.env.NEXT_PUBLIC_SITE_URL || "https://safesphere0.netlify.app",
+        "X-Title": "SafeSphere",
+      },
+    }).chat(modelId),
+    probe: {
+      baseURL: cfg.baseURL,
+      model: modelId,
+      apiKey: key,
+      keyEnvVar: cfg.keyEnvVar,
+    },
   });
 }
 
@@ -249,7 +272,7 @@ export function getEmergencyPlannerCandidates(
   }
 
   // Last known-good provider answers first on subsequent requests.
-  if (lastHealthyProviderName) {
+  if (lastHealthyProviderName && (!preferred || preferred === "auto")) {
     const idx = candidates.findIndex((c) => c.name === lastHealthyProviderName);
     if (idx > 0) {
       const [winner] = candidates.splice(idx, 1);
@@ -284,7 +307,8 @@ async function safeErrorText(res: Response): Promise<string | undefined> {
     const raw = await res.text();
     const parsed = JSON.parse(raw) as { error?: { message?: string } | string };
     if (typeof parsed?.error === "string") return parsed.error.slice(0, 300);
-    if (typeof parsed?.error?.message === "string") return parsed.error.message.slice(0, 300);
+    if (typeof parsed?.error?.message === "string")
+      return parsed.error.message.slice(0, 300);
     if (raw && raw.length < 300) return raw;
     return undefined;
   } catch {
@@ -292,7 +316,9 @@ async function safeErrorText(res: Response): Promise<string | undefined> {
   }
 }
 
-async function probeCandidate(candidate: ProviderCandidate): Promise<ProviderProbeResult> {
+async function probeCandidate(
+  candidate: ProviderCandidate,
+): Promise<ProviderProbeResult> {
   const startedAt = Date.now();
   const base = {
     provider: candidate.name,
@@ -348,7 +374,10 @@ let lastResolvedAt = 0;
 let inFlight: Promise<LanguageModel> | null = null;
 let lastHealthyProviderName: string | null = null;
 
-const probeStatusCache = new Map<string, { result: ProviderProbeResult; checkedAt: number }>();
+const probeStatusCache = new Map<
+  string,
+  { result: ProviderProbeResult; checkedAt: number }
+>();
 
 function recordProbeOutcome(result: ProviderProbeResult): void {
   probeStatusCache.set(result.provider, { result, checkedAt: Date.now() });

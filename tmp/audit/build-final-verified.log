@@ -1,0 +1,41 @@
+
+> disaster-response-platform@0.1.0 build E:\Hackathons\disaster management\disaster-response-platform
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Custom worker found: E:\Hackathons\disaster management\disaster-response-platform\worker\index.js
+> [PWA] Build custom worker: E:\Hackathons\disaster management\disaster-response-platform\public\worker-YkK75Y9eXh4p697flVBEb.js
+> [PWA] Auto register service worker is disabled, please call following code in componentDidMount callback or useEffect hook
+> [PWA]   window.workbox.register()
+> [PWA] Service worker: E:\Hackathons\disaster management\disaster-response-platform\public\sw.js
+> [PWA]   url: /sw.js
+> [PWA]   scope: /
+> [PWA] Fallback to precache routes when fetch failed from cache or network:
+> [PWA]   document (page): /~offline
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+   Linting and checking validity of types ...
+ ⚠ Compiled with warnings
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/global-error.tsx
+
+/_next/static/chunks/12cbcdcd.9e4609a8614da058.js is 6.03 MB, and won't be precached. Configure maximumFileSizeToCacheInBytes to change this limit.
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/error.tsx
+

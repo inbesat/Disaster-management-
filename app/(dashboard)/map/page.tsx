@@ -20,16 +20,14 @@
 // ---------------------------------------------------------------------
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MapHeader from "@/components/map/MapHeader";
 import LayerControl from "@/components/map/LayerControl";
 import MapLegend from "@/components/map/MapLegend";
 import TimeSlider from "@/components/map/TimeSlider";
-import MapSearchBar from "@/components/map/MapSearchBar";
 import MeasurementToolbar from "@/components/map/MeasurementToolbar";
 import MiniMapWidget from "@/components/map/MiniMapWidget";
 import MapContextMenu from "@/components/map/MapContextMenu";
-import InfoDrawer, { type InfoFeature } from "@/components/map/InfoDrawer";
 import type { LayerVisibility } from "@/components/map/LayerToggle";
 
 const DisasterMap = dynamic(() => import("@/components/map/DisasterMap"), {
@@ -47,22 +45,15 @@ const MAP_LAYERS: LayerVisibility = {
   resources: true,
 };
 
-/** Demo selection so the drawer is visible straight away — real markers
-    will drive this via DisasterMap's onSelect later. */
-const MOCK_SELECTED: InfoFeature = {
-  title: "Patna Central Shelter",
-  subtitle: "Sector 4 · Ward 12",
-  capacityUsed: 450,
-  capacityTotal: 500,
-  status: "Open",
-};
-
 export default function MapPage() {
   const [layers, setLayers] = useState<LayerVisibility>(MAP_LAYERS);
   const [hoursAhead, setHoursAhead] = useState(0);
-  const [selected, setSelected] = useState<InfoFeature | null>(MOCK_SELECTED);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  const [focus, setFocus] = useState("Global");
+  const handleMapFocus = useCallback(({ place, district }: { place: string | null; district: string | null }) => {
+    setFocus(place ?? district ?? "Global");
+  }, []);
 
   // Escape exits presentation mode.
   useEffect(() => {
@@ -85,6 +76,7 @@ export default function MapPage() {
     >
       {!isFullscreen && (
         <MapHeader
+          title={`${focus} Map Operations`}
           isFullscreen={false}
           onToggleFullscreen={() => setIsFullscreen(true)}
         />
@@ -95,6 +87,8 @@ export default function MapPage() {
           visibleLayers={layers}
           hoursAhead={hoursAhead}
           disasterType="flood"
+          searchBelowHeader
+          onMapStateChange={handleMapFocus}
         />
       </div>
 
@@ -104,12 +98,10 @@ export default function MapPage() {
           <LayerControl
             layers={layers}
             onLayersChange={setLayers}
-            className="absolute right-3 top-[60px] z-10"
+            className="absolute right-3 top-[190px] z-10 sm:left-3 sm:right-auto sm:top-20"
           />
-          <MapSearchBar className="absolute left-1/2 top-[64px] z-20 -translate-x-1/2" />
           <MeasurementToolbar className="absolute right-3 top-1/2 z-10 -translate-y-1/2" />
           <MiniMapWidget className="fixed bottom-[200px] right-6 z-20 hidden lg:block" />
-          <InfoDrawer feature={selected} onClose={() => setSelected(null)} />
         </>
       )}
 

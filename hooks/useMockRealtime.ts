@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isDemoModeEnabled } from "@/lib/demo/scenarios";
 import {
   createRealtimeClient,
   PollingTransport,
@@ -11,11 +12,7 @@ import {
 } from "@/lib/realtime";
 
 export type RealtimeEventType =
-  | "SHELTER_UPDATE"
-  | "RESOURCE_MOVE"
-  | "CRITICAL_ALERT"
-  | "ROAD_CLOSURE"
-  | "FIELD_REPORT";
+  "SHELTER_UPDATE" | "RESOURCE_MOVE" | "CRITICAL_ALERT" | "ROAD_CLOSURE" | "FIELD_REPORT";
 
 export interface RealtimeEvent {
   id: string;
@@ -112,20 +109,46 @@ function nextMockMessage(channelName: string): RealtimeMessage {
 export function useMockRealtime(channelName: string): {
   liveEvents: RealtimeEvent[];
   status: RealtimeStatus;
+  simulated: boolean;
 } {
   const [liveEvents, setLiveEvents] = useState<RealtimeEvent[]>([]);
   const [status, setStatus] = useState<RealtimeStatus>("connecting");
 
+  const [simulated, setSimulated] = useState(false);
   useEffect(() => {
+    const demo = isDemoModeEnabled();
+    setSimulated(demo);
     const client = createRealtimeClient({
-      primary: new WebSocketTransport({
-        url: `wss://realtime.demo.local/v1/${channelName}`,
-        socketFactory: () => blockedSocketForDemo(),
-        connectTimeoutMs: 1200,
-      }),
+      primary: demo
+        ? new WebSocketTransport({
+            url: `wss://realtime.demo.local/v1/${channelName}`,
+            socketFactory: () => blockedSocketForDemo(),
+            connectTimeoutMs: 1200,
+          })
+        : undefined,
       fallback: new PollingTransport({
-        poll: () => [nextMockMessage(channelName)],
-        intervalMs: 4000,
+        poll: async () => {
+          if (demo) return [nextMockMessage(channelName)];
+          const response = await fetch("/api/alerts?limit=40", {
+            cache: "no-store",
+            signal: AbortSignal.timeout(8000),
+          });
+          if (!response.ok) {
+            setStatus("offline");
+            return [];
+          }
+          const data = (await response.json()) as {
+            alerts?: Array<{ id: string; message: string; createdAt: string }>;
+          };
+          setStatus("polling");
+          return (data.alerts ?? []).map((alert) => ({
+            id: alert.id,
+            type: "CRITICAL_ALERT",
+            payload: { message: alert.message },
+            at: alert.createdAt,
+          }));
+        },
+        intervalMs: demo ? 4000 : 15000,
       }),
     });
 
@@ -150,5 +173,5 @@ export function useMockRealtime(channelName: string): {
     };
   }, [channelName]);
 
-  return { liveEvents, status };
+  return { liveEvents, status, simulated };
 }

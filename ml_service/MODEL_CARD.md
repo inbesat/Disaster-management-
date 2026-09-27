@@ -28,7 +28,7 @@
 2. `lib/ml-client.ts` formats the 4-model-features payload and POSTs it to the FastAPI service (`http://127.0.0.1:8000/predict`).
 3. FastAPI loads the trained `flood_xgboost_model.pkl` on startup, runs `predict_proba`, and returns the predicted class + confidence.
 4. `lib/ml-client.ts` maps class `0-3` to the UI labels **Safe / Watch / Warning / Evacuate**, persists the row to `flood_predictions`, and returns it to the UI.
-5. If the Python service is unreachable, the client **gracefully falls back** to a default `Safe` result so the app never crashes.
+5. If the Python service is unreachable, the API returns HTTP 503 with risk unavailable. It never substitutes a `Safe` result. Predictions are experimental, and automated alert dispatch is disabled unless `ML_AUTO_ALERTS_ENABLED=true`.
 
 ## 2. Features
 

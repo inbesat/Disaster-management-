@@ -9,9 +9,7 @@ let stripe: Stripe | null = null;
 
 function getStripe() {
   if (!stripe && process.env.STRIPE_SECRET_KEY) {
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
-    });
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {});
   }
   return stripe;
 }
@@ -26,7 +24,10 @@ export async function POST(request: NextRequest) {
   const signature = request.headers.get("stripe-signature");
 
   if (!signature) {
-    return NextResponse.json({ error: "Missing stripe-signature header" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing stripe-signature header" },
+      { status: 400 },
+    );
   }
 
   let event;
@@ -34,9 +35,15 @@ export async function POST(request: NextRequest) {
   try {
     const stripeInstance = getStripe();
     if (!stripeInstance) throw new Error("Stripe not initialized");
-    event = stripeInstance.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
+    event = stripeInstance.webhooks.constructEvent(
+      body,
+      signature,
+      STRIPE_WEBHOOK_SECRET,
+    );
   } catch (err: unknown) {
-    safeLog("error", "[stripe/webhook] Signature verification failed", { metadata: { error: String(err) } });
+    safeLog("error", "[stripe/webhook] Signature verification failed", {
+      metadata: { error: String(err) },
+    });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -46,7 +53,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const userId = session.subscription_data?.metadata?.supabase_user_id;
+        const userId = session.metadata?.supabase_user_id || session.client_reference_id;
         const customerId = session.customer as string;
         const subscriptionId = session.subscription as string;
 
@@ -54,9 +61,12 @@ export async function POST(request: NextRequest) {
           // Get subscription details
           const stripeInstance = getStripe();
           if (!stripeInstance) throw new Error("Stripe not initialized");
-          const subscription = await stripeInstance.subscriptions.retrieve(subscriptionId);
+          const subscription =
+            await stripeInstance.subscriptions.retrieve(subscriptionId);
           const priceId = subscription.items.data[0]?.price.id;
-          const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+          const currentPeriodEnd = new Date(
+            (subscription.items.data[0]?.current_period_end ?? 0) * 1000,
+          );
 
           await supabase
             .from("users")
@@ -71,7 +81,9 @@ export async function POST(request: NextRequest) {
             })
             .eq("id", userId);
 
-          safeLog("info", "[stripe/webhook] Subscription activated", { metadata: { userId, subscriptionId, priceId } });
+          safeLog("info", "[stripe/webhook] Subscription activated", {
+            metadata: { userId, subscriptionId, priceId },
+          });
         }
         break;
       }
@@ -94,13 +106,15 @@ export async function POST(request: NextRequest) {
 
         if (targetUserId) {
           const priceId = subData.items.data[0]?.price.id;
-          const currentPeriodEnd = new Date(subData.current_period_end * 1000);
+          const currentPeriodEnd = new Date(
+            (subData.items.data[0]?.current_period_end ?? 0) * 1000,
+          );
           let status: "active" | "past_due" | "canceled" | "trialing" = "active";
 
           switch (subData.status) {
             case "active":
             case "trialing":
-              status = subData.status;
+              status = subData.status === "trialing" ? "trialing" : "active";
               break;
             case "past_due":
               status = "past_due";
@@ -126,7 +140,12 @@ export async function POST(request: NextRequest) {
             .eq("id", targetUserId);
 
           safeLog("info", "[stripe/webhook] Subscription updated", {
-            metadata: { userId: targetUserId, subscriptionId: subData.id, status, priceId },
+            metadata: {
+              userId: targetUserId,
+              subscriptionId: subData.id,
+              status,
+              priceId,
+            },
           });
         }
         break;
@@ -155,7 +174,9 @@ export async function POST(request: NextRequest) {
             })
             .eq("id", profile.id);
 
-          safeLog("info", "[stripe/webhook] Subscription canceled", { metadata: { userId: profile.id, subscriptionId: subscription.id } });
+          safeLog("info", "[stripe/webhook] Subscription canceled", {
+            metadata: { userId: profile.id, subscriptionId: subscription.id },
+          });
         }
         break;
       }
@@ -179,18 +200,24 @@ export async function POST(request: NextRequest) {
             })
             .eq("id", profile.id);
 
-          safeLog("warn", "[stripe/webhook] Payment failed", { metadata: { userId: profile.id, invoiceId: invoice.id } });
+          safeLog("warn", "[stripe/webhook] Payment failed", {
+            metadata: { userId: profile.id, invoiceId: invoice.id },
+          });
         }
         break;
       }
 
       default:
-        safeLog("info", "[stripe/webhook] Unhandled event type", { metadata: { type: event.type } });
+        safeLog("info", "[stripe/webhook] Unhandled event type", {
+          metadata: { type: event.type },
+        });
     }
 
     return NextResponse.json({ received: true });
   } catch (error: unknown) {
-    safeLog("error", "[stripe/webhook] Handler error", { metadata: { error: String(error), type: event.type } });
+    safeLog("error", "[stripe/webhook] Handler error", {
+      metadata: { error: String(error), type: event.type },
+    });
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

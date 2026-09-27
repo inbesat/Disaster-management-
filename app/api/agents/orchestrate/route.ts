@@ -3,8 +3,7 @@ import { createInitialState, type EmergencyGraphInput } from "@/lib/agents/graph
 import { getEmergencyGraph, foldFinalState } from "@/lib/agents/graph";
 import { requireRole } from "@/lib/security/require-role";
 import { createRateLimiter } from "@/lib/security/rate-limit";
-import { getAgentModel } from "@/lib/agents/model-provider";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -35,39 +34,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!rateResult.success) {
     return NextResponse.json(
       { error: "Too many requests. Please wait before trying again." },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((rateResult.resetTime - Date.now()) / 1000)) } },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rateResult.resetTime - Date.now()) / 1000)),
+        },
+      },
     );
   }
 
-  let body: {
-    incidentDetails?: string;
-    incidentId?: string;
-    availableInventory?: Record<string, number>;
-    hoardingLimitPercent?: number;
-    predictorSensitivity?: number;
-  } = {};
-  try {
-    body = await request.json();
-  } catch {
-    body = {};
-  }
-
-  const incidentDetails = (body.incidentDetails ?? "").toString().trim();
-  if (!incidentDetails) {
+  const parsed = z
+    .object({
+      incidentDetails: z.string().trim().min(1).max(6000),
+      incidentId: z.string().max(100).optional(),
+      availableInventory: z
+        .record(z.string().max(100), z.number().finite().nonnegative())
+        .optional(),
+      hoardingLimitPercent: z.number().min(0).max(100).optional(),
+      predictorSensitivity: z.number().min(0).max(100).optional(),
+    })
+    .safeParse(await request.json().catch(() => null));
+  if (!parsed.success)
     return NextResponse.json(
-      { ok: false, error: "incidentDetails is required." },
+      {
+        error:
+          "Valid incident details, nonnegative inventory and percentages from 0 to 100 are required.",
+      },
       { status: 400 },
     );
-  }
-
+  const body = parsed.data;
+  const incidentDetails = body.incidentDetails;
   const incidentId = body.incidentId ?? `incident-${Date.now()}`;
 
   const graph = getEmergencyGraph();
   const input: EmergencyGraphInput = createInitialState(incidentDetails, {
     status: "predicting",
     ...(body.availableInventory ? { availableInventory: body.availableInventory } : {}),
-    ...(body.hoardingLimitPercent ? { hoardingLimitPercent: body.hoardingLimitPercent } : {}),
-    ...(body.predictorSensitivity ? { predictorSensitivity: body.predictorSensitivity } : {}),
+    ...(body.hoardingLimitPercent !== undefined
+      ? { hoardingLimitPercent: body.hoardingLimitPercent }
+      : {}),
+    ...(body.predictorSensitivity !== undefined
+      ? { predictorSensitivity: body.predictorSensitivity }
+      : {}),
   });
 
   // Stream per-node "updates" so the UI can replay each agent's contribution
@@ -83,36 +91,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // Fold streamed updates into the authoritative final state.
   const finalState = foldFinalState(steps, incidentDetails);
 
-  // Generate human-readable public advisory via LLM chain (deterministic decisions untouched).
-  // Uses the multi-provider fallback: OpenRouter (primary + backup) → Groq → Bluesminds.
-  let communicatorAdvisory = "";
-  let llmUsed = false;
-  if (finalState.status === "pending_approval" || finalState.status === "resolved") {
-    try {
-      const model = getAgentModel();
-      const prompt = `Generate a concise, official-sounding public advisory broadcast for the following emergency situation. Tone: authoritative, calm, action-oriented. No markdown. Max 180 words.
-
-Incident: ${finalState.incidentDetails}
-Risk Level: ${finalState.riskLevel}
-Evacuation Plan: ${finalState.evacuationPlan || "No evacuation plan drafted yet"}
-Resource Allocations: ${JSON.stringify(finalState.resourceAllocations)}
-Status: ${finalState.status}
-${finalState.conflict ? `Conflict: ${finalState.conflict}` : ""}
-
-Output ONLY the advisory text.`;
-      const response = await model.invoke([
-        new SystemMessage("You are the Emergency Communications Officer. Draft clear, directive public advisories."),
-        new HumanMessage(prompt),
-      ]);
-      communicatorAdvisory = typeof response.content === "string" ? response.content : String(response.content);
-      llmUsed = true;
-    } catch (e) {
-      console.warn("[orchestrate] LLM advisory generation failed, using template fallback:", e);
-      // Template fallback (existing communicatorNode logic)
-      const incidentHint = (finalState.incidentDetails ?? "").slice(0, 48) || "active incident";
-      communicatorAdvisory = `ATTENTION: Emergency broadcast for "${incidentHint}". ${finalState.riskLevel === "CRITICAL" ? "CRITICAL FLOOD RISK — Immediate evacuation ordered." : "Elevated flood risk — Monitor official channels."} Evacuation routes activated. Proceed to designated shelters. Follow field responder instructions.`;
-    }
-  }
+  const llmUsed = steps.some(
+    (step) => step.node === "planner" && Array.isArray(step.update.proposedAllocations),
+  );
+  const communicatorAdvisory =
+    finalState.status === "pending_approval"
+      ? `DRAFT — not broadcast or an official order. ${finalState.evacuationPlan}`
+      : "";
 
   return NextResponse.json({
     ok: true,

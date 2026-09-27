@@ -17,7 +17,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Map as MapIcon, Phone, X } from "lucide-react";
+import { Map as MapIcon, X } from "lucide-react";
 import {
   CENTER_FILTERS,
   CENTER_TYPE_EMOJI,
@@ -56,13 +56,15 @@ export default function CenterDirectory() {
             <MapIcon aria-hidden="true" className="h-[18px] w-[18px] text-[var(--dl-blue)]" />
           </span>
           <div>
-            <h2 className="text-base font-bold text-white">Nearby Help Centers</h2>
+            <h2 className="text-base font-bold text-white">Demo Help Centers</h2>
             <p className="text-[0.6875rem] font-semibold uppercase tracking-widest text-[var(--dl-text-muted)]">
               NDRF · Police · Hospitals · Fire
             </p>
           </div>
         </div>
       </div>
+
+      <p role="status" className="mt-3 text-xs font-semibold text-amber-200">Sample locations, hours, status and phone numbers are unverified. Use official local directories for emergency contact.</p>
 
       {/* Filter chips */}
       <div className="mt-3 flex flex-wrap gap-2">
@@ -117,19 +119,16 @@ export default function CenterDirectory() {
           {/* Faint street grid */}
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:28px_28px]" />
           {pins.map(({ center, x, y }) => (
-            <a
+            <span
               key={center.id}
-              href={centerDirectionsUrl(center)}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={`${center.name} — ${center.distanceKm.toFixed(1)} km`}
+              title={`${center.name} — sample location`}
               className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: `${x}%`, top: `${y}%` }}
             >
-              <span className="block text-2xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] transition hover:scale-125">
+              <span className="block text-2xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
                 {CENTER_TYPE_EMOJI[center.type]}
               </span>
-            </a>
+            </span>
           ))}
           {/* Legend */}
           <div className="absolute bottom-2 left-2 flex flex-wrap gap-x-3 gap-y-1 rounded-lg bg-black/40 px-2 py-1 backdrop-blur">
@@ -181,30 +180,11 @@ function CenterCard({ center }: { center: HelpCenter }) {
               overloaded ? "animate-pulse bg-severity-red-400" : "bg-emerald-400"
             }`}
           />
-          {overloaded ? "Overloaded" : "Open"}
+          {overloaded ? "Sample: Overloaded" : "Sample: Open"}
         </span>
       </div>
 
-      {/* Massive One-Tap Call */}
-      <a
-        href={`tel:${center.phone}`}
-        aria-label={`Call ${center.name} — ${center.phone}`}
-        className="flex h-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-emerald-600 px-3 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)] transition hover:bg-emerald-500 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
-      >
-        <Phone aria-hidden="true" className="h-4 w-4" />
-        <span className="text-[0.625rem] font-black uppercase leading-none tracking-wide">
-          Call
-        </span>
-      </a>
+      <span className="rounded-lg border border-amber-400/40 px-2 py-1 text-[0.625rem] font-bold uppercase text-amber-200">Unverified</span>
     </li>
   );
-}
-
-function centerDirectionsUrl(center: HelpCenter): string {
-  const params = new URLSearchParams({
-    api: "1",
-    destination: `${center.lat},${center.lng}`,
-    travelmode: "walking",
-  });
-  return `https://www.google.com/maps/dir/?${params.toString()}`;
 }

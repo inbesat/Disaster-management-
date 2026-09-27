@@ -32,7 +32,7 @@ const STATUS_BADGE: Record<
     text: "POLLING",
     cls: "text-amber-300",
     dot: "bg-amber-400",
-    title: "Realtime WebSocket blocked — fallback to polling is active",
+    title: "Refreshing recorded alerts from the server",
   },
   connecting: {
     text: "CONNECTING…",
@@ -89,7 +89,7 @@ export default function LiveActivityFeed({
 }: {
   channelName?: string;
 }) {
-  const { liveEvents, status } = useMockRealtime(channelName);
+  const { liveEvents, status, simulated } = useMockRealtime(channelName);
   const badge = STATUS_BADGE[status];
   const [now, setNow] = useState(Date.now());
   const [simEvents, setSimEvents] = useState<RealtimeEvent[]>([]);
@@ -113,7 +113,7 @@ export default function LiveActivityFeed({
     return () => window.removeEventListener(DEMO_ACTIVITY_EVENT, onDemoActivity);
   }, []);
 
-  const allEvents = [...simEvents, ...liveEvents];
+  const allEvents = [...(simulated ? simEvents : []), ...liveEvents];
 
   function timeAgo(iso: string): string {
     const s = Math.max(0, Math.floor((now - new Date(iso).getTime()) / 1000));
@@ -128,14 +128,14 @@ export default function LiveActivityFeed({
       <header className="flex items-center justify-between border-b border-border px-4 py-3">
         <h2 className="eoc-label flex items-center gap-2 text-accent">
           <Radio className="h-4 w-4" />
-          LIVE ACTIVITY FEED
+          {simulated ? "DEMO ACTIVITY" : "RECORDED ALERTS"}
         </h2>
         <span
           title={badge.title}
           className={`flex cursor-help items-center gap-1.5 text-xs font-bold ${badge.cls}`}
         >
           <span className={`h-2 w-2 rounded-full ${badge.dot}`} />
-          {badge.text}
+          {simulated ? "DEMO DATA" : badge.text}
           {status === "polling" && (
             <RefreshCw className="ml-0.5 h-3 w-3" aria-label="Polling fallback active" />
           )}

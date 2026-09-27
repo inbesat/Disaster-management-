@@ -1,0 +1,3 @@
+{"database":"unavailable","reason":"Host unreachable"}
+Notion: Source returned HTTP 404
+ML 200 {"predicted_risk_class":3,"risk_level":"Critical","confidence_score":0.5655086636543274,"probabilities":[0.017314201220870018,0.03329943120479584,0.3838777244091034,0.5655086636543274]}

@@ -37,6 +37,7 @@ async function main() {
     incidentDetails: "river breach",
     riskLevel: s.riskLevel,
     evacuationPlan: s.evacuationPlan,
+    proposedAllocations: [],
     resourceAllocations: s.resourceAllocations as never,
     status: s.status,
     logs: s.logs,

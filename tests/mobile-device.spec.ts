@@ -9,17 +9,22 @@ test.describe("Mobile Device Experience", () => {
   test("1. Verify public dashboard responsiveness & touch targets on mobile", async ({
     page,
   }) => {
-    await page.context().addCookies([
-      { name: "role", value: "public", domain: "localhost", path: "/" },
-    ]);
+    await page
+      .context()
+      .addCookies([{ name: "role", value: "public", domain: "localhost", path: "/" }]);
     await page.goto("/public/dashboard");
 
     // Bottom navigation visible on mobile
-    const bottomNav = page.locator("nav").filter({ hasText: /Home|Alerts|Map|SOS/i }).first();
+    const bottomNav = page
+      .locator('nav[aria-label="Citizen navigation"]:visible')
+      .first();
     await expect(bottomNav).toBeVisible();
 
     // Check touch target heights (must be at least 44px)
-    const sosTab = page.getByRole("button", { name: /SOS/i }).or(page.getByText("SOS")).first();
+    const sosTab = page
+      .getByRole("button", { name: /SOS/i })
+      .or(page.getByText("SOS"))
+      .first();
     if (await sosTab.isVisible()) {
       const box = await sosTab.boundingBox();
       if (box) {
@@ -33,18 +38,36 @@ test.describe("Mobile Device Experience", () => {
     page,
     context,
   }) => {
-    await page.context().addCookies([
-      { name: "role", value: "public", domain: "localhost", path: "/" },
-    ]);
+    await page
+      .context()
+      .addCookies([{ name: "role", value: "public", domain: "localhost", path: "/" }]);
     await page.goto("/public/dashboard");
 
-    // Simulate going offline on mobile device
+    // Wait for the production service worker to install and control a page.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            async () =>
+              (await navigator.serviceWorker.getRegistration())?.active?.state ===
+              "activated",
+          ),
+        { timeout: 30_000 },
+      )
+      .toBe(true);
+    await page.reload();
+    await expect
+      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+
     await context.setOffline(true);
-    await page.goto("/public/dashboard");
+    await page.goto("/public/dashboard", { waitUntil: "domcontentloaded" });
 
-    // Banner or status should indicate offline mode
+    // A visited public page remains readable offline, with the safety state
+    // explicitly unverified when live services cannot be reached.
+    await expect(page.getByRole("main")).toBeVisible();
     await expect(
-      page.getByText(/OFFLINE|cached|connectivity/i).or(page.getByText(/SAFE|WATCH/i)).first(),
+      page.getByRole("heading", { name: /safety status unavailable|offline/i }).first(),
     ).toBeVisible();
 
     // Reconnect

@@ -12,56 +12,6 @@ export type ResourceSnapshot = {
   depotName: string | null;
 };
 
-function mockInventory(district: string): ResourceSnapshot[] {
-  return [
-    {
-      id: "res-1",
-      name: "NDRF Rescue Boats",
-      category: "boat",
-      quantity: 12,
-      unit: "boats",
-      status: "available",
-      depotName: `${district} NDRF Depot`,
-    },
-    {
-      id: "res-2",
-      name: "Medical First-Aid Kits",
-      category: "medical",
-      quantity: 200,
-      unit: "kits",
-      status: "available",
-      depotName: "Sadar Hospital Depot",
-    },
-    {
-      id: "res-3",
-      name: "Bottled Water Pallets",
-      category: "water",
-      quantity: 350,
-      unit: "pallets",
-      status: "available",
-      depotName: "Gandhi Maidan Store",
-    },
-    {
-      id: "res-4",
-      name: "Search & Rescue Teams",
-      category: "personnel",
-      quantity: 8,
-      unit: "teams",
-      status: "available",
-      depotName: "District Unit",
-    },
-    {
-      id: "res-5",
-      name: "Food Rations",
-      category: "food",
-      quantity: 350,
-      unit: "pallets",
-      status: "available",
-      depotName: "District Store",
-    },
-  ];
-}
-
 export const getResourceInventory = tool({
   description:
     "Fetches the current inventory of response resources (boats, food, medical, personnel, water, vehicles) and their availability status for a district.",
@@ -84,9 +34,14 @@ export const getResourceInventory = tool({
   }),
   execute: async ({ district, category }) => {
     try {
+      // Resources have coordinates rather than a district column. Restrict to
+      // verified depots whose labels explicitly identify the requested district.
       const rows = await prisma.resource.findMany({
-        where: category ? { category } : {},
-        orderBy: { category: "asc" },
+        where: {
+          isDemo: false,
+          depotName: { contains: district, mode: "insensitive" },
+          ...(category ? { category } : {}),
+        },
         select: {
           id: true,
           name: true,
@@ -96,35 +51,23 @@ export const getResourceInventory = tool({
           status: true,
           depotName: true,
         },
+        take: 50,
       });
-
-      if (!rows.length) {
-        const base = mockInventory(district);
-        const filtered = category ? base.filter((r) => r.category === category) : base;
-        return { district, resources: filtered };
-      }
-
       return {
         district,
-        category: category ?? "all",
-        resources: rows.map((r) => ({
-          id: r.id,
-          name: r.name,
-          category: r.category,
-          quantity: r.quantity,
-          unit: r.unit,
-          status: r.status,
-          depotName: r.depotName,
-        })),
+        resources: rows,
+        source: "database",
+        coverage:
+          "District-labelled depots only; unassigned depots require operator review.",
       };
     } catch {
-      const base = mockInventory(district);
-      const filtered = category ? base.filter((r) => r.category === category) : base;
-      return { district, category: category ?? "all", resources: filtered };
+      return {
+        district,
+        resources: [],
+        source: "unavailable",
+        error: "Inventory unavailable. Do not assume stock is available.",
+      };
     }
   },
 });
-
-export const resourceInventoryTools = {
-  getResourceInventory,
-};
+export const resourceInventoryTools = { getResourceInventory };

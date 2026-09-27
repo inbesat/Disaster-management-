@@ -69,14 +69,16 @@ export function foldFinalState(
 
   for (const { update } of steps) {
     const partial = update as Partial<FinalStateShape>;
-    if (typeof partial.incidentDetails === "string") final.incidentDetails = partial.incidentDetails;
+    if (typeof partial.incidentDetails === "string")
+      final.incidentDetails = partial.incidentDetails;
     if (typeof partial.riskLevel === "string") final.riskLevel = partial.riskLevel;
-    if (typeof partial.evacuationPlan === "string") final.evacuationPlan = partial.evacuationPlan;
+    if (typeof partial.evacuationPlan === "string")
+      final.evacuationPlan = partial.evacuationPlan;
     if (typeof partial.status === "string") final.status = partial.status;
     if (partial.conflict !== undefined) final.conflict = partial.conflict;
     if (Array.isArray(partial.logs)) final.logs.push(...partial.logs);
     if (Array.isArray(partial.resourceAllocations)) {
-      final.resourceAllocations.push(...partial.resourceAllocations);
+      final.resourceAllocations = partial.resourceAllocations;
     }
   }
 

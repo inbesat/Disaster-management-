@@ -1,0 +1,29 @@
+[
+  {
+    "provider": "GROQ_API_KEY",
+    "status": 403,
+    "model": "openai/gpt-oss-120b"
+  },
+  {
+    "provider": "GROQ_API_KEY_BACKUP",
+    "status": 403,
+    "model": "openai/gpt-oss-120b"
+  },
+  {
+    "provider": "OPENROUTER_API_KEY",
+    "status": 200,
+    "textReceived": false,
+    "model": "openrouter/free"
+  },
+  {
+    "provider": "OPENROUTER_API_KEY_BACKUP",
+    "status": 200,
+    "textReceived": true,
+    "model": "openrouter/free"
+  },
+  {
+    "provider": "BLUESMINDS_API_KEY",
+    "status": "URLError",
+    "model": "google/gemini-2.5-flash"
+  }
+]

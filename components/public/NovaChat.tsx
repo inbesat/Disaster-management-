@@ -1,40 +1,6 @@
 "use client";
 
-// ---------------------------------------------------------------------
-// components/public/NovaChat.tsx — Phase 1 · Step 1 · the "Nova" AI
-// floating companion.
-//
-// Nova ("friends") is the citizen's life-saving AI companion, rebranded
-// from the earlier Nova shell with a warm, human feel:
-//
-//   • A persistent 56px floating chat bubble (the --bg-accent-purple
-//     token, #8b5cf6) pinned bottom-right on every /public screen.
-//   • Tap → a smooth framer-motion BOTTOM SHEET with two snap points —
-//     60% by default, draggable/flingable to 100% — and drag-down past
-//     60% to dismiss (same physics as NovaChat/MapBottomSheet).
-//   • Voice-first composer: the microphone is the LARGEST, most prominent
-//     control in the input row — bigger than the text field and glowing
-//     violet (VoiceInput with tone="violet").
-//   • A friendly, non-robotic avatar — a warm smile on a violet gradient
-//     circle instead of a robot chip — in the header and beside replies.
-//
-// The welcome + replies are calm, human language; the mock reply uses the
-// existing translated nova_reply guidance so the answer still speaks
-// the citizen's language. Voice results drop straight into the composer.
-//
-// Phase 1 · Step 2 — Emergency Intent Detection & Auto-SOS. If a citizen
-// says they're in danger, Nova must ACT, not just chat:
-//
-//   • Every input — typed OR the voice transcript — is intercepted BEFORE
-//     it reaches the reply path (see detectEmergency).
-//   • Emergency keywords (help / trapped / flood / rescue / medical /
-//     emergency — plus common Hindi equivalents) flip the sheet into
-//     red-tinted "Emergency Mode" with larger text.
-//   • Nova auto-replies with a calming confirmation and programmatically
-//     triggers the SOS flow: the app enters Emergency Mode (red banner +
-//     nav lock), live GPS sharing starts, the citizen is marked TRAPPED,
-//     and the control room / family are notified (toast + persisted flag).
-// ---------------------------------------------------------------------
+// Citizen chat. Emergency language opens the SOS form for explicit confirmation.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -51,7 +17,6 @@ import { triggerLightHaptic } from "@/hooks/useHaptics";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 import { showToast } from "@/components/ui/Toast";
 import { useSOS } from "@/components/public/sos/SOSContext";
-import { writeTrappedStatus } from "@/lib/mock-data/public-alerts";
 import { detectEmergency } from "@/lib/emergency-intent";
 import { detectCenterIntent, nearestCenterOfType } from "@/lib/center-intent";
 import { CENTER_TYPE_EMOJI, CENTER_TYPE_LABEL, type HelpCenter } from "@/lib/mock-data/help-centers";
@@ -87,7 +52,7 @@ const WELCOME =
 
 /** Calming auto-reply when an emergency intent is detected. */
 const EMERGENCY_REPLY =
-  "I am alerting the control room now. Stay calm. I've shared your live location and marked you as needing rescue — help is on the way.";
+  "I can help you send an SOS. Confirm the request in the emergency form that just opened. Nothing has been sent yet; call emergency services if you are in immediate danger.";
 
 type ChatEntry = {
   id: string;
@@ -107,7 +72,7 @@ export function NovaChat() {
   const showFab = !pathname?.startsWith("/public/map");
   // Global SOS controls — Nova sits under the public layout's SOSProvider,
   // so it can activate Emergency Mode + location sharing programmatically.
-  const { activateEmergency, startSharingLocation } = useSOS();
+  const { open: openSOS } = useSOS();
 
   const [open, setOpen] = useState(false);
   const [snap, setSnap] = useState<"collapsed" | "expanded">("collapsed");
@@ -119,7 +84,6 @@ export function NovaChat() {
   const [emergencyActive, setEmergencyActive] = useState(false);
   // Guards the SOS side-effects so repeated emergency messages in one open
   // session fire the toast / banner / location share exactly once.
-  const sosTriggeredRef = useRef(false);
   // Typewriter intervals — cleared on unmount so reveals never tick on.
   const streamTimersRef = useRef<number[]>([]);
 
@@ -233,14 +197,7 @@ export function NovaChat() {
     settle(snapToPx(next === "expanded" ? SNAP_EXPANDED : SNAP_COLLAPSED));
   };
 
-  /**
-   * Step 2 — Emergency path. Called when an input carries an emergency
-   * intent. Pins the user's words, switches the sheet to Emergency Mode,
-   * auto-replies with the calming confirmation, then — ONCE per open
-   * session — programmatically triggers the SOS flow: Emergency Mode
-   * (red banner + nav lock), live GPS sharing, TRAPPED status, and the
-   * control-room / family notification toast.
-   */
+  /** Open the SOS form when emergency language is detected. */
   const handleEmergency = (text: string) => {
     triggerLightHaptic();
     setEmergencyActive(true);
@@ -251,17 +208,10 @@ export function NovaChat() {
     ]);
     setDraft("");
 
-    if (sosTriggeredRef.current) return;
-    sosTriggeredRef.current = true;
-
-    activateEmergency();
-    startSharingLocation();
-    writeTrappedStatus();
-    showToast("error", {
-      title: "Emergency Mode active — help is on the way",
-      description:
-        "Your live location is being shared with the control room and your family. Stay calm and stay put.",
-      duration: 6000,
+    openSOS();
+    showToast("warning", {
+      title: "Confirm your SOS",
+      description: "The request has not been sent yet. Call emergency services if in immediate danger.",
     });
   };
 
@@ -346,10 +296,10 @@ export function NovaChat() {
 
     resolveNovaReply(trimmed, history, undefined)
       .then((result) => {
-        streamReveal(result.source === "static" ? t("nova_reply") : result.text);
+        streamReveal(result.source === "static" ? "AI is unavailable. Please retry shortly." : result.text);
       })
       .catch(() => {
-        streamReveal(t("nova_reply"));
+        streamReveal("AI is unavailable. Please retry shortly.");
       });
   };
 

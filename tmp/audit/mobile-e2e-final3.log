@@ -1,0 +1,39 @@
+
+Running 2 tests using 1 worker
+
+(node:13024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:9:7 › Mobile Device Experience › 1. Verify public dashboard responsiveness & touch targets on mobile (1.6s)
+  x  2 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness (12.9s)
+
+
+  1) [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  getByText(/OFFLINE|cached|connectivity/i).or(getByText(/SAFE|WATCH/i)).first()
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText(/OFFLINE|cached|connectivity/i).or(getByText(/SAFE|WATCH/i)).first()
+        13 × locator resolved to <span class="text-base font-bold leading-tight text-white">SafeSphere</span>
+           - unexpected value "hidden"
+
+
+      70 |         .or(page.getByText(/SAFE|WATCH/i))
+      71 |         .first(),
+    > 72 |     ).toBeVisible();
+         |       ^
+      73 |
+      74 |     // Reconnect
+      75 |     await context.setOffline(false);
+        at E:\Hackathons\disaster management\disaster-response-platform\tests\mobile-device.spec.ts:72:7
+
+    Error Context: test-results\mobile-device-Mobile-Devic-267c1-us-banner-and-PWA-readiness-Mobile-Chrome-Pixel-5-\error-context.md
+
+  1 failed
+    [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness 
+  1 passed (16.9s)

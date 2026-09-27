@@ -15,6 +15,7 @@ function baseUrl(): string {
 export type SafeWeatherResult = {
   source: "live" | "synthetic";
   rainfall_mm: number;
+  cumulative_rainfall_72h?: number;
   river_level_m: number | null;
   river_discharge_m3s: number | null;
   river_name: string | null;
@@ -120,6 +121,7 @@ export async function getSafeWeatherData(
   lng: number,
 ): Promise<SafeWeatherResult> {
   let rainfallMm = 0;
+  let cumulativeRainfall: number | undefined;
   let riverDischarge: number | null = null;
   let weatherOk = false;
   let floodOk = false;
@@ -128,7 +130,9 @@ export async function getSafeWeatherData(
   try {
     const weather = (await fetchJson(
       `${baseUrl()}/api/weather?lat=${lat}&lng=${lng}`,
-    )) as { weather?: { rainfall_mm?: number } };
+    )) as { source?: string; weather?: { rainfall_mm?: number } };
+    if (weather.source === "mock" || weather.source === "synthetic")
+      throw new Error("Weather source is simulated");
     const rain = Number(weather?.weather?.rainfall_mm);
     if (validateRainfall(rain)) {
       rainfallMm = rain;
@@ -140,12 +144,37 @@ export async function getSafeWeatherData(
     console.warn("Live weather fetch failed, falling back:", error);
   }
 
+  // The ML model needs 72-hour precipitation, not the current one-hour amount.
+  try {
+    const history = (await fetchJson(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=precipitation&past_hours=72&forecast_hours=1&timezone=GMT`,
+    )) as { hourly?: { time?: string[]; precipitation?: Array<number | null> } };
+    const now = Date.now();
+    const values = (history.hourly?.time ?? []).flatMap((time, index) => {
+      const at = Date.parse(time + "Z"),
+        value = history.hourly?.precipitation?.[index];
+      return at <= now &&
+        at > now - 72 * 3600000 &&
+        typeof value === "number" &&
+        Number.isFinite(value)
+        ? [value]
+        : [];
+    });
+    if (values.length === 72)
+      cumulativeRainfall = values.reduce((sum, value) => sum + value, 0);
+  } catch {
+    /* Missing history disables automatic model estimates. */
+  }
+
   // 2. Try live flood (river discharge).
   try {
     const flood = (await fetchJson(`${baseUrl()}/api/flood?lat=${lat}&lng=${lng}`)) as {
       peak_discharge_m3s?: number;
+      source?: string;
     };
-    const discharge = Number(flood?.peak_discharge_m3s);
+    if (flood.source === "mock" || flood.peak_discharge_m3s == null)
+      throw new Error("Flood source is unavailable");
+    const discharge = Number(flood.peak_discharge_m3s);
     if (validateDischarge(discharge)) {
       riverDischarge = discharge;
       floodOk = true;
@@ -174,6 +203,7 @@ export async function getSafeWeatherData(
     return {
       source: "live",
       rainfall_mm: rainfallMm,
+      cumulative_rainfall_72h: cumulativeRainfall,
       river_level_m: null,
       river_discharge_m3s: riverDischarge,
       river_name: place.river,

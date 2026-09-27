@@ -172,7 +172,7 @@ export const NAVIGATION_ROUTES: NavRoute[] = [
   },
   {
     label: "Satellite & Ground Truth",
-    href: "/settings/integrations",
+    href: "/satellite",
     icon: Satellite,
     section: "intelligence",
     allowedRoles: ["district_admin", "super_admin"],

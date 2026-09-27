@@ -2,17 +2,12 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
-import {
-  DefaultChatTransport,
-  type UIMessage,
-  type UIDataTypes,
-} from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { Database, FileText, Send, Sparkles, ShieldCheck } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import VoiceInput from "@/components/public/ai/VoiceInput";
-import RAGSourcesPanel, {
-  DEFAULT_SOURCES,
-  type RAGSource,
-} from "./RAGSourcesPanel";
+import RAGSourcesPanel, { type RAGSource } from "./RAGSourcesPanel";
 
 const WELCOME_CONTENT =
   "Commander, the swarm is online. Ask about responder availability, shelter capacity or flood scenarios — or tap a suggested query below.";
@@ -28,63 +23,20 @@ const TOOL_PROMPTS: ToolPrompt[] = [
 ];
 
 function formatTime(d: Date): string {
-  return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
 }
 
 function renderMarkdown(text: string) {
-  const lines = text.split("\n");
-  const elements: React.ReactNode[] = [];
-
-  lines.forEach((line, i) => {
-    const trimmed = line.trim();
-
-    const boldParsed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>');
-
-    if (trimmed.startsWith("- ")) {
-      elements.push(
-        <div key={i} className="flex gap-2 pl-1">
-          <span className="text-purple-400 mt-0.5">•</span>
-          <span
-            className="text-sm leading-relaxed text-slate-100"
-            dangerouslySetInnerHTML={{ __html: boldParsed.slice(2) }}
-          />
-        </div>,
-      );
-      return;
-    }
-
-    const numMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
-    if (numMatch) {
-      elements.push(
-        <div key={i} className="flex gap-2 pl-1">
-          <span className="text-purple-400 font-mono text-xs mt-0.5">{numMatch[1]}.</span>
-          <span
-            className="text-sm leading-relaxed text-slate-100"
-            dangerouslySetInnerHTML={{ __html: boldParsed.replace(/^\d+\.\s+/, "") }}
-          />
-        </div>,
-      );
-      return;
-    }
-
-    if (!trimmed) {
-      elements.push(<div key={i} className="h-1.5" />);
-      return;
-    }
-
-    elements.push(
-      <p
-        key={i}
-        className="text-sm leading-relaxed text-slate-100"
-        dangerouslySetInnerHTML={{ __html: boldParsed }}
-      />,
-    );
-  });
-
-  return elements;
+  return <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>;
 }
 
-function mapMetadataToRAGSources(meta: UIDataTypes["metadata"] | undefined): RAGSource[] | undefined {
+function mapMetadataToRAGSources(
+  meta: Record<string, unknown> | undefined,
+): RAGSource[] | undefined {
   if (!meta || !meta.ragSources || !Array.isArray(meta.ragSources)) return undefined;
   const srcs = meta.ragSources as Array<{
     title: string;
@@ -92,17 +44,21 @@ function mapMetadataToRAGSources(meta: UIDataTypes["metadata"] | undefined): RAG
     score: number | null;
     snippet: string;
   }>;
-  if (srcs.length === 0) return DEFAULT_SOURCES;
+  if (srcs.length === 0) return [];
   return srcs.map((s) => ({
     title: s.docType ? `${s.title} (${s.docType})` : s.title,
     icon: s.docType === "procedure" || s.docType === "guideline" ? ShieldCheck : FileText,
   }));
 }
 
-function getProviderBadge(meta: UIDataTypes["metadata"] | undefined): { label: string; isOffline: boolean } | null {
+function getProviderBadge(
+  meta: Record<string, unknown> | undefined,
+): { label: string; isOffline: boolean } | null {
   if (!meta) return null;
-  if (meta.offline === true) return { label: "OFFLINE · 61-rule fallback", isOffline: true };
-  if (meta.aiProvider && typeof meta.aiProvider === "string") return { label: meta.aiProvider.toUpperCase(), isOffline: false };
+  if (meta.offline === true)
+    return { label: "OFFLINE · 61-rule fallback", isOffline: true };
+  if (meta.aiProvider && typeof meta.aiProvider === "string")
+    return { label: meta.aiProvider.toUpperCase(), isOffline: false };
   return null;
 }
 
@@ -110,23 +66,18 @@ export function PlannerChat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [draft, setDraft] = useState("");
 
-  const { messages, append, status } = useChat({
+  const { messages, sendMessage, status, error } = useChat<
+    UIMessage<Record<string, unknown>>
+  >({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
-    initialMessages: [
+    messages: [
       {
         id: "welcome",
         role: "assistant",
         parts: [{ type: "text", text: WELCOME_CONTENT }],
-        metadata: { ragSources: DEFAULT_SOURCES.map((s) => ({ title: s.title, docType: null, score: null, snippet: "" })) },
-      } as UIMessage,
+        metadata: { ragSources: [] },
+      } as UIMessage<Record<string, unknown>>,
     ],
-    body: () => ({
-      // The server resolves district from auth (gov cookie + Supabase profile).
-      // currentDistrict is optional viewing context for the map sector.
-      // provider preference comes from settings localStorage if set.
-      currentDistrict: undefined,
-      provider: undefined,
-    }),
   });
 
   useEffect(() => {
@@ -140,10 +91,13 @@ export function PlannerChat() {
     (raw: string) => {
       const text = raw.trim();
       if (!text || status === "submitted" || status === "streaming") return;
-      setIsTyping(true);
-      append({ role: "user", content: text }, { body: { currentDistrict: undefined, provider: undefined } });
+      setDraft("");
+      void sendMessage(
+        { text: text },
+        { body: { currentDistrict: undefined, provider: undefined } },
+      );
     },
-    [append, status],
+    [sendMessage, status],
   );
 
   const handleKeyDown = useCallback(
@@ -159,10 +113,13 @@ export function PlannerChat() {
   const handleToolPrompt = useCallback(
     (label: string) => {
       if (status === "submitted" || status === "streaming") return;
-      setIsTyping(true);
-      append({ role: "user", content: label }, { body: { currentDistrict: undefined, provider: undefined } });
+      setDraft("");
+      void sendMessage(
+        { text: label },
+        { body: { currentDistrict: undefined, provider: undefined } },
+      );
     },
-    [append, status],
+    [sendMessage, status],
   );
 
   return (
@@ -183,18 +140,29 @@ export function PlannerChat() {
         <div className="flex items-center gap-2">
           {status === "submitted" || status === "streaming" ? (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-400/40 bg-purple-400/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-purple-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400" aria-hidden />
+              <span
+                className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400"
+                aria-hidden
+              />
               Streaming
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-400/40 bg-purple-400/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-purple-400">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400" aria-hidden />
+              <span
+                className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400"
+                aria-hidden
+              />
               Live
             </span>
           )}
         </div>
       </div>
 
+      {error && (
+        <p role="alert" className="px-4 py-2 text-sm text-red-400">
+          The AI request failed. Please retry shortly.
+        </p>
+      )}
       {/* Messages */}
       <div
         aria-live="polite"
@@ -202,9 +170,14 @@ export function PlannerChat() {
       >
         {messages.map((msg) => {
           const isUser = msg.role === "user";
-          const contentPart = msg.parts.find((p) => p.type === "text");
-          const content = contentPart?.text ?? "";
-          const isTypingMsg = !isUser && (status === "streaming" || status === "submitted") && msg.id === messages[messages.length - 1]?.id;
+          const content = msg.parts
+            .filter((p) => p.type === "text")
+            .map((p) => p.text)
+            .join("");
+          const isTypingMsg =
+            !isUser &&
+            (status === "streaming" || status === "submitted") &&
+            msg.id === messages[messages.length - 1]?.id;
           const sources = mapMetadataToRAGSources(msg.metadata);
           const badge = getProviderBadge(msg.metadata);
 
@@ -213,7 +186,9 @@ export function PlannerChat() {
               <div className="max-w-[85%] rounded-xl rounded-br-md bg-blue-600 px-3.5 py-2.5 text-sm leading-relaxed text-white shadow-[0_0_12px_rgba(37,99,235,0.2)]">
                 {content}
               </div>
-              <span className="text-[0.625rem] text-slate-400">{formatTime(new Date(msg.createdAt ?? Date.now()))}</span>
+              <span className="text-[0.625rem] text-slate-400">
+                {formatTime(new Date(Date.now()))}
+              </span>
             </div>
           ) : (
             <div key={msg.id} className="flex flex-col items-start gap-1">
@@ -237,7 +212,10 @@ export function PlannerChat() {
                         >
                           {badge.isOffline ? (
                             <>
-                              <span className="h-1 w-1 animate-pulse rounded-full bg-amber-400" aria-hidden />
+                              <span
+                                className="h-1 w-1 animate-pulse rounded-full bg-amber-400"
+                                aria-hidden
+                              />
                               {badge.label}
                             </>
                           ) : (
@@ -249,7 +227,9 @@ export function PlannerChat() {
                   </>
                 )}
               </div>
-              <span className="text-[0.625rem] text-slate-400">{formatTime(new Date(msg.createdAt ?? Date.now()))}</span>
+              <span className="text-[0.625rem] text-slate-400">
+                {formatTime(new Date(Date.now()))}
+              </span>
               {!isTypingMsg && sources && <RAGSourcesPanel sources={sources} />}
             </div>
           );

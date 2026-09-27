@@ -49,7 +49,7 @@ const ITEMS: MoreItem[] = [
   { kind: "link", label: "Shelters", href: "/shelters", icon: Tent },
   { kind: "link", label: "Resources", href: "/inventory", icon: PackageOpen },
   { kind: "link", label: "Routes", href: "/evacuations", icon: Route },
-  { kind: "link", label: "Satellite", href: "/settings/integrations", icon: Satellite },
+  { kind: "link", label: "Satellite", href: "/satellite", icon: Satellite },
   { kind: "link", label: "Settings", href: "/settings/profile", icon: Settings },
   { kind: "link", label: "Profile", href: "/settings/profile", icon: UserRound },
   { kind: "link", label: "Help Center", href: "https://help.safesphere.com", icon: LifeBuoy },

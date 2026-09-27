@@ -148,6 +148,9 @@ export default function PublicMapPage() {
       {/* Step 10 — offline-map badge, top-left below the header (renders
           only while the network is down; hydration-safe). */}
       <OfflineMapBadge />
+      <div role="status" className="pointer-events-none absolute inset-x-3 top-24 z-30 mx-auto max-w-lg rounded-lg border border-amber-400/60 bg-slate-950/95 px-3 py-2 text-center text-xs font-semibold text-amber-100 shadow-lg">
+        Demo map: shelter, road closure, flood and route layers are illustrative. Verify local advisories before travelling.
+      </div>
 
       {/* Citizen bottom nav — Map tab lights up via route matching */}
       <BottomNav />

@@ -47,19 +47,7 @@ function browserIsOnline(): boolean {
  */
 async function pingBackend(signal?: AbortSignal): Promise<boolean> {
   try {
-    // NEXT_PUBLIC_ is inlined into client bundles by Next.js, so the URL is
-    // always present on the browser even though process.env is otherwise
-    // server-only. Reads it directly (no Supabase client) so the probe works
-    // without importing @supabase/ssr into a plain browser context.
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SUPABASE_URL ??
-      (typeof window !== "undefined" &&
-        (window as unknown as { NEXT_PUBLIC_SUPABASE_URL?: string })
-          .NEXT_PUBLIC_SUPABASE_URL) ??
-      "";
-    if (!baseUrl) return false;
-    const url = baseUrl.replace(/\/$/, "") + "/auth/v1/health";
-    const res = await fetch(url, { signal, cache: "no-store" });
+    const res = await fetch("/api/ping", { signal, cache: "no-store" });
     return res.ok;
   } catch {
     return false;

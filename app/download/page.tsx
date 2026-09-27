@@ -41,7 +41,7 @@ const APK_EDITIONS: ApkEdition[] = [
   {
     title: "Standard Edition",
     target: "For general citizens",
-    size: "~25 MB",
+    size: "4.0 MB",
     tooltip:
       "Lightweight cloud-connected version. Requires internet for AI planning and live maps.",
     href: "/safesphere.apk",
@@ -50,23 +50,31 @@ const APK_EDITIONS: ApkEdition[] = [
     iconTile: "bg-sky-500/10 text-sky-300 ring-sky-500/30",
     buttonClass:
       "bg-sky-500 text-white shadow-[0_4px_20px_rgba(59,130,246,0.35)] hover:bg-sky-400 hover:shadow-[0_6px_28px_rgba(59,130,246,0.5)] focus-visible:outline-sky-400",
-    glowClass: "hover:shadow-[0_0_0_1px_rgba(59,130,246,0.25),0_12px_40px_-12px_rgba(59,130,246,0.35)]",
+    glowClass:
+      "hover:shadow-[0_0_0_1px_rgba(59,130,246,0.25),0_12px_40px_-12px_rgba(59,130,246,0.35)]",
     features: ["Cloud AI planning", "Live map routing", "Small footprint"],
   },
   {
     title: "Field Ops Edition",
-    target: "First responders & extreme offline survival",
-    size: "~73.6 MB",
+    target: "For responders and offline preparation",
+    size: "73.4 MB",
     tooltip:
-      "Full offline operation: 61-rule AI (Nova), TFLite triage classifier, offline MapLibre maps, GPS SOS with countdown, family distances, report triage — zero internet required.",
+      "Cloud AI when connected; clearly marked offline guidance and cached field tools when disconnected. Maps require previously downloaded data. Sending SOS reports requires connectivity.",
     href: "/safesphere-field-ops.apk",
     downloadName: "safesphere-field-ops.apk",
     icon: Satellite,
     iconTile: "bg-amber-500/10 text-amber-300 ring-amber-500/30",
     buttonClass:
       "bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-[0_4px_20px_rgba(249,115,22,0.35)] hover:from-amber-400 hover:to-orange-400 hover:shadow-[0_6px_28px_rgba(249,115,22,0.5)] focus-visible:outline-amber-400",
-    glowClass: "hover:shadow-[0_0_0_1px_rgba(249,115,22,0.25),0_12px_40px_-12px_rgba(249,115,22,0.4)]",
-    features: ["61-rule offline AI (Nova)", "TFLite triage classifier", "Offline MapLibre maps", "GPS SOS with 3-2-1 countdown", "Zero-internet operation"],
+    glowClass:
+      "hover:shadow-[0_0_0_1px_rgba(249,115,22,0.25),0_12px_40px_-12px_rgba(249,115,22,0.4)]",
+    features: [
+      "Cloud AI + offline guidance",
+      "TFLite triage classifier",
+      "Offline MapLibre maps",
+      "GPS SOS with 3-2-1 countdown",
+      "Cached data when offline",
+    ],
   },
 ];
 
@@ -133,6 +141,11 @@ export default function DownloadPage() {
           technical difference.
         </p>
       </header>
+
+      <p className="mx-auto mt-5 max-w-2xl text-center text-sm text-amber-200">
+        Android test builds. Online features connect to the deployed SafeSphere server;
+        server updates require a separate deployment.
+      </p>
 
       {/* Android APK edition cards */}
       <div className="mx-auto mt-12 grid w-full max-w-5xl grid-cols-1 gap-6 lg:grid-cols-2">
@@ -231,8 +244,8 @@ export default function DownloadPage() {
       </div>
 
       <footer className="mt-12 text-center text-xs text-slate-500">
-        SafeSphere builds signed releases for every supported platform. Verify
-        the checksum before sideloading an APK.
+        SafeSphere builds signed releases for every supported platform. Verify the
+        checksum before sideloading an APK.
       </footer>
     </main>
   );

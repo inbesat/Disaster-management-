@@ -7,7 +7,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const lat = Number(request.nextUrl.searchParams.get("lat"));
   const lng = Number(request.nextUrl.searchParams.get("lng"));
 
-  if (Number.isNaN(lat) || Number.isNaN(lng)) {
+  if (
+    !request.nextUrl.searchParams.has("lat") ||
+    !request.nextUrl.searchParams.has("lng") ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    Math.abs(lat) > 90 ||
+    Math.abs(lng) > 180
+  ) {
     return NextResponse.json(
       { error: "Missing or invalid 'lat' / 'lng' query parameters." },
       { status: 400 },

@@ -19,7 +19,6 @@ import {
   rateLimitByRole,
 } from "@/lib/security/rate-limiter";
 import { sanitizeShelterForPublic } from "@/lib/security/sanitize";
-import { CITIZEN_SHELTERS } from "@/lib/map/citizen-shelters";
 import { PUBLIC_SHELTERS_CACHE_TAG } from "@/lib/cache-tags";
 
 /**
@@ -43,6 +42,7 @@ export const revalidate = 300;
 const fetchPublicShelters = unstable_cache(
   async () => {
     const rows = await prisma.shelter.findMany({
+      where: { isDemo: false },
       orderBy: { createdAt: "desc" },
     });
     return rows.map(sanitizeShelterForPublic);
@@ -70,25 +70,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const shelters = await fetchPublicShelters();
     return NextResponse.json({ ok: true, shelters, source: "db" });
   } catch (error: unknown) {
-    // Prisma can be unreachable on cold starts — never 500 the Citizen App;
-    // serve the demo district's shelters so the public map still renders.
-    console.error("[public/shelters] Prisma unavailable; serving mock shelters.", error);
-    const now = new Date();
-    const shelters = CITIZEN_SHELTERS.map((s) =>
-      sanitizeShelterForPublic({
-        id: s.id,
-        name: s.name,
-        district: "Patna",
-        lat: s.lat,
-        lng: s.lng,
-        capacity: s.capacity,
-        currentOccupancy: s.occupancy,
-        status: s.occupancy >= s.capacity ? "full" : "open",
-        facilities: { food: s.food, medical: s.medical },
-        imageUrl: null,
-        updatedAt: now,
-      }),
-    );
-    return NextResponse.json({ ok: true, shelters, source: "mock" });
+    console.error("[public/shelters] Database unavailable", error);
+    return NextResponse.json({ ok: false, shelters: [], source: "unavailable", error: "Shelter information is temporarily unavailable. Contact local authorities before travelling." }, { status: 503 });
   }
 }

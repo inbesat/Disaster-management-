@@ -53,6 +53,7 @@ const ADMIN_BASES = [
   "/analytics",
   "/audit-logs",
   "/health",
+  "/satellite",
   // Settings · admin-only sections (Organization, Integrations). Non-admin
   // roles and guests are bounced to /403 here, like every other admin route.
   "/settings/organization",
@@ -98,26 +99,68 @@ export async function middleware(request: NextRequest) {
   // ingest, webhooks, admin) enforce auth via requireRole() in their
   // handlers. Sandbox traffic is handled separately below.
   if (pathname.startsWith("/api/") && !isSandbox) {
-    // Whitelist of public API prefixes that need no auth.
-    const publicApiPrefixes = [
-      "/api/shelters",
-      "/api/alerts",
-      "/api/predictions",
-      "/api/flood",
-      "/api/weather",
-      "/api/live-conditions",
-      "/api/public",
-      "/api/health",
-      "/api/cap",
-      "/api/road-closures",
-      "/api/allocations",
-    ];
-    const isPublicApi = publicApiPrefixes.some((p) => pathname === p || pathname.startsWith(p + "/"));
-    if (isPublicApi) return NextResponse.next();
-    // All other API routes pass through — auth is enforced per-handler via
-    // requireRole() or requireAuth(). The middleware's role-cookie check
-    // below still applies when a role cookie is present.
-    return NextResponse.next();
+    const origin = request.headers.get("origin");
+    const configured = process.env.NEXT_PUBLIC_SITE_URL;
+    const allowed = new Set([
+      request.nextUrl.origin,
+      "http://localhost:3000",
+      "https://safesphere0.netlify.app",
+      ...(configured ? [configured.replace(/\/$/, "")] : []),
+    ]);
+    if (origin && !allowed.has(origin))
+      return NextResponse.json(
+        { error: "CORS error: Origin not allowed." },
+        { status: 403 },
+      );
+    const signedWebhook =
+      pathname.startsWith("/api/webhooks/") ||
+      pathname.startsWith("/api/cron/") ||
+      pathname === "/api/whatsapp/inbound";
+    const readOnlyPost = pathname === "/api/chat" || pathname === "/api/predict";
+    if (
+      !["GET", "HEAD", "OPTIONS"].includes(request.method) &&
+      !signedWebhook &&
+      !readOnlyPost
+    ) {
+      const token = request.headers.get("x-csrf-token");
+      const cookie = request.cookies.get("csrf_token")?.value;
+      // Same-origin browser requests are protected by the Origin header;
+      // clients without it must provide the double-submit token.
+      if (!(origin && allowed.has(origin)) && (!token || token !== cookie))
+        return NextResponse.json(
+          { error: "CSRF token mismatch or missing." },
+          { status: 403 },
+        );
+    }
+    const response =
+      request.method === "OPTIONS"
+        ? new NextResponse(null, { status: 204 })
+        : NextResponse.next();
+    if (origin) {
+      response.headers.set("Access-Control-Allow-Origin", origin);
+      response.headers.set("Access-Control-Allow-Credentials", "true");
+      response.headers.set(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+      );
+      response.headers.set(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-CSRF-Token",
+      );
+      response.headers.set("Vary", "Origin");
+    }
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains",
+    );
+    response.headers.set(
+      "Content-Security-Policy",
+      "default-src 'self'; frame-ancestors 'none'; object-src 'none'",
+    );
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   }
 
   // =========================================================================
@@ -423,6 +466,7 @@ export const config = {
     "/analytics/:path*",
     "/audit-logs/:path*",
     "/health/:path*",
+    "/satellite/:path*",
     "/admin/:path*",
     "/field/:path*",
     "/shelter-update",

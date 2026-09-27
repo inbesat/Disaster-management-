@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import ToastViewport from "@/components/ui/Toast";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
@@ -35,26 +34,6 @@ import { SIMULATION_COOKIE } from "@/lib/admin/simulation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-
-// Phase 22 · Step 9 + UI Phase 1 · Step 9 — next/font/google (Inter for the
-// UI, JetBrains Mono for technical data readouts — coordinates, timestamps,
-// quotas). Exposed as --font-sans / --font-mono so tailwind.config.ts and
-// globals.css pick them up. Fonts are self-hosted at build time (no runtime
-// Google requests) and next/font applies fallback metric overrides, so text
-// never shifts while fonts load (zero CLS). `display: swap` is implied.
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-display",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -153,7 +132,7 @@ export default function RootLayout({
       {/* bg-primary / text-primary = the roadmap tokens (globals.css also
           sets them on body — these classes make it explicit). */}
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} ${poppins.variable} bg-[var(--brand-navy)] text-primary antialiased scroll-smooth`}
+        className={"bg-[var(--brand-navy)] text-primary antialiased scroll-smooth"}
       >
         {/* Phase 1 · SEO & Analytics — Local Business Schema + GA tracking */}
         <LocalBusinessSchema />

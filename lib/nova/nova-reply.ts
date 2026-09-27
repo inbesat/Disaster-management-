@@ -5,7 +5,7 @@ import { RuleBasedFallback } from "@/lib/ai-bridge/rule-based-fallback";
 import type { ChatContext, AIResponse } from "@/lib/ai-bridge/types";
 
 const NOVA_CHAT_ENDPOINT = "/api/chat";
-const NOVA_TIMEOUT_MS = 20_000;
+const NOVA_TIMEOUT_MS = 60_000;
 
 export type NovaReplySource = "cloud" | "rule-fallback" | "static";
 
@@ -20,7 +20,12 @@ export interface CloudProviderLike {
 }
 
 export interface RuleFallbackLike {
-  generateResponse(prompt: string, context: { currentDistrict: string }): { text: string; confidence?: number; mode?: string };
+  generateResponse(
+    prompt: string,
+    context: { currentDistrict: string },
+  ):
+    | { text: string; confidence?: number; mode?: string }
+    | Promise<{ text: string; confidence?: number; mode?: string }>;
 }
 
 /**
@@ -41,21 +46,28 @@ export async function resolveNovaReply(
   ruleFallback?: RuleFallbackLike,
 ): Promise<NovaReplyResult> {
   // Use injected providers or create defaults
-  const cloud = cloudProvider ?? new CloudAIProvider({
-    endpoint: NOVA_CHAT_ENDPOINT,
-    fetchImpl: (input, init) =>
-      fetch(input, {
-        ...init,
-        signal: AbortSignal.timeout(NOVA_TIMEOUT_MS),
-      }),
-  });
+  const cloud =
+    cloudProvider ??
+    new CloudAIProvider({
+      endpoint: NOVA_CHAT_ENDPOINT,
+      fetchImpl: (input, init) =>
+        fetch(input, {
+          ...init,
+          signal: AbortSignal.timeout(NOVA_TIMEOUT_MS),
+        }),
+    });
   const rule = ruleFallback ?? new RuleBasedFallback();
 
   // 1. Cloud — attempt the LLM chain
   if (typeof navigator !== "undefined" && navigator.onLine) {
     try {
       const ctx: ChatContext = {
-        history: history.slice(-6),
+        history: history
+          .slice(-6)
+          .map((m) => ({
+            role: m.role === "ai" ? ("assistant" as const) : ("user" as const),
+            content: m.content,
+          })),
         currentDistrict,
       };
 
@@ -72,12 +84,12 @@ export async function resolveNovaReply(
 
   // 2. RuleBasedFallback — 61 pre-written emergency rules, offline-capable
   try {
-    const fbResult = rule.generateResponse(prompt, {
+    const fbResult = await rule.generateResponse(prompt, {
       currentDistrict: currentDistrict ?? "unknown",
     });
     if (fbResult.confidence && fbResult.confidence > 0.5) {
       return {
-        text: fbResult.text.trim(),
+        text: `[Offline guidance] ${fbResult.text.trim()}`,
         source: "rule-fallback",
         confidence: fbResult.confidence,
       };

@@ -1,0 +1,30 @@
+
+Running 2 tests using 1 worker
+
+(node:21820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:9:7 › Mobile Device Experience › 1. Verify public dashboard responsiveness & touch targets on mobile (1.7s)
+  x  2 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness (10.0s)
+
+
+  1) [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness 
+
+    Error: page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:3000/public/dashboard
+    Call log:
+      - navigating to "http://localhost:3000/public/dashboard", waiting until "domcontentloaded"
+
+
+      62 |
+      63 |     await context.setOffline(true);
+    > 64 |     await page.goto("/public/dashboard", { waitUntil: "domcontentloaded" });
+         |                ^
+      65 |
+      66 |     // Banner or status should indicate offline mode
+      67 |     await expect(
+        at E:\Hackathons\disaster management\disaster-response-platform\tests\mobile-device.spec.ts:64:16
+
+    Error Context: test-results\mobile-device-Mobile-Devic-267c1-us-banner-and-PWA-readiness-Mobile-Chrome-Pixel-5-\error-context.md
+
+  1 failed
+    [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness 
+  1 passed (14.1s)

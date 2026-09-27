@@ -35,7 +35,6 @@ export default function DashboardPage() {
             classes below always match the real track count (mismatched spans
             force implicit grid tracks and break card alignment). */}
         <DashboardGrid
-          columns={{ mobile: 1, tablet: 2, desktop: 12, wide: 12 }}
           items={[
             { key: "kpis", className: "lg:col-span-12", children: <HeroKPIs /> },
             {

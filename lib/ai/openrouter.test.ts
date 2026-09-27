@@ -29,6 +29,7 @@ const PROVIDER_KEY_ENVS = [
   "OPENROUTER_API_KEY",
   "OPENROUTER_API_KEY_BACKUP",
   "BLUESMINDS_API_KEY",
+  "HF_TOKEN",
 ] as const;
 
 /** Blank every provider key — `hasKey("")` is false, so an unstubbed test

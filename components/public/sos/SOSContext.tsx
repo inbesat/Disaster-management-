@@ -1,29 +1,6 @@
 "use client";
 
-// ---------------------------------------------------------------------
-// components/public/sos/SOSContext.tsx — Phase 5 · Steps 1, 3–4 · global
-// SOS state.
-//
-// A tiny React context (the app has no Zustand; contexts are the
-// established global-state pattern here — LanguageContext, MapSettings,
-// AiSettings). It owns two things:
-//
-//   1. The SOS modal trigger — any component under the public layout can
-//      call useSOS().open(); the modal lives once in the layout.
-//   2. Emergency Mode (Step 4) — once a rescue/medical SOS is confirmed
-//      after its 3-second countdown, the app enters Emergency Mode:
-//      `emergency === true` shows the fixed red EmergencyModeBanner on
-//      every page and locks the BottomNav onto essential tabs.
-//   3. Live location sharing (Step 5) — the SOS modal's Share Location
-//      action starts a sharing session that drives the LocationTracker
-//      countdown bar. Emergency Mode implies sharing; it can also run
-//      standalone.
-//
-// The active flag is persisted (drip:sos-active) so a reload mid-
-// emergency keeps the banner — hydration-safe: it starts `false` on both
-// server and first paint, then snaps to the persisted value post-mount,
-// exactly like the "I am Safe" status.
-// ---------------------------------------------------------------------
+// Public SOS modal state and a local marker for reports recorded by the server.
 
 import {
   createContext,

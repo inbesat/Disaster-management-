@@ -9,6 +9,7 @@
 //      so the AI planner still gets useful context without any keys.
 // ---------------------------------------------------------------------
 
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/prisma";
 
 export type RetrievedDocument = {
@@ -27,23 +28,9 @@ const EMBEDDING_MODEL = process.env.OPENAI_EMBEDDING_MODEL || "text-embedding-3-
  * caller then falls back to keyword retrieval.
  */
 export async function getEmbedding(text: string): Promise<number[] | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-
   try {
-    const response = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: EMBEDDING_MODEL,
-        input: text.replace(/\s+/g, " ").trim(),
-      }),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!response.ok) return null;
-    const data = (await response.json()) as { data?: { embedding?: number[] }[] };
-    const embedding = data?.data?.[0]?.embedding;
-    return Array.isArray(embedding) && embedding.length > 0 ? embedding : null;
+    const { generateEmbeddings } = await import("@/lib/rag/embeddings");
+    return (await generateEmbeddings([text]))[0]?.embedding ?? null;
   } catch {
     return null;
   }
@@ -63,9 +50,11 @@ function tokenize(query: string): string[] {
 export async function retrieveRelevantDocuments(
   query: string,
   limit = 4,
+  district?: string,
+  keywordOnly = false,
 ): Promise<RetrievedDocument[]> {
   // Attempt vector similarity first.
-  const embedding = await getEmbedding(query);
+  const embedding = keywordOnly ? null : await getEmbedding(query);
   if (embedding) {
     try {
       const vector = `[${embedding.join(",")}]`;
@@ -82,6 +71,7 @@ export async function retrieveRelevantDocuments(
                1 - (embedding <=> ${vector}::vector) AS score
         FROM public.emergency_documents
         WHERE embedding IS NOT NULL
+          ${district ? Prisma.sql`AND (metadata->>'district' = ${district} OR metadata->>'district' IS NULL)` : Prisma.empty}
         ORDER BY embedding <=> ${vector}::vector
         LIMIT ${limit}
       `;
@@ -106,6 +96,18 @@ export async function retrieveRelevantDocuments(
   try {
     const docs = await prisma.emergencyDocument.findMany({
       where: {
+        ...(district
+          ? {
+              AND: [
+                {
+                  OR: [
+                    { metadata: { path: ["district"], equals: district } },
+                    { metadata: { path: ["district"], equals: Prisma.AnyNull } },
+                  ],
+                },
+              ],
+            }
+          : {}),
         OR: keywords.map((term) => ({
           OR: [
             { title: { contains: term, mode: "insensitive" as const } },

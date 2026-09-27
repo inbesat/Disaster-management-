@@ -1,0 +1,324 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 E:/Hackathons/disaster management/disaster-response-platform
+
+ ❯ lib/ai-bridge/ai-bridge-phase9.test.ts (6 tests | 1 failed) 29ms
+     × keeps the guided offline notice when the fallback itself errors 17ms
+ ❯ lib/ai-bridge/ai-bridge.test.ts (6 tests | 1 failed) 32ms
+     × returns the offline notice when offline and no local model is ready 16ms
+stderr | tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with arbitrary citizen email and password
+{"level":"error","message":"[auth] signInAction failed","timestamp":"2026-09-26T15:03:10.003Z","metadata":{"error":"Error: Invalid credentials"}}
+
+stderr | tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with admin email and routes to gov dashboard
+{"level":"error","message":"[auth] signInAction failed","timestamp":"2026-09-26T15:03:10.013Z","metadata":{"error":"Error: Invalid credentials"}}
+
+stderr | tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with super admin email and routes to gov overview
+{"level":"error","message":"[auth] signInAction failed","timestamp":"2026-09-26T15:03:10.015Z","metadata":{"error":"Error: Invalid credentials"}}
+
+ ❯ tests/auth-demo.test.ts (7 tests | 7 failed) 71ms
+       × accepts any arbitrary OTP code and redirects to command center 17ms
+       × accepts random digit string OTPs 2ms
+       × returns error message if no digits provided 4ms
+       × allows sign in with arbitrary citizen email and password 40ms
+       × allows sign in with admin email and routes to gov dashboard 2ms
+       × allows sign in with super admin email and routes to gov overview 2ms
+       × allows sign up with arbitrary details and falls back to demo login 1ms
+ ❯ lib/security/cors-csrf.test.ts (6 tests | 3 failed) 29ms
+     × rejects state-changing requests when CSRF token is missing or mismatched in middleware 20ms
+     × rejects requests with unauthorized CORS origins (e.g. https://evil.com) 1ms
+     × allows valid CORS preflight and GET requests for allowed origins 1ms
+ ❯ tests/security-regression.test.ts (16 tests | 2 failed) 34ms
+       × rejects state-changing requests with missing CSRF token in middleware 14ms
+       × rejects requests with unauthorized CORS origins (e.g. evil.com) 1ms
+stderr | lib/security/require-role.test.ts > Supabase mode (env configured) > fails closed (401) when the Supabase lookup throws
+{"level":"warn","message":"[requireRole] Supabase lookup failed; admitting demo role cookie","timestamp":"2026-09-26T15:03:37.922Z","metadata":{"error":"Error: network down"}}
+
+ ❯ lib/security/require-role.test.ts (13 tests | 1 failed) 40ms
+     × fails closed (401) when the Supabase lookup throws 22ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > verifyOTP > accepts any arbitrary OTP code and redirects to command center
+AssertionError: promise resolved "{ ok: false, …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "message": "Invalid or expired code. Request a new one.",
++   "ok": false,
+  }
+
+ ❯ tests/auth-demo.test.ts:40:40
+     38|   describe("verifyOTP", () => {
+     39|     it("accepts any arbitrary OTP code and redirects to command center…
+     40|       await expect(verifyOTP("123456")).rejects.toThrow("REDIRECT:/com…
+       |                                        ^
+     41|       expect(mockSet).toHaveBeenCalledWith("guest_mode", "true", expec…
+     42|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > verifyOTP > accepts random digit string OTPs
+AssertionError: promise resolved "{ ok: false, …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "message": "Invalid or expired code. Request a new one.",
++   "ok": false,
+  }
+
+ ❯ tests/auth-demo.test.ts:45:40
+     43|
+     44|     it("accepts random digit string OTPs", async () => {
+     45|       await expect(verifyOTP("999888")).rejects.toThrow("REDIRECT:/com…
+       |                                        ^
+     46|       expect(mockSet).toHaveBeenCalledWith("guest_mode", "true", expec…
+     47|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > verifyOTP > returns error message if no digits provided
+AssertionError: expected 'Enter the 6-digit code from your phon…' to contain 'Enter the code'
+
+Expected: "Enter the code"
+Received: "Enter the 6-digit code from your phone."
+
+ ❯ tests/auth-demo.test.ts:52:27
+     50|       const res = await verifyOTP("");
+     51|       expect(res.ok).toBe(false);
+     52|       expect(res.message).toContain("Enter the code");
+       |                           ^
+     53|     });
+     54|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with arbitrary citizen email and password
+AssertionError: expected [Function] to throw error including 'REDIRECT:/public/dashboard' but got 'REDIRECT:/login?error=Could%20not%20s…'
+
+Expected: "REDIRECT:/public/dashboard"
+Received: "REDIRECT:/login?error=Could%20not%20sign%20you%20in.%20Please%20try%20again."
+
+ ❯ tests/auth-demo.test.ts:62:43
+     60|       formData.append("password", "anypassword");
+     61|
+     62|       await expect(signInAction(formData)).rejects.toThrow("REDIRECT:/…
+       |                                           ^
+     63|       expect(mockSet).toHaveBeenCalledWith("role", "public", expect.an…
+     64|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with admin email and routes to gov dashboard
+AssertionError: expected [Function] to throw error including 'REDIRECT:/gov/dashboard' but got 'REDIRECT:/login?error=Could%20not%20s…'
+
+Expected: "REDIRECT:/gov/dashboard"
+Received: "REDIRECT:/login?error=Could%20not%20sign%20you%20in.%20Please%20try%20again."
+
+ ❯ tests/auth-demo.test.ts:71:43
+     69|       formData.append("password", "secret");
+     70|
+     71|       await expect(signInAction(formData)).rejects.toThrow("REDIRECT:/…
+       |                                           ^
+     72|       expect(mockSet).toHaveBeenCalledWith("role", "district_admin", e…
+     73|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > signInAction > allows sign in with super admin email and routes to gov overview
+AssertionError: expected [Function] to throw error including 'REDIRECT:/gov/overview' but got 'REDIRECT:/login?error=Could%20not%20s…'
+
+Expected: "REDIRECT:/gov/overview"
+Received: "REDIRECT:/login?error=Could%20not%20sign%20you%20in.%20Please%20try%20again."
+
+ ❯ tests/auth-demo.test.ts:80:43
+     78|       formData.append("password", "pass123");
+     79|
+     80|       await expect(signInAction(formData)).rejects.toThrow("REDIRECT:/…
+       |                                           ^
+     81|       expect(mockSet).toHaveBeenCalledWith("role", "super_admin", expe…
+     82|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  tests/auth-demo.test.ts > Demo Mode Authentication Actions > signUpAction > allows sign up with arbitrary details and falls back to demo login
+AssertionError: expected [Function] to throw error including 'REDIRECT:/public/dashboard' but got 'REDIRECT:/signup?error=Password%20mus…'
+
+Expected: "REDIRECT:/public/dashboard"
+Received: "REDIRECT:/signup?error=Password%20must%20be%20at%20least%208%20characters%20long%20and%20contain%20at%20least%20one%20uppercase%20letter%20and%20one%20number."
+
+ ❯ tests/auth-demo.test.ts:92:43
+     90|       formData.append("password", "simplepass");
+     91|
+     92|       await expect(signUpAction(formData)).rejects.toThrow("REDIRECT:/…
+       |                                           ^
+     93|       expect(mockSet).toHaveBeenCalledWith("role", "public", expect.an…
+     94|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  tests/security-regression.test.ts > Security Regression Tests (Prompt 19.2) > 8. CSRF & Origin Validation via Middleware > rejects state-changing requests with missing CSRF token in middleware
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ tests/security-regression.test.ts:221:26
+    219|
+    220|       const res = await middleware(req);
+    221|       expect(res.status).toBe(403);
+       |                          ^
+    222|       const json = await res.json();
+    223|       expect(json.error).toMatch(/CSRF/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  tests/security-regression.test.ts > Security Regression Tests (Prompt 19.2) > 8. CSRF & Origin Validation via Middleware > rejects requests with unauthorized CORS origins (e.g. evil.com)
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ tests/security-regression.test.ts:233:26
+    231|
+    232|       const res = await middleware(req);
+    233|       expect(res.status).toBe(403);
+       |                          ^
+    234|       const json = await res.json();
+    235|       expect(json.error).toMatch(/CORS/i);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  lib/ai-bridge/ai-bridge-phase9.test.ts > AIBridge phase-9 fallback > keeps the guided offline notice when the fallback itself errors
+AssertionError: expected 'I\'m offline and the local safety mod…' to contain 'AI assistant is temporarily unavailab…'
+
+Expected: "AI assistant is temporarily unavailable. For emergencies, use the SOS button or call 108."
+Received: "I'm offline and the local safety model isn't ready yet. Please reconnect to the internet, or start the local model download from Settings · Offline AI so emergency planning keeps working in blackouts."
+
+ ❯ lib/ai-bridge/ai-bridge-phase9.test.ts:82:22
+     80|     expect(res.mode).toBe("error");
+     81|     expect(res.error).toBe(true);
+     82|     expect(res.text).toContain("AI assistant is temporarily unavailabl…
+       |                      ^
+     83|   });
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ FAIL  lib/ai-bridge/ai-bridge.test.ts > AIBridge.route > returns the offline notice when offline and no local model is ready
+AssertionError: expected 'I\'m offline and the local safety mod…' to contain 'AI assistant is temporarily unavailab…'
+
+Expected: "AI assistant is temporarily unavailable. For emergencies, use the SOS button or call 108."
+Received: "I'm offline and the local safety model isn't ready yet. Please reconnect to the internet, or start the local model download from Settings · Offline AI so emergency planning keeps working in blackouts."
+
+ ❯ lib/ai-bridge/ai-bridge.test.ts:86:22
+     84|     expect(res.mode).toBe("error");
+     85|     expect(res.error).toBe(true);
+     86|     expect(res.text).toContain("AI assistant is temporarily unavailabl…
+       |                      ^
+     87|   });
+     88|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/15]⎯
+
+ FAIL  lib/security/cors-csrf.test.ts > CSRF and Header Security Validation > rejects state-changing requests when CSRF token is missing or mismatched in middleware
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ lib/security/cors-csrf.test.ts:25:30
+     23|
+     24|     const resNoCsrf = await middleware(reqNoCsrf);
+     25|     expect(resNoCsrf.status).toBe(403);
+       |                              ^
+     26|     const bodyNoCsrf = await resNoCsrf.json();
+     27|     expect(bodyNoCsrf.error).toBe("CSRF token mismatch or missing.");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/15]⎯
+
+ FAIL  lib/security/cors-csrf.test.ts > CSRF and Header Security Validation > rejects requests with unauthorized CORS origins (e.g. https://evil.com)
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ lib/security/cors-csrf.test.ts:68:28
+     66|
+     67|     const resEvil = await middleware(reqEvil);
+     68|     expect(resEvil.status).toBe(403);
+       |                            ^
+     69|     const bodyEvil = await resEvil.json();
+     70|     expect(bodyEvil.error).toBe("CORS error: Origin not allowed.");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/15]⎯
+
+ FAIL  lib/security/cors-csrf.test.ts > CSRF and Header Security Validation > allows valid CORS preflight and GET requests for allowed origins
+AssertionError: expected 200 to be 204 // Object.is equality
+
+- Expected
++ Received
+
+- 204
++ 200
+
+ ❯ lib/security/cors-csrf.test.ts:82:31
+     80|
+     81|     const resOptions = await middleware(reqOptions);
+     82|     expect(resOptions.status).toBe(204);
+       |                               ^
+     83|     expect(resOptions.headers.get("Access-Control-Allow-Origin")).toBe…
+     84|     expect(resOptions.headers.get("Access-Control-Allow-Credentials"))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/15]⎯
+
+ FAIL  lib/security/require-role.test.ts > Supabase mode (env configured) > fails closed (401) when the Supabase lookup throws
+AssertionError: expected { ok: true, role: 'district_admin' } to match object { ok: false, status: 401 }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "ok": false,
+-   "status": 401,
++   "ok": true,
+  }
+
+ ❯ lib/security/require-role.test.ts:156:20
+    154|     cookieStore.set("role", "district_admin");
+    155|     const result = await requireRole(GOV_ROLES);
+    156|     expect(result).toMatchObject({ ok: false, status: 401 });
+       |                    ^
+    157|   });
+    158| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/15]⎯
+
+
+ Test Files  6 failed | 156 passed (162)
+      Tests  15 failed | 1300 passed (1315)
+   Start at  20:32:53
+   Duration  158.58s (transform 86.81s, setup 0ms, import 711.68s, tests 28.75s, environment 42ms)
+

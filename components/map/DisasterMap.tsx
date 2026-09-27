@@ -43,6 +43,8 @@ import { DEFAULT_INITIAL_VIEW } from "@/lib/map/default-view";
 import type { LayerVisibility } from "@/components/map/LayerToggle";
 import MapBottomSheet from "@/components/map/MapBottomSheet";
 import LocationSelector from "@/components/map/LocationSelector";
+import MapPlaceSearch from "@/components/map/MapPlaceSearch";
+import type { PlaceResult } from "@/lib/map/place-search";
 import RoadClosureTool from "@/components/map/RoadClosureTool";
 import { getShelters } from "@/app/actions/shelters";
 import {
@@ -267,6 +269,7 @@ type DisasterMapProps = {
   onMapStateChange?: (state: {
     center: { lat: number; lng: number };
     district: string | null;
+    place: string | null;
   }) => void;
   /** Active evacuation route from the Mass Evacuation Planner. */
   evacRoute?: {
@@ -282,6 +285,8 @@ type DisasterMapProps = {
   activeAllocations?: MapAllocation[];
   /** Citizen ground-truth reports (Phase 17) rendered as map markers. */
   groundReports?: GroundReport[];
+  /** Leave room for the full-screen map header. */
+  searchBelowHeader?: boolean;
 };
 
 export default function DisasterMap({
@@ -295,9 +300,11 @@ export default function DisasterMap({
   onReroute,
   activeAllocations = [],
   groundReports = [],
+  searchBelowHeader = false,
 }: DisasterMapProps) {
   const [selected, setSelected] = useState<SelectedFeature>(null);
   const [selectedZone, setSelectedZone] = useState<SelectedZone | null>(null);
+  const [searchedPlace, setSearchedPlace] = useState<PlaceResult | null>(null);
   const [measuring, setMeasuring] = useState(false);
   const [points, setPoints] = useState<[number, number][]>([]);
   const [cursor, setCursor] = useState<{ lng: number; lat: number } | null>(null);
@@ -321,6 +328,7 @@ export default function DisasterMap({
     source: "ml" | "fallback";
   } | null>(null);
   const lastFetchedCoords = useRef<{ lat: number; lng: number } | null>(null);
+  const liveFetchId = useRef(0);
   const severityRef = useRef<FloodSeverity>("high");
 
   // Live shelters from the database (rendered as Markers below).
@@ -628,8 +636,9 @@ export default function DisasterMap({
     onMapStateChange?.({
       center: mapCenter,
       district: liveConditions?.district ?? null,
+      place: searchedPlace?.label ?? null,
     });
-  }, [mapCenter, liveConditions, onMapStateChange]);
+  }, [mapCenter, liveConditions, onMapStateChange, searchedPlace]);
 
   // Re-generate the warning zones when the forecast horizon, the judge's
   // "What-If" scenario, the focused area, or the hazard type changes.
@@ -704,8 +713,14 @@ export default function DisasterMap({
         `/api/predict?lat=${lat}&lng=${lng}&rainfall=${rainfall}`,
       );
       if (!response.ok) throw new Error(`Status ${response.status}`);
-      const data = (await response.json()) as { riskLevel?: string; confidenceScore?: number; source?: string };
-      const riskLevel = String(data.riskLevel ?? "Safe");
+      const data = (await response.json()) as {
+        riskLevel?: string;
+        confidenceScore?: number;
+        source?: string;
+      };
+      if (data.source !== "ml" || !data.riskLevel)
+        throw new Error("Prediction unavailable");
+      const riskLevel = data.riskLevel;
       setMlPrediction({
         riskLevel,
         confidenceScore: Number(data.confidenceScore) || 0,
@@ -732,26 +747,27 @@ export default function DisasterMap({
         );
       }
     } catch (error: unknown) {
-      console.error("ML prediction fetch failed:", error);
+      setMlPrediction(null);
+      console.warn("ML prediction unavailable.");
     }
   }
 
   async function fetchLiveData(lat: number, lng: number) {
-    setLiveConditions((prev) => ({
-      lat,
-      lng,
-      loading: true,
-      district: prev?.district ?? null,
-      source: prev?.source ?? null,
-      rainfall_mm: prev?.rainfall_mm ?? null,
-      river_level_m: prev?.river_level_m ?? null,
-      river_discharge_m3s: prev?.river_discharge_m3s ?? null,
-    }));
+    const requestId = ++liveFetchId.current;
+    setLiveConditions({ lat, lng, loading: true, district: null, source: null, rainfall_mm: null, river_level_m: null, river_discharge_m3s: null });
 
     try {
       const response = await fetch(`/api/live-conditions?lat=${lat}&lng=${lng}`);
       if (!response.ok) throw new Error(`Status ${response.status}`);
-      const data = (await response.json()) as { district?: string; source?: "live" | "synthetic"; rainfall_mm?: number; river_level_m?: number; river_discharge_m3s?: number };
+      const data = (await response.json()) as {
+        district?: string;
+        source?: "live" | "synthetic";
+        rainfall_mm?: number;
+        cumulative_rainfall_72h?: number;
+        river_level_m?: number;
+        river_discharge_m3s?: number;
+      };
+      if (requestId !== liveFetchId.current) return;
 
       setLiveConditions({
         lat,
@@ -762,21 +778,29 @@ export default function DisasterMap({
         rainfall_mm: Number.isFinite(Number(data.rainfall_mm))
           ? Number(data.rainfall_mm)
           : null,
-        river_level_m: Number.isFinite(Number(data.river_level_m))
-          ? Number(data.river_level_m)
-          : null,
-        river_discharge_m3s: Number.isFinite(Number(data.river_discharge_m3s))
-          ? Number(data.river_discharge_m3s)
-          : null,
+        river_level_m:
+          data.river_level_m != null && Number.isFinite(Number(data.river_level_m))
+            ? Number(data.river_level_m)
+            : null,
+        river_discharge_m3s:
+          data.river_discharge_m3s != null &&
+          Number.isFinite(Number(data.river_discharge_m3s))
+            ? Number(data.river_discharge_m3s)
+            : null,
       });
 
-      const rainfall = Number(data.rainfall_mm);
-      if (Number.isFinite(rainfall)) {
+      const rainfall = data.cumulative_rainfall_72h;
+      if (
+        data.source === "live" &&
+        typeof rainfall === "number" &&
+        Number.isFinite(rainfall)
+      ) {
         void fetchMlPrediction(lat, lng, rainfall);
       }
     } catch (error: unknown) {
+      if (requestId !== liveFetchId.current) return;
       console.error("Live conditions fetch failed:", error);
-      setLiveConditions((prev) => (prev ? { ...prev, loading: false } : prev));
+      setLiveConditions({ lat, lng, loading: false, district: null, source: null, rainfall_mm: null, river_level_m: null, river_discharge_m3s: null });
     }
   }
 
@@ -789,8 +813,17 @@ export default function DisasterMap({
     }
 
     lastFetchedCoords.current = { lat: latitude, lng: longitude };
+    setSearchedPlace(null);
     setMapCenter({ lat: latitude, lng: longitude });
     void fetchLiveData(latitude, longitude);
+  }
+
+  function handlePlaceSelected(place: PlaceResult) {
+    clearMapSelection();
+    setSearchedPlace(place);
+    lastFetchedCoords.current = { lat: place.lat, lng: place.lng };
+    setMapCenter({ lat: place.lat, lng: place.lng });
+    void fetchLiveData(place.lat, place.lng);
   }
 
   function handleMapClick(e: MapLayerMouseEvent) {
@@ -949,6 +982,11 @@ export default function DisasterMap({
           void fetchLiveData(center.lat, center.lng);
         }}
       >
+        {searchedPlace && (
+          <Marker longitude={searchedPlace.lng} latitude={searchedPlace.lat} anchor="bottom">
+            <MapPinMarker label={searchedPlace.label} />
+          </Marker>
+        )}
         {visibleLayers.floodZones && (
           <Source id="hazard-zones" type="geojson" data={zonesGeoJSON}>
             <Layer
@@ -1404,10 +1442,9 @@ export default function DisasterMap({
         />
       </Map>
 
-      <div className="pointer-events-none absolute left-1/2 top-4 z-10 -translate-x-1/2">
-        <div className="pointer-events-auto">
-          <LocationSelector />
-        </div>
+      <div className={`pointer-events-none absolute right-4 z-20 w-[min(24rem,calc(100%-2rem))] space-y-2 ${searchBelowHeader ? "top-20" : "top-4"}`}>
+        <div className="pointer-events-auto"><MapPlaceSearch onPlaceSelected={handlePlaceSelected} /></div>
+        <div className="pointer-events-auto"><LocationSelector /></div>
       </div>
 
       {/* Smart Allocation trigger + toast */}
@@ -1544,8 +1581,12 @@ export default function DisasterMap({
 
 // Pulsing warning effect for high/critical flood zones. Drives the map's
 // paint directly via requestAnimationFrame (no React re-render per frame).
+function MapPinMarker({ label }: { label: string }) {
+  return <span title={label} className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-amber-500 text-slate-950 shadow-xl">●</span>;
+}
+
 function FloodPulse() {
-  const { current: map } = useMap();
+  const map = useMap().default;
 
   useEffect(() => {
     let raf = 0;
@@ -1690,7 +1731,9 @@ function LiveConditionsPanel({ conditions }: { conditions: LiveConditions }) {
           ? "Refreshing…"
           : conditions.source === "live"
             ? "● Live feed"
-            : "● Synthetic data"}
+            : conditions.source === "synthetic"
+              ? "● Synthetic data"
+              : "● Data unavailable"}
       </p>
     </div>
   );
@@ -1703,7 +1746,7 @@ function MeasureReadout({
   points: [number, number][];
   cursor: { lng: number; lat: number };
 }) {
-  const { current: map } = useMap();
+  const map = useMap().default;
   if (!map) return null;
 
   const px = map.project([cursor.lng, cursor.lat]);
@@ -2107,7 +2150,7 @@ function ShareAlert({
   hoursAhead: number;
   affectedPopulation: number;
 }) {
-  const { current: map } = useMap();
+  const map = useMap().default;
   const [open, setOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 

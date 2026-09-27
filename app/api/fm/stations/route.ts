@@ -3,7 +3,6 @@ import { prisma } from "@/server/prisma";
 import { requireRole } from "@/lib/security/require-role";
 import { sanitizeInput } from "@/lib/security/sanitize";
 import { serializeFmStation } from "@/lib/fm/serialize";
-import { MOCK_FM_STATIONS } from "@/lib/fm/mock-stations";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +46,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // DB unreachable (migrations not pushed / offline) — serve the seeded
     // demo list so the admin UI and coverage tool keep working.
     console.error("Failed to list FM stations:", error);
-    return NextResponse.json({ ok: true, stations: MOCK_FM_STATIONS, source: "mock" });
+    return NextResponse.json(
+      {
+        ok: false,
+        stations: [],
+        source: "unavailable",
+        error: "Station registry unavailable; no broadcast destination was verified.",
+      },
+      { status: 503 },
+    );
   }
 }
 
@@ -77,10 +84,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const lat =
-    typeof body.lat === "number" && Number.isFinite(body.lat) ? body.lat : null;
-  const lng =
-    typeof body.lng === "number" && Number.isFinite(body.lng) ? body.lng : null;
+  const lat = typeof body.lat === "number" && Number.isFinite(body.lat) ? body.lat : null;
+  const lng = typeof body.lng === "number" && Number.isFinite(body.lng) ? body.lng : null;
 
   try {
     const station = await prisma.fmStation.create({

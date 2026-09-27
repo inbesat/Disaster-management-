@@ -12,9 +12,7 @@ let stripe: Stripe | null = null;
 
 function getStripe() {
   if (!stripe && STRIPE_SECRET_KEY) {
-    stripe = new Stripe(STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
-    });
+    stripe = new Stripe(STRIPE_SECRET_KEY, {});
   }
   return stripe;
 }
@@ -74,11 +72,17 @@ export async function createCheckoutSession(priceId: string) {
     redirect("/login?next=/settings/billing");
   }
 
-  const customerId = await getOrCreateCustomer(user.id, user.email!, user.user_metadata?.full_name);
+  const customerId = await getOrCreateCustomer(
+    user.id,
+    user.email!,
+    user.user_metadata?.full_name,
+  );
 
   try {
     const session = await requireStripe().checkout.sessions.create({
       customer: customerId,
+      client_reference_id: user.id,
+      metadata: { supabase_user_id: user.id },
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
@@ -94,7 +98,9 @@ export async function createCheckoutSession(priceId: string) {
 
     return { url: session.url };
   } catch (error: unknown) {
-    safeLog("error", "[billing] createCheckoutSession failed", { metadata: { error: String(error), userId: user.id } });
+    safeLog("error", "[billing] createCheckoutSession failed", {
+      metadata: { error: String(error), userId: user.id },
+    });
     throw new Error("Failed to create checkout session. Please try again.");
   }
 }
@@ -131,7 +137,9 @@ export async function createCustomerPortalSession() {
 
     return { url: session.url };
   } catch (error: unknown) {
-    safeLog("error", "[billing] createCustomerPortalSession failed", { metadata: { error: String(error), userId: user.id } });
+    safeLog("error", "[billing] createCustomerPortalSession failed", {
+      metadata: { error: String(error), userId: user.id },
+    });
     throw new Error("Failed to open billing portal. Please try again.");
   }
 }
@@ -149,7 +157,9 @@ export async function getSubscriptionStatus() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("subscription_status, stripe_price_id, stripe_current_period_end, cancel_at_period_end, stripe_customer_id")
+    .select(
+      "subscription_status, stripe_price_id, stripe_current_period_end, cancel_at_period_end, stripe_customer_id",
+    )
     .eq("id", user.id)
     .single();
 
