@@ -51,6 +51,8 @@ import {
   type PublicAlert,
 } from "@/lib/mock-data/public-alerts";
 
+const DEMO_ALERTS_ENABLED = process.env.NEXT_PUBLIC_DEMO_DATA_ENABLED === "true";
+
 export default function PublicAlertsPage() {
   const [filter, setFilter] = useState<AlertFilter>("all");
   const [selected, setSelected] = useState<PublicAlert | null>(null);
@@ -65,6 +67,7 @@ export default function PublicAlertsPage() {
   // Persist the feed to the offline cache on load, and remember when it
   // was written so the amber banner can say "cached from …" (Step 7).
   useEffect(() => {
+    if (!DEMO_ALERTS_ENABLED) return;
     cacheAlerts(PUBLIC_ALERTS);
     const cached = readCachedAlerts();
     if (cached.alerts) setCachedAlerts(cached.alerts);
@@ -78,7 +81,7 @@ export default function PublicAlertsPage() {
     if (typeof window === "undefined") return;
     try {
       const seen = window.sessionStorage.getItem(CRITICAL_OVERLAY_SESSION_KEY);
-      if (!seen && PUBLIC_ALERTS.some((a) => a.severity === "critical")) {
+      if (DEMO_ALERTS_ENABLED && !seen && PUBLIC_ALERTS.some((a) => a.severity === "critical")) {
         // Defer past this commit's effect flush: on a full page load this
         // page's effects run BEFORE the layout host's listener attaches
         // (sibling order), so a synchronous dispatch would be lost — the
@@ -98,7 +101,7 @@ export default function PublicAlertsPage() {
       const alert = (event as CustomEvent<PublicAlert>).detail;
       // Cap the simulated feed so a judge spamming the button can't grow
       // the list without bound.
-      if (alert) setExtraAlerts((prev) => [alert, ...prev].slice(0, 10));
+      if (DEMO_ALERTS_ENABLED && alert) setExtraAlerts((prev) => [alert, ...prev].slice(0, 10));
     };
     window.addEventListener(CITIZEN_DEMO_ALERT_EVENT, onDemoAlert);
     return () =>
@@ -107,10 +110,9 @@ export default function PublicAlertsPage() {
 
   // Offline → show the last cached feed instead of the live array;
   // simulated alerts ride on top of whichever source is active.
-  const base = [
-    ...(offline && cachedAlerts ? cachedAlerts : PUBLIC_ALERTS),
-    ...extraAlerts,
-  ];
+  const base = DEMO_ALERTS_ENABLED
+    ? [...(offline && cachedAlerts ? cachedAlerts : PUBLIC_ALERTS), ...extraAlerts]
+    : [];
   // Filter bar (Step 1) then the citizen's preferences (Step 5).
   const alerts = filterAlertsByPreferences(
     filterAlertsByScope(base, filter),
@@ -213,6 +215,8 @@ export default function PublicAlertsPage() {
           </div>
         </header>
 
+        {!DEMO_ALERTS_ENABLED && <p role="status" className="mt-4 rounded-xl border border-amber-400/50 bg-amber-950/30 p-4 text-sm font-semibold text-amber-100">Live official alerts are not connected. An empty list does not mean your area is safe. Follow official local advisories.</p>}
+
         {/* Feed — single column on mobile, 2-col grid on tablet+ */}
         {alerts.length > 0 ? (
           <>
@@ -230,10 +234,9 @@ export default function PublicAlertsPage() {
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
               <Inbox aria-hidden="true" className="h-6 w-6 text-[var(--dl-text-muted)]" />
             </span>
-            <p className="text-sm font-semibold text-white">No alerts in this view</p>
+            <p className="text-sm font-semibold text-white">{DEMO_ALERTS_ENABLED ? "No alerts in this view" : "Alert feed unavailable"}</p>
             <p className="max-w-xs text-sm text-[var(--dl-text-muted)]">
-              Try a different filter — or check back when a new warning is issued
-              for your area.
+              {DEMO_ALERTS_ENABLED ? "Try a different filter or check back later." : "Check official local warnings for current conditions."}
             </p>
           </div>
         )}
@@ -243,7 +246,7 @@ export default function PublicAlertsPage() {
       <BottomNav className="md:hidden" />
 
       {/* "I Am Safe" floating action (Step 9) */}
-      <SafeStatusToggle />
+      {DEMO_ALERTS_ENABLED && <SafeStatusToggle />}
 
       {/* Alert detail bottom sheet (Step 4) — opened by tapping a card */}
       <AlertDetailModal alert={selected} onClose={() => setSelected(null)} />

@@ -20,30 +20,6 @@ export type SimilarDocument = {
   score: number;
 };
 
-const MOCK_RESULTS: SimilarDocument[] = [
-  {
-    title: "Flood Evacuation Standard Operating Procedure",
-    content:
-      "In a CRITICAL flood risk, the District Control Room must place affected riverside wards under EVACUATE status, activate the Mass Evacuation Planner, deploy boats and buses, broadcast an alert, and track convoys until all villages are marked COMPLETE.",
-    docType: "procedure",
-    score: 0.92,
-  },
-  {
-    title: "Shelter Management & Capacity Protocol",
-    content:
-      "Shelters accept evacuees while current_occupancy is below capacity. When a shelter reaches capacity, set its status to FULL and route evacuees to the next nearest open shelter.",
-    docType: "procedure",
-    score: 0.87,
-  },
-  {
-    title: "Flood Risk Levels and Responses",
-    content:
-      "Risk levels GATE: SAFE no action; WATCH continue monitoring and pre-position boats; WARNING prepare evacuation; EVACUATE move people to shelters immediately.",
-    docType: "report",
-    score: 0.81,
-  },
-];
-
 /**
  * Return the top-K most similar document chunks for `query`, optionally
  * scoped to a single district. Returns an empty array for a blank query and a
@@ -59,7 +35,7 @@ export async function searchSimilarDocuments(
 
   // 1) Embed the query (mock vectors are produced when no key is configured,
   //    so this call still returns a stable 1536-dim vector to search on).
-  const [embedded] = await generateEmbeddings([normalizedQuery]);
+  const [embedded] = await generateEmbeddings([normalizedQuery]).catch(() => []);
   if (!embedded) return [];
 
   const vectorLiteral = `[${embedded.embedding.join(",")}]`;
@@ -84,22 +60,6 @@ export async function searchSimilarDocuments(
       LIMIT ${topK}
     `;
 
-    if (rows.length === 0) {
-      // 3) Empty result set (e.g. a district filter that has no documents yet):
-      //    fall back to keyword-unfiltered retrieval so the demo still returns
-      //    useful context.
-      const fallback = await prisma.emergencyDocument.findMany({
-        take: topK,
-        select: { title: true, content: true, docType: true },
-      });
-      return fallback.map((doc) => ({
-        title: doc.title,
-        content: doc.content,
-        docType: doc.docType,
-        score: 0,
-      }));
-    }
-
     return rows.map((row) => ({
       title: row.title,
       content: row.content,
@@ -107,7 +67,7 @@ export async function searchSimilarDocuments(
       score: Number(row.score),
     }));
   } catch (error: unknown) {
-    console.warn("[rag] vector search failed — returning mock results.", error);
-    return MOCK_RESULTS.slice(0, topK);
+    console.warn("[rag] vector search unavailable; trying scoped keyword retrieval.");
+    return [];
   }
 }

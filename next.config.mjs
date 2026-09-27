@@ -22,6 +22,22 @@ const withPWA = withPWAInit({
   disable: false,
   register: false,
   customWorkerDir: "worker",
+  // APK downloads and design reference files are not part of the offline web shell.
+  // Precaching the 77 MB native APK can make first-time worker installation fail.
+  publicExcludes: ["!noprecache/**/*", "!*.apk", "!stitch-designs/**"],
+  // Next includes this manifest in the build output, but next start does not serve it.
+  // Precache installation must not fail on that 404.
+  buildExcludes: [/app-build-manifest\.json$/],
+  // Workbox also receives generated manifest entries, so filter here as a
+  // second guard. Native installers must remain normal downloads.
+  manifestTransforms: [
+    async (entries) => ({
+      manifest: entries.filter(({ url }) =>
+        !/\.apk(?:\?|$)/i.test(url) && !/\/app-build-manifest\.json$/i.test(url),
+      ),
+      warnings: [],
+    }),
+  ],
   fallbacks: { document: "/~offline" },
   // Phase 7 · Step 1 — sw.js cache strategies. Workbox owns these routes in
   // the generated public/sw.js:
@@ -32,18 +48,30 @@ const withPWA = withPWAInit({
   //   • Map tiles + icons — cache-first with a larger timeout.
   runtimeCaching: [
     {
-      urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith("/api/"),
+      // Cache only public pages. Private dashboards must never be served from
+      // another user's browser cache after a sign-out or account switch.
+      urlPattern: ({ url, request }) =>
+        url.origin === self.location.origin &&
+        request.mode === "navigate" &&
+        /^\/public(?:\/|$)/.test(url.pathname),
       handler: "NetworkFirst",
-      method: "GET",
       options: {
-        cacheName: "disasterlink-api-v1",
-        networkTimeoutSeconds: 4,
-        expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 },
+        cacheName: "disasterlink-public-pages-v1",
+        networkTimeoutSeconds: 5,
+        expiration: { maxEntries: 20, maxAgeSeconds: 24 * 60 * 60 },
       },
     },
     {
       urlPattern: ({ url }) =>
-        url.origin === self.location.origin && /\.(png|jpg|jpeg|svg|webp|css|js|woff2?)$/.test(url.pathname),
+        url.origin === self.location.origin && url.pathname.startsWith("/api/"),
+      handler: "NetworkOnly",
+      method: "GET",
+      options: {},
+    },
+    {
+      urlPattern: ({ url }) =>
+        url.origin === self.location.origin &&
+        /\.(png|jpg|jpeg|svg|webp|css|js|woff2?)$/.test(url.pathname),
       handler: "CacheFirst",
       method: "GET",
       options: {
@@ -53,7 +81,9 @@ const withPWA = withPWAInit({
     },
     {
       urlPattern: ({ url }) =>
-        url.origin === self.location.origin && /\.(png|jpe?g)$/.test(url.pathname) && url.pathname.includes("tile"),
+        url.origin === self.location.origin &&
+        /\.(png|jpe?g)$/.test(url.pathname) &&
+        url.pathname.includes("tile"),
       handler: "CacheFirst",
       method: "GET",
       options: {
@@ -84,16 +114,16 @@ const allowedOrigin =
     ? envOrigin
     : isDev
       ? "http://localhost:3000"
-      : "https://safesphere.vercel.app";
+      : "https://safesphere0.netlify.app";
 
 const nextConfig = {
-  // Hackathon deadline: skip TypeScript checking at build time
+  // Require compiler validation for releases
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  // Hackathon deadline: skip ESLint at build time
+  // Require lint validation for releases
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
 
   // Remote image hosts the app renders via next/image (QR codes are generated
@@ -116,21 +146,6 @@ const nextConfig = {
   },
 
   async headers() {
-    // Hackathon CSP: completely permissive so Maps, Translate, etc work
-    const csp = [
-      "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;",
-      "script-src * 'unsafe-inline' 'unsafe-eval';",
-      "style-src * 'unsafe-inline';",
-      "img-src * data: blob: 'unsafe-inline';",
-      "connect-src *;",
-      "font-src * data:;",
-      "frame-src *;",
-      "frame-ancestors *;",
-      "object-src *;",
-      "base-uri *;",
-      "form-action *;",
-    ].join(" ");
-
     return [
       {
         source: "/api/:path*",
@@ -156,7 +171,10 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // Hackathon CSP: completely permissive so Maps, Translate, etc work
-          { key: "Content-Security-Policy", value: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline';" },
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; frame-ancestors 'none'; object-src 'none'",
+          },
         ],
       },
       {
@@ -199,7 +217,7 @@ const nextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(self), geolocation=(self)",
+            value: "camera=(self), microphone=(self), geolocation=(self)",
           },
         ],
       },

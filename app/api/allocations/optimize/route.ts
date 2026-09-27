@@ -30,100 +30,6 @@ type UnmetDemand = {
   priorityScore: number;
 };
 
-// Realistic Patna-area mock resources (available stock) for when the DB is
-// unreachable or not pushed yet — the demo must never break.
-const MOCK_RESOURCES: AllocationCandidateResource[] = [
-  {
-    id: "res-1",
-    name: "NDRF Rescue Boats",
-    category: "boat",
-    quantity: 12,
-    lat: 25.62,
-    lng: 85.14,
-  },
-  {
-    id: "res-2",
-    name: "Medical First-Aid Kits",
-    category: "medical",
-    quantity: 200,
-    lat: 25.594,
-    lng: 85.132,
-  },
-  {
-    id: "res-3",
-    name: "Food Rations",
-    category: "food",
-    quantity: 350,
-    lat: 25.608,
-    lng: 85.12,
-  },
-  {
-    id: "res-4",
-    name: "Search & Rescue Teams",
-    category: "personnel",
-    quantity: 8,
-    lat: 25.63,
-    lng: 85.16,
-  },
-  {
-    id: "res-5",
-    name: "High-Power Generators",
-    category: "power",
-    quantity: 14,
-    lat: 25.585,
-    lng: 85.1,
-  },
-];
-
-const MOCK_DEMANDS: AllocationDemand[] = [
-  {
-    id: "req-1",
-    disasterEventId: "mock-event-1",
-    category: "boat",
-    quantityNeeded: 6,
-    lat: 25.604,
-    lng: 85.153,
-    affectedPopulation: 48000,
-    severityRisk: 0.9,
-    accessibilityFactor: 0.7,
-  },
-  {
-    id: "req-2",
-    disasterEventId: "mock-event-1",
-    category: "medical",
-    quantityNeeded: 40,
-    lat: 25.63,
-    lng: 85.16,
-    affectedPopulation: 30000,
-    severityRisk: 0.75,
-    accessibilityFactor: 0.6,
-  },
-  {
-    id: "req-3",
-    disasterEventId: "mock-event-1",
-    category: "food",
-    quantityNeeded: 120,
-    lat: 25.72,
-    lng: 85.19,
-    affectedPopulation: 20000,
-    severityRisk: 0.5,
-    accessibilityFactor: 0.4,
-  },
-  {
-    // No "communication" stock exists in either mock or DB → this demand stays
-    // partially/met unmmet, demonstrating the Unmet Demand summary.
-    id: "req-4",
-    disasterEventId: "mock-event-1",
-    category: "communication",
-    quantityNeeded: 5,
-    lat: 25.612,
-    lng: 85.142,
-    affectedPopulation: 6000,
-    severityRisk: 0.4,
-    accessibilityFactor: 0.9,
-  },
-];
-
 function buildUnmet(
   demands: AllocationDemand[],
   plan: ProposedAllocation[],
@@ -208,7 +114,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     }));
     demands = reqRows.map((r) => ({
       id: r.id,
-      disasterEventId: eventId || events[0]?.id || "mock-event-1",
+      disasterEventId: eventId || events[0]?.id || "",
       category: r.category,
       quantityNeeded: r.quantityNeeded,
       lat: r.lat,
@@ -218,17 +124,17 @@ export async function POST(request: Request): Promise<NextResponse> {
       accessibilityFactor: 0.8,
     }));
 
-    if (!eventId) eventId = events[0]?.id ?? "mock-event-1";
-
-    if (!resources.length && !demands.length) {
-      resources = MOCK_RESOURCES;
-      demands = MOCK_DEMANDS;
-    }
+    if (!eventId) eventId = events[0]?.id ?? "";
   } catch (error: unknown) {
-    console.warn("[allocations] optimize fell back to mock data.", error);
-    resources = MOCK_RESOURCES;
-    demands = MOCK_DEMANDS;
-    if (!eventId) eventId = "mock-event-1";
+    console.error("[allocations] inventory unavailable", error);
+    return NextResponse.json(
+      {
+        ok: false,
+        source: "unavailable",
+        error: "Live resource inventory is unavailable",
+      },
+      { status: 503 },
+    );
   }
 
   const locked: LockedAllocation[] = (body.locked_allocations ?? [])
@@ -254,23 +160,31 @@ export async function POST(request: Request): Promise<NextResponse> {
     }));
   }
 
+  if (!eventId && demands.length > 0) {
+    return NextResponse.json(
+      { ok: false, error: "An existing disaster event is required" },
+      { status: 422 },
+    );
+  }
+
   const plan = await runGreedyAllocation(resources, demands, locked);
   const unmetDemand = buildUnmet(demands, plan);
 
-  // Phase 13 · Persist the proposed allocations so the plan survives a refresh
-  // and can be reviewed in the command center. Mock/demo event ids and mock
-  // resources have no DB rows, so this degrades silently without breaking the
-  // demo — the computed plan is still returned to the client either way.
-  await persistAllocations(plan, eventId).catch((error) =>
-    console.warn("[allocations] failed to persist allocation plan.", error),
-  );
+  let persisted = false;
+  if (plan.length > 0 && eventId) {
+    try {
+      persisted = await persistAllocations(plan, eventId);
+    } catch (error) {
+      console.error("[allocations] failed to persist allocation plan", error);
+    }
+  }
 
   return NextResponse.json({
     ok: true,
     event_id: eventId,
     plan,
     unmet_demand: unmetDemand,
-    persisted: true,
+    persisted,
     meta: {
       resources_scanned: resources.length,
       demands_scanned: demands.length,
@@ -284,33 +198,17 @@ export async function POST(request: Request): Promise<NextResponse> {
 
 /**
  * Persist a proposed allocation plan into the resource_allocations table.
- * Creates a stand-in disaster event if the referenced event does not exist
- * yet, and upserts by (resource_id, disaster_event_id) so re-running the
- * optimizer updates rather than duplicates the plan.
+ * Only persists against an existing disaster event. Re-running the optimizer
+ * updates allocations by resource and event rather than duplicating them.
  */
 async function persistAllocations(
   plan: ProposedAllocation[],
   eventId: string,
-): Promise<void> {
-  if (!plan.length) return;
+): Promise<boolean> {
+  if (!plan.length) return false;
 
-  // Ensure a disaster event row exists so the FK constraint is satisfied.
-  const event =
-    (await prisma.disasterEvent
-      .findUnique({ where: { id: eventId } })
-      .catch(() => null)) ??
-    (await prisma.disasterEvent
-      .create({
-        data: {
-          id: eventId,
-          name: `Allocation plan — ${new Date().toLocaleDateString()}`,
-          type: "flood",
-          status: "active",
-        },
-      })
-      .catch(() => null));
-
-  if (!event) return; // DB unreachable — skip persistence for this run.
+  const event = await prisma.disasterEvent.findUnique({ where: { id: eventId } });
+  if (!event) return false;
 
   for (const allocation of plan) {
     const data = {
@@ -343,4 +241,5 @@ async function persistAllocations(
       await prisma.resourceAllocation.create({ data });
     }
   }
+  return true;
 }

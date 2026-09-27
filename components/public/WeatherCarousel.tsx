@@ -1,15 +1,7 @@
 "use client";
 
-// ---------------------------------------------------------------------
-// components/public/WeatherCarousel.tsx — Phase 2 · Step 5 · Weather &
-// Flood Forecast mini-card — NOW LIVE.
-//
-// Client island fetching /api/weather/forecast (OpenWeatherMap aggregated
-// to 3 daily buckets; deterministic mock fallback server-side). Shows a
-// pulsing LIVE chip when real OWM data is flowing and a cached chip when
-// the seeded mock is active. Cards snap horizontally; desktop width is
-// capped so cards never stretch absurdly wide.
-// ---------------------------------------------------------------------
+// Three-day forecast from live weather data. When unavailable, state it
+// plainly instead of rendering invented conditions or zero temperatures.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CloudLightning, CloudRain, CloudSun, Sun, type LucideIcon } from "lucide-react";
@@ -36,10 +28,10 @@ const CONDITION_ICON: Record<ForecastDay["condition"], LucideIcon> = {
   clear: Sun,
 };
 
-function riskFor(rain: number, condition: ForecastDay["condition"]): { risk: SeverityLevel; label: string } {
-  if (condition === "storm" || rain >= 100) return { risk: "warning", label: "Heavy rain" };
-  if (rain >= 20) return { risk: "watch", label: "Light rain" };
-  return { risk: "safe", label: "Dry" };
+function riskFor(rain: number, condition: ForecastDay["condition"]): { risk: SeverityLevel; riskLabel: string } {
+  if (condition === "storm" || rain >= 100) return { risk: "warning", riskLabel: "Heavy rain" };
+  if (rain >= 20) return { risk: "watch", riskLabel: "Light rain" };
+  return { risk: "safe", riskLabel: "Dry" };
 }
 
 /** "2026-08-24" → "24 Aug" */
@@ -81,14 +73,8 @@ export function WeatherCarousel() {
         );
         setLive(body.source === "openweathermap");
       } catch {
-        if (!cancelled && cards === null) {
-          // Total network failure before first paint — show a neutral
-          // placeholder card set rather than an empty carousel.
-          setCards([
-            { day: "Today", date: "—", icon: CloudSun, temp: 0, rain: 0, risk: "info", riskLabel: "No data" },
-            { day: "Tomorrow", date: "—", icon: CloudSun, temp: 0, rain: 0, risk: "info", riskLabel: "No data" },
-            { day: "Day 3", date: "—", icon: CloudSun, temp: 0, rain: 0, risk: "info", riskLabel: "No data" },
-          ]);
+        if (!cancelled) {
+          setCards([]);
           setLive(false);
         }
       }
@@ -119,7 +105,7 @@ export function WeatherCarousel() {
               className={`h-1 w-1 rounded-full ${live ? "animate-pulse bg-emerald-400" : "bg-slate-500"}`}
               aria-hidden
             />
-            {live ? "Live · OpenWeatherMap" : "Cached forecast"}
+            {live ? "Live · OpenWeatherMap" : "Unavailable"}
           </span>
         )}
       </div>
@@ -135,6 +121,11 @@ export function WeatherCarousel() {
         id="citizen-weather-carousel"
         className="-mx-4 mt-1 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
+        {cards?.length === 0 && (
+          <div role="status" className="w-full rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
+            Live forecast is unavailable. Check local weather advisories before travelling.
+          </div>
+        )}
         {(cards ?? [null, null, null]).map((day, i) => (
           <article
             key={day ? `${day.day}-${day.date}` : `skeleton-${i}`}
@@ -190,7 +181,7 @@ export function WeatherCarousel() {
 
       {/* Carousel hint */}
       <p className="mt-1 text-center text-[0.6875rem] text-[var(--dl-text-muted)]">
-        Swipe for the 3-day outlook
+        {cards?.length ? "Swipe for the 3-day outlook" : ""}
       </p>
     </section>
   );

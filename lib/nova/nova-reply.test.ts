@@ -1,10 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { resolveNovaReply, type CloudProviderLike, type RuleFallbackLike } from "./nova-reply";
+import {
+  resolveNovaReply,
+  type CloudProviderLike,
+  type RuleFallbackLike,
+} from "./nova-reply";
 
 describe("resolveNovaReply — cloud-first fallback chain", () => {
   let originalOnLine: boolean;
-  let mockCloudGenerate: ReturnType<typeof vi.fn>;
-  let mockRuleGenerate: ReturnType<typeof vi.fn>;
+  let mockCloudGenerate: ReturnType<typeof vi.fn<CloudProviderLike["generateResponse"]>>;
+  let mockRuleGenerate: ReturnType<typeof vi.fn<RuleFallbackLike["generateResponse"]>>;
   let mockCloudProvider: CloudProviderLike;
   let mockRuleFallback: RuleFallbackLike;
 
@@ -24,12 +28,16 @@ describe("resolveNovaReply — cloud-first fallback chain", () => {
   });
 
   afterEach(() => {
-    Object.defineProperty(navigator, "onLine", { value: originalOnLine, configurable: true });
+    Object.defineProperty(navigator, "onLine", {
+      value: originalOnLine,
+      configurable: true,
+    });
   });
 
   it("returns cloud response when provider succeeds", async () => {
     Object.defineProperty(navigator, "onLine", { value: true, configurable: true });
     mockCloudGenerate.mockResolvedValue({
+      durationMs: 0,
       text: "The nearest shelter is 1.2 km away.",
       mode: "cloud",
       error: false,
@@ -51,6 +59,7 @@ describe("resolveNovaReply — cloud-first fallback chain", () => {
 
   it("falls back to RuleBasedFallback when cloud returns error mode", async () => {
     mockCloudGenerate.mockResolvedValue({
+      durationMs: 0,
       text: "Cloud AI failed: Network error",
       mode: "error",
       error: true,
@@ -133,6 +142,7 @@ describe("resolveNovaReply — cloud-first fallback chain", () => {
 
   it("passes last 6 messages as history to cloud provider", async () => {
     mockCloudGenerate.mockResolvedValue({
+      durationMs: 0,
       text: "OK",
       mode: "cloud",
       error: false,
@@ -166,7 +176,9 @@ describe("resolveNovaReply — cloud-first fallback chain", () => {
     );
 
     expect(mockCloudGenerate).toHaveBeenCalledTimes(1);
-    const calledWith = mockCloudGenerate.mock.calls[0][1] as { history: any[] };
+    const calledWith = mockCloudGenerate.mock.calls[0][1] as {
+      history: Array<{ content: string }>;
+    };
     expect(calledWith.history.length).toBe(6);
     expect(calledWith.history[0].content).toBe("reply4");
     expect(calledWith.history[5].content).toBe("msg7");

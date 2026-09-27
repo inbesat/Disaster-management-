@@ -1,0 +1,378 @@
+
+> disaster-response-platform@0.1.0 build E:\Hackathons\disaster management\disaster-response-platform
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Custom worker found: E:\Hackathons\disaster management\disaster-response-platform\worker\index.js
+> [PWA] Build custom worker: E:\Hackathons\disaster management\disaster-response-platform\public\worker-08qZgHAE3IqVycDEi5n5g.js
+> [PWA] Auto register service worker is disabled, please call following code in componentDidMount callback or useEffect hook
+> [PWA]   window.workbox.register()
+> [PWA] Service worker: E:\Hackathons\disaster management\disaster-response-platform\public\sw.js
+> [PWA]   url: /sw.js
+> [PWA]   scope: /
+> [PWA] Fallback to precache routes when fetch failed from cache or network:
+> [PWA]   document (page): /~offline
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+   Linting and checking validity of types ...
+ ⚠ Compiled with warnings
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/error.tsx
+
+/_next/static/chunks/12cbcdcd.9e4609a8614da058.js is 6.03 MB, and won't be precached. Configure maximumFileSizeToCacheInBytes to change this limit.
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/error.tsx
+
+
+./app/(public)/onboarding/page.tsx
+27:18  Warning: 'useAnimation' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/(public)/report/page.tsx
+6:3  Warning: 'Camera' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Warning: 'Info' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'ShieldAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/actions/documents.ts
+185:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/layout.tsx
+34:10  Warning: 'Analytics' is defined but never used.  @typescript-eslint/no-unused-vars
+35:10  Warning: 'SpeedInsights' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/AgentCard.tsx
+117:9  Warning: 'StatusIcon' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/OrchestrationFlow.tsx
+224:17  Warning: 'nextComplete' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/PlanApprovalBar.tsx
+36:3  Warning: 'ShieldCheck' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/PlannerLayout.tsx
+32:3  Warning: 'Radio' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/alerts/AlertComposer.tsx
+230:9  Warning: 'useTemplate' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/alerts/DeliveryTracking.tsx
+16:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'Send' is defined but never used.  @typescript-eslint/no-unused-vars
+28:6  Warning: 'ChannelStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/HeroKPIRow.tsx
+6:3  Warning: 'Building2' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/ResponderTracker.tsx
+4:10  Warning: 'Navigation' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/SituationHeader.tsx
+30:3  Warning: 'ShieldCheck' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/map/AdvancedLayerControl.tsx
+24:3  Warning: 'GOV_MAP_LAYER_KEYS' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/map/GovMapWorkspace.tsx
+16:3  Warning: 'Layers' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'MapPin' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/tasks/TaskBoard.tsx
+21:3  Warning: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'XCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/team/TeamRoster.tsx
+19:3  Warning: 'AlertCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+22:3  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+32:3  Warning: 'XCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/landing/layout/Footer.tsx
+4:23  Warning: 'ExternalLink' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/map/DisasterMap.tsx
+740:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/navigation/SidebarHeader.tsx
+17:10  Warning: 'useSidebar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/public/report/CitizenReportForm.tsx
+6:3  Warning: 'Camera' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Warning: 'Info' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'ShieldAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+239:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./lib/agents/nodes/action-nodes.ts
+62:3  Warning: '_state' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/ai/AIBridge.ts
+152:10  Warning: 'defaultCloudRoute' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/analytics/tracker.ts
+10:7  Warning: 'POSTHOG_HOST' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./lib/config/navigation.ts
+22:3  Warning: 'Activity' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'FileText' is defined but never used.  @typescript-eslint/no-unused-vars
+27:3  Warning: 'Heart' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'Map' is defined but never used.  @typescript-eslint/no-unused-vars
+36:3  Warning: 'Shield' is defined but never used.  @typescript-eslint/no-unused-vars
+38:3  Warning: 'TriangleAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+42:3  Warning: 'UserX' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/nova/nova-reply.test.ts
+170:11  Warning: 'result' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./lib/rag/embeddings.ts
+180:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/rag/sources-payload.test.ts
+2:39  Warning: 'RagSourcePayload' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/rag/vector-search.ts
+69:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/retrieval/retrieve.ts
+23:7  Warning: 'EMBEDDING_MODEL' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/148) ...
+   Generating static pages (37/148) 
+   Generating static pages (74/148) 
+   Generating static pages (111/148) 
+ ✓ Generating static pages (148/148)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                  Size     First Load JS
+┌ ƒ /                                        42 kB           362 kB
+├ ƒ /_not-found                              173 B          89.3 kB
+├ ƒ /~offline                                3.24 kB        92.4 kB
+├ ƒ /2fa-setup                               6.8 kB          145 kB
+├ ƒ /403                                     180 B          98.1 kB
+├ ƒ /access                                  1.5 kB         99.4 kB
+├ ƒ /access-requests                         4.84 kB        99.1 kB
+├ ƒ /admin-dashboard                         10.7 kB         149 kB
+├ ƒ /agent-orchestration                     196 kB          363 kB
+├ ƒ /ai-advisor                              14 kB           244 kB
+├ ƒ /ai-planner                              8.24 kB         195 kB
+├ ƒ /alerts                                  4.2 kB          143 kB
+├ ƒ /allocations                             11.2 kB         215 kB
+├ ƒ /analytics                               2.37 kB         219 kB
+├ ƒ /api/access-request                      0 B                0 B
+├ ƒ /api/agents/orchestrate                  0 B                0 B
+├ ƒ /api/ai/test                             0 B                0 B
+├ ƒ /api/alerts                              0 B                0 B
+├ ƒ /api/allocations/optimize                0 B                0 B
+├ ƒ /api/assignments/notify                  0 B                0 B
+├ ƒ /api/assignments/status                  0 B                0 B
+├ ƒ /api/auth/reset-password                 0 B                0 B
+├ ƒ /api/broadcast/fm/approvals              0 B                0 B
+├ ƒ /api/broadcast/fm/approvals/[id]/decide  0 B                0 B
+├ ƒ /api/broadcast/fm/auto-trigger           0 B                0 B
+├ ƒ /api/broadcast/fm/compliance             0 B                0 B
+├ ƒ /api/broadcast/fm/dispatch               0 B                0 B
+├ ƒ /api/broadcast/fm/export/pdf             0 B                0 B
+├ ƒ /api/broadcast/fm/history                0 B                0 B
+├ ƒ /api/broadcast/fm/ivr-fallback           0 B                0 B
+├ ƒ /api/broadcast/fm/logs                   0 B                0 B
+├ ƒ /api/broadcast/fm/report                 0 B                0 B
+├ ƒ /api/broadcast/fm/test                   0 B                0 B
+├ ƒ /api/broadcast/rds/push                  0 B                0 B
+├ ƒ /api/cap/generate                        0 B                0 B
+├ ƒ /api/casualties                          0 B                0 B
+├ ƒ /api/chat                                0 B                0 B
+├ ƒ /api/chat/sessions                       0 B                0 B
+├ ƒ /api/chat/sessions/[id]                  0 B                0 B
+├ ƒ /api/cron/audio-retention                0 B                0 B
+├ ƒ /api/cron/ingest                         0 B                0 B
+├ ƒ /api/demo-request                        0 B                0 B
+├ ƒ /api/demo/scenario                       0 B                0 B
+├ ƒ /api/demo/session                        0 B                0 B
+├ ƒ /api/evacuation-plans                    0 B                0 B
+├ ƒ /api/field/broadcast                     0 B                0 B
+├ ƒ /api/field/checklist                     0 B                0 B
+├ ƒ /api/field/handover                      0 B                0 B
+├ ƒ /api/field/photo                         0 B                0 B
+├ ƒ /api/field/sos                           0 B                0 B
+├ ƒ /api/field/status                        0 B                0 B
+├ ƒ /api/flood                               0 B                0 B
+├ ƒ /api/fm/coverage                         0 B                0 B
+├ ƒ /api/fm/import                           0 B                0 B
+├ ƒ /api/fm/stations                         0 B                0 B
+├ ƒ /api/fm/stations/[id]                    0 B                0 B
+├ ƒ /api/gov/export/opendata                 0 B                0 B
+├ ƒ /api/gov/shelters                        0 B                0 B
+├ ƒ /api/health                              0 B                0 B
+├ ƒ /api/ingest/parse                        0 B                0 B
+├ ƒ /api/ingest/social                       0 B                0 B
+├ ƒ /api/integrations                        0 B                0 B
+├ ƒ /api/live-conditions                     0 B                0 B
+├ ƒ /api/missing-persons                     0 B                0 B
+├ ƒ /api/ping                                0 B                0 B
+├ ƒ /api/predict                             0 B                0 B
+├ ƒ /api/predictions/history                 0 B                0 B
+├ ƒ /api/public/shelters                     0 B                0 B
+├ ƒ /api/pulse                               0 B                0 B
+├ ƒ /api/push/send                           0 B                0 B
+├ ƒ /api/push/subscribe                      0 B                0 B
+├ ƒ /api/rag/search                          0 B                0 B
+├ ƒ /api/reports/missing                     0 B                0 B
+├ ƒ /api/retrieval/embed                     0 B                0 B
+├ ƒ /api/road-closures                       0 B                0 B
+├ ƒ /api/road-closures/[id]                  0 B                0 B
+├ ƒ /api/sandbox                             0 B                0 B
+├ ƒ /api/sandbox/status                      0 B                0 B
+├ ƒ /api/sessions                            0 B                0 B
+├ ƒ /api/sessions/[id]                       0 B                0 B
+├ ƒ /api/shelters/nearest                    0 B                0 B
+├ ƒ /api/shelters/occupancy                  0 B                0 B
+├ ƒ /api/sos                                 0 B                0 B
+├ ƒ /api/tts/generate                        0 B                0 B
+├ ƒ /api/user/delete                         0 B                0 B
+├ ƒ /api/user/export                         0 B                0 B
+├ ƒ /api/weather                             0 B                0 B
+├ ƒ /api/weather/forecast                    0 B                0 B
+├ ƒ /api/webhooks/sms                        0 B                0 B
+├ ƒ /api/webhooks/stripe                     0 B                0 B
+├ ƒ /api/webhooks/twilio/call-status         0 B                0 B
+├ ƒ /api/webhooks/voice                      0 B                0 B
+├ ƒ /api/webhooks/whatsapp                   0 B                0 B
+├ ƒ /api/whatsapp/inbound                    0 B                0 B
+├ ƒ /audit-logs                              4.2 kB         98.4 kB
+├ ƒ /auth/callback                           0 B                0 B
+├ ƒ /broadcast-history                       4.95 kB        99.2 kB
+├ ƒ /broadcast-monitor                       5.38 kB         105 kB
+├ ƒ /bulk-ops                                4.34 kB        98.6 kB
+├ ƒ /casualties                              4.6 kB         93.8 kB
+├ ƒ /command-center                          177 B           246 kB
+├ ƒ /compare                                 173 B          89.3 kB
+├ ƒ /dashboard                               15.7 kB         284 kB
+├ ƒ /debug/performance                       6.03 kB         128 kB
+├ ƒ /demo                                    9.69 kB         151 kB
+├ ƒ /demo/fm-broadcast                       7.06 kB         325 kB
+├ ƒ /demo/insights                           4.83 kB         103 kB
+├ ƒ /demo/present                            4.1 kB         98.3 kB
+├ ƒ /demo/summary                            173 B          89.3 kB
+├ ƒ /directory                               191 B           103 kB
+├ ƒ /dispatch                                4.04 kB         104 kB
+├ ƒ /districts                               3.1 kB         97.3 kB
+├ ƒ /download                                879 B          98.8 kB
+├ ƒ /emergency/offline                       3.75 kB         102 kB
+├ ƒ /evacuations                             6.75 kB        95.9 kB
+├ ƒ /family/[shareId]                        2.92 kB         101 kB
+├ ƒ /field                                   24.2 kB         166 kB
+├ ƒ /field/chat                              5.61 kB        99.8 kB
+├ ƒ /field/map                               5.88 kB         310 kB
+├ ƒ /field/team                              846 B            90 kB
+├ ƒ /fm-stations                             6.97 kB         319 kB
+├ ƒ /global-map                              178 B           246 kB
+├ ƒ /gov/ai-planner                          22.4 kB         265 kB
+├ ƒ /gov/alerts                              25.4 kB         168 kB
+├ ƒ /gov/casualties                          4.21 kB        93.4 kB
+├ ƒ /gov/dashboard                           19.7 kB         277 kB
+├ ƒ /gov/login                               173 B          89.3 kB
+├ ƒ /gov/map                                 31.3 kB         407 kB
+├ ƒ /gov/map/compare                         4.03 kB         324 kB
+├ ƒ /gov/missing-persons                     9.82 kB         148 kB
+├ ƒ /gov/ngos                                4.86 kB        99.2 kB
+├ ƒ /gov/overview                            879 B          98.8 kB
+├ ƒ /gov/resources                           23.4 kB         113 kB
+├ ƒ /gov/signup                              4.56 kB         102 kB
+├ ƒ /health                                  1.58 kB         200 kB
+├ ƒ /help                                    10.6 kB         114 kB
+├ ● /help/[topic]                            2.15 kB         105 kB
+├   ├ /help/send-sos
+├   ├ /help/citizen-alerts
+├   ├ /help/landing
+├   └ [+13 more paths]
+├ ○ /icon.svg                                0 B                0 B
+├ ƒ /inventory                               8.36 kB         286 kB
+├ ƒ /knowledge-base                          9.69 kB         104 kB
+├ ƒ /landing                                 173 B          89.3 kB
+├ ƒ /lite                                    173 B          89.3 kB
+├ ƒ /login                                   6.68 kB         105 kB
+├ ƒ /map                                     13.7 kB         155 kB
+├ ƒ /missing-persons                         4.46 kB        93.6 kB
+├ ƒ /ngo-portal                              3.74 kB        98.1 kB
+├ ƒ /onboarding                              4.94 kB         138 kB
+├ ƒ /profile-setup                           19.1 kB         205 kB
+├ ƒ /public/ai                               8.5 kB          157 kB
+├ ƒ /public/alerts                           14 kB           172 kB
+├ ƒ /public/dashboard                        28.4 kB         196 kB
+├ ƒ /public/donations                        5.2 kB          116 kB
+├ ƒ /public/family                           8.61 kB         155 kB
+├ ƒ /public/login                            173 B          89.3 kB
+├ ƒ /public/map                              5.98 kB         161 kB
+├ ƒ /public/missing-report                   9.66 kB         148 kB
+├ ƒ /public/onboarding                       11.7 kB         145 kB
+├ ƒ /public/report                           4.22 kB        93.4 kB
+├ ƒ /public/settings                         14.7 kB         241 kB
+├ ƒ /public/settings/alerts                  5 kB            111 kB
+├ ƒ /public/settings/sos-history             9.23 kB         164 kB
+├ ƒ /public/setup/family                     5.09 kB         125 kB
+├ ƒ /public/setup/location                   3.86 kB         102 kB
+├ ƒ /public/shelters                         4.81 kB         146 kB
+├ ƒ /report                                  4.22 kB        93.4 kB
+├ ƒ /request-resources                       4.13 kB         146 kB
+├ ○ /robots.txt                              0 B                0 B
+├ ƒ /settings                                173 B          89.3 kB
+├ ƒ /settings/admin                          5.47 kB         147 kB
+├ ƒ /settings/ai                             6.82 kB         149 kB
+├ ƒ /settings/ai-setup                       8.96 kB        98.1 kB
+├ ƒ /settings/billing                        7.79 kB          97 kB
+├ ƒ /settings/contacts                       4.45 kB         146 kB
+├ ƒ /settings/integrations                   1.02 kB        90.2 kB
+├ ƒ /settings/map                            4.43 kB         146 kB
+├ ƒ /settings/notifications                  5.51 kB         147 kB
+├ ƒ /settings/notifications/history          3.26 kB        92.4 kB
+├ ƒ /settings/organization                   5.73 kB         148 kB
+├ ƒ /settings/privacy                        7.32 kB         149 kB
+├ ƒ /settings/privacy/policy                 879 B          98.8 kB
+├ ƒ /settings/profile                        8.54 kB         178 kB
+├ ƒ /settings/storage                        4.83 kB         186 kB
+├ ƒ /shelter-update                          3.96 kB        93.1 kB
+├ ƒ /shelters                                8.93 kB         215 kB
+├ ƒ /signup                                  6.85 kB         152 kB
+├ ○ /sitemap.xml                             0 B                0 B
+├ ƒ /sos                                     4.58 kB        93.8 kB
+├ ƒ /styleguide                              20.8 kB         210 kB
+├ ƒ /triage                                  4.54 kB        93.7 kB
+├ ƒ /trust                                   879 B          98.8 kB
+├ ƒ /tts-preview                             5.14 kB        99.3 kB
+├ ƒ /update-password                         3.49 kB         171 kB
+└ ƒ /users                                   5.73 kB         122 kB
++ First Load JS shared by all                89.2 kB
+  ├ chunks/1601-12eba4c96eab554f.js          31.9 kB
+  ├ chunks/52c9b890-63781289ea313156.js      53.6 kB
+  └ other shared chunks (total)              3.63 kB
+
+
+ƒ Middleware                                 85.4 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses getStaticProps)
+ƒ  (Dynamic)  server-rendered on demand
+

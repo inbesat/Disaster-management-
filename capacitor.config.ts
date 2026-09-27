@@ -22,7 +22,7 @@ const config: CapacitorConfig = {
   server: {
     // Live production origin. The whole app runs from here inside the
     // Android WebView. Change this + rebuild when the domain moves.
-    url: "https://disaster-link-ai.vercel.app",
+    url: process.env.CAPACITOR_SERVER_URL || "https://safesphere0.netlify.app",
     cleartext: false,
     androidScheme: "https",
   },

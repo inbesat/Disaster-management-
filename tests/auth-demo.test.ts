@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // Mocks for Next.js navigation and headers
 const mockSet = vi.fn();
@@ -33,6 +33,7 @@ import { verifyOTP, signInAction, signUpAction } from "@/app/actions/auth";
 describe("Demo Mode Authentication Actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("DEMO_AUTH_ENABLED", "true");
   });
 
   describe("verifyOTP", () => {
@@ -94,3 +95,5 @@ describe("Demo Mode Authentication Actions", () => {
     });
   });
 });
+
+afterEach(() => vi.unstubAllEnvs());

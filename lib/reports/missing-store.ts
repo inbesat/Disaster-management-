@@ -137,7 +137,7 @@ export function listMissingReports(filters?: {
   status?: string | null;
   type?: string | null;
 }): MissingReport[] {
-  let rows = [...store.values()].sort(
+  let rows = Array.from(store.values()).sort(
     (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
   );
   if (filters?.status && filters.status !== "all") {

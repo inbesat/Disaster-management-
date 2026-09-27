@@ -1,50 +1,38 @@
 name: Build Android APK
 
-# Builds the SafeSphere debug APK (Capacitor WebView wrapper) and commits it
-# to public/safesphere.apk so the website serves it for direct download.
-#
-# Triggered:
-#   • manually via "Run workflow" (after changing the production domain in
-#     capacitor.config.ts) — recommended way to rebuild
-#   • automatically on push to main (ignoring public/safesphere.apk, so this
-#     workflow never loops on its own auto-commit)
-#
-# The auto-commit message uses [skip ci] so GitHub does not re-trigger this
-# workflow, and `paths-ignore` guards against the public/safesphere.apk change
-# too.
-
+# Manual artifact builds; deployment remains a separate operator action.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'public/safesphere.apk'
 
 jobs:
   build-apk:
     name: Build debug APK
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: 22
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Install Android SDK platform + build-tools (API 36)
         run: |
@@ -68,16 +56,3 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
-
-      - name: Commit APK to public for website download
-        run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk public/safesphere.apk
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/safesphere.apk
-          if git diff --cached --quiet; then
-            echo "No APK changes to commit"
-          else
-            git commit -m "chore(apk): update SafeSphere debug APK [skip ci]"
-            git push
-          fi

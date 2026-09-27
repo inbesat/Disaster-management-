@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { parseCitizenReport, issueLabel, type ParsedCitizenReport } from "@/lib/ai/groq-parser";
+import {
+  parseCitizenReport,
+  issueLabel,
+  type ParsedCitizenReport,
+} from "@/lib/ai/groq-parser";
 import { sanitizeInput } from "@/lib/security/sanitize";
 
 export const dynamic = "force-dynamic";
@@ -59,12 +63,17 @@ function toReportType(issue: ParsedCitizenReport["issue"]): ReportType {
 }
 
 export async function GET(): Promise<NextResponse> {
+  if (process.env.DEMO_DATA_ENABLED !== "true")
+    return NextResponse.json(
+      { ok: false, error: "Social-media demo simulation is disabled." },
+      { status: 404 },
+    );
   const reports: Array<{
     lat: number;
     lng: number;
     report_type: ReportType;
     issue_label: string;
-    source: "social";
+    source: "demo-social";
     raw_text: string;
     confidence_score: number;
     verification_status: "unverified";
@@ -87,7 +96,7 @@ export async function GET(): Promise<NextResponse> {
       lng: jitter(PATNA.lng),
       report_type: reportType,
       issue_label: sanitizeInput(issueLabel(parsed.issue)),
-      source: "social",
+      source: "demo-social",
       raw_text: sanitizeInput(rawText),
       confidence_score: +(parsed.severity / 100).toFixed(2),
       verification_status: "unverified",

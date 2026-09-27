@@ -23,7 +23,11 @@ import PublicBackButton from "@/components/public/PublicBackButton";
 type Gps = { lat: number; lng: number };
 
 const EMERGENCY_CONTACTS = [
-  { label: "National Emergency", number: "112", description: "Police / Fire / Ambulance" },
+  {
+    label: "National Emergency",
+    number: "112",
+    description: "Police / Fire / Ambulance",
+  },
   { label: "Disaster Helpline", number: "1070", description: "NDRF / SDRF" },
   { label: "Ambulance", number: "108", description: "Medical Emergency" },
   { label: "Women Helpline", number: "1091", description: "Women in distress" },
@@ -41,6 +45,7 @@ export default function SosPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sosId, setSosId] = useState<string | null>(null);
+  const [sosError, setSosError] = useState<string | null>(null);
 
   function captureLocation() {
     setGpsLoading(true);
@@ -59,13 +64,14 @@ export default function SosPage() {
         setGpsError("Could not access location. Please enable GPS.");
         setGpsLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000 },
     );
   }
 
   async function handleSos(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
+    setSosError(null);
     try {
       const res = await fetch("/api/sos", {
         method: "POST",
@@ -81,14 +87,17 @@ export default function SosPage() {
         }),
       });
       const data = await res.json();
-      if (data.ok) {
-        setSosId(data.sosId);
-        setSubmitted(true);
+      if (!res.ok || !data.ok) {
+        setSosError(
+          data.error ??
+            "SOS could not be recorded. Call your local emergency number now.",
+        );
+        return;
       }
-    } catch {
-      // Still show confirmation on network failure
-      setSosId("offline-" + Date.now());
+      setSosId(data.sosId);
       setSubmitted(true);
+    } catch {
+      setSosError("SOS could not be sent. Call your local emergency number now.");
     } finally {
       setSubmitting(false);
     }
@@ -104,9 +113,9 @@ export default function SosPage() {
             </div>
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">SOS Sent</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">SOS Report Recorded</h1>
             <p className="text-slate-400">
-              Your emergency alert has been dispatched to responders in your area.
+              Your report was saved. Responder notification has not been confirmed.
             </p>
             {sosId && (
               <p className="text-xs text-slate-500 mt-2 font-mono">
@@ -116,12 +125,21 @@ export default function SosPage() {
           </div>
           <div className="rounded-xl border border-white/10 bg-white/5 p-4">
             <p className="text-sm text-slate-300">
-              Help is on the way. Stay where you are if safe to do so.
-              Responders have your GPS location{isPwd ? " and PWD priority flag" : ""}.
+              Call your local emergency number for immediate help. Keep your location
+              available if it is safe to do so.
             </p>
           </div>
           <button
-            onClick={() => { setSubmitted(false); setSosId(null); setName(""); setPhone(""); setMessage(""); setIsPwd(false); setPwdDetails(""); setGps(null); }}
+            onClick={() => {
+              setSubmitted(false);
+              setSosId(null);
+              setName("");
+              setPhone("");
+              setMessage("");
+              setIsPwd(false);
+              setPwdDetails("");
+              setGps(null);
+            }}
             className="rounded-full border border-white/20 px-6 py-2.5 text-sm text-white hover:bg-white/10 transition"
           >
             Send Another SOS
@@ -156,10 +174,15 @@ export default function SosPage() {
               href={`tel:${c.number}`}
               className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10 transition group"
             >
-              <Phone size={16} className="text-emerald-400 group-hover:scale-110 transition" />
+              <Phone
+                size={16}
+                className="text-emerald-400 group-hover:scale-110 transition"
+              />
               <div>
                 <p className="text-sm font-semibold text-white">{c.label}</p>
-                <p className="text-xs text-slate-500">{c.number} · {c.description}</p>
+                <p className="text-xs text-slate-500">
+                  {c.number} · {c.description}
+                </p>
               </div>
             </a>
           ))}
@@ -197,7 +220,9 @@ export default function SosPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-slate-400 mb-1">What&apos;s happening?</label>
+              <label className="block text-xs text-slate-400 mb-1">
+                What&apos;s happening?
+              </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -252,14 +277,25 @@ export default function SosPage() {
                 disabled={gpsLoading}
                 className="flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-xs text-white hover:bg-white/10 transition disabled:opacity-50"
               >
-                {gpsLoading ? <Loader2 size={12} className="animate-spin" /> : <MapPin size={12} />}
+                {gpsLoading ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <MapPin size={12} />
+                )}
                 {gps ? "Refresh" : "Get Location"}
               </button>
             </div>
-            {gpsError && (
-              <p className="text-xs text-amber-400">{gpsError}</p>
-            )}
+            {gpsError && <p className="text-xs text-amber-400">{gpsError}</p>}
           </div>
+
+          {sosError && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-400 bg-red-950 p-3 text-sm font-semibold text-white"
+            >
+              {sosError}
+            </p>
+          )}
 
           {/* SOS Button */}
           <button
@@ -283,8 +319,8 @@ export default function SosPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-600">
-          Your location and message will be sent to nearby disaster responders.
-          {isPwd && " PWD flag ensures priority dispatch."}
+          Your report is recorded when the service is available. Contact emergency
+          services directly for immediate help.
         </p>
       </div>
     </div>

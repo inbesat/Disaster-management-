@@ -1,0 +1,16 @@
+
+> disaster-response-platform@0.1.0 test E:\Hackathons\disaster management\disaster-response-platform
+> vitest run
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 E:/Hackathons/disaster management/disaster-response-platform
+
+
+ Test Files  165 passed (165)
+      Tests  1324 passed (1324)
+   Start at  00:39:52
+   Duration  42.07s (transform 21.88s, setup 0ms, import 135.11s, tests 17.01s, environment 73ms)
+

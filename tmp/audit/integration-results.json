@@ -1,0 +1,56 @@
+{
+  "database": "unavailable",
+  "notion": {
+    "ok": false
+  },
+  "countries": {
+    "ok": true,
+    "fields": [
+      "source",
+      "data"
+    ]
+  },
+  "events": {
+    "ok": true,
+    "fields": [
+      "source",
+      "fetchedAt",
+      "events"
+    ]
+  },
+  "spaceWeather": {
+    "ok": true,
+    "fields": [
+      "source",
+      "fetchedAt",
+      "notifications"
+    ]
+  },
+  "ml": {
+    "ok": false
+  },
+  "graph": {
+    "status": "conflict",
+    "planLength": 54,
+    "resources": [
+      {
+        "resourceType": "boats",
+        "quantity": 2,
+        "targetZone": "Patna vicinity",
+        "eta": "within 2 hours"
+      },
+      {
+        "resourceType": "medicalKits",
+        "quantity": 10,
+        "targetZone": "Patna vicinity",
+        "eta": "within 2 hours"
+      }
+    ],
+    "logs": [
+      "Predictor: HIGH is a preliminary text-based triage classification, not a measured weather forecast. Verify local conditions.",
+      "Planner: generated an incident-specific draft with LangChain. Pending inventory validation and human approval.",
+      "Allocator: review required. boats: requested 4, verified allowance 2; medicalKits: requested 20, verified allowance 10",
+      "Validator: holding for human review of the reported conflict."
+    ]
+  }
+}

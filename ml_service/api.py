@@ -24,6 +24,13 @@ from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+# Explicit local configuration; production deployments can provide process env.
+from pathlib import Path
+for _line in (Path(__file__).parent / ".env.local").read_text().splitlines() if (Path(__file__).parent / ".env.local").exists() else []:
+    if "=" in _line and not _line.lstrip().startswith("#"):
+        _key, _value = _line.split("=", 1)
+        os.environ.setdefault(_key.strip(), _value.strip())
+
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "flood_xgboost_model.pkl")
 
 # Column order MUST match the order used during training (train_model.py).

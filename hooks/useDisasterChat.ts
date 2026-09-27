@@ -20,7 +20,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAIBridge } from "@/lib/ai-bridge/ai-bridge";
-import type { AIProvider, ChatContext, ChatMessage, BridgeMode } from "@/lib/ai-bridge/types";
+import type {
+  AIProvider,
+  ChatContext,
+  ChatMessage,
+  BridgeMode,
+} from "@/lib/ai-bridge/types";
 import { getOfflineDb } from "@/lib/offline-sync/db";
 import { WorkerLLMProvider } from "@/lib/ai-bridge/worker-provider";
 
@@ -69,7 +74,9 @@ export function useDisasterChat(options: DisasterChatOptions = {}) {
   const district = options.district;
   const sessionId = options.sessionId ?? DEFAULT_SESSION;
   const persist = options.persist ?? true;
-  const localProviderRef = useRef<ChatLocalProvider | null>(options.localProvider ?? null);
+  const localProviderRef = useRef<ChatLocalProvider | null>(
+    options.localProvider ?? null,
+  );
 
   const [messages, setMessages] = useState<DisasterChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,15 +100,13 @@ export function useDisasterChat(options: DisasterChatOptions = {}) {
       if (!persist || typeof indexedDB === "undefined") return;
       try {
         const db = getOfflineDb();
-        const rows = await db.chatHistory
-          .where("sessionId")
-          .equals(sessionId)
-          .toArray();
+        const rows = await db.chatHistory.where("sessionId").equals(sessionId).toArray();
         const restored: DisasterChatMessage[] = rows
           .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
           .map((r) => ({
             id: r.id,
-            role: (r.role === "user" || r.role === "assistant" ? r.role : "assistant") as "user" | "assistant",
+            role: (r.role === "user" || r.role === "assistant" ? r.role : "assistant") as
+              "user" | "assistant",
             content: r.content,
             timestamp: new Date(r.timestamp).getTime(),
             source: (r as unknown as { source?: BridgeMode }).source,
@@ -151,6 +156,7 @@ export function useDisasterChat(options: DisasterChatOptions = {}) {
       };
       const history: ChatMessage[] = messagesRef.current
         .filter((m) => m.role === "user" || m.role === "assistant")
+        .slice(-20)
         .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }));
 
       setMessages((prev) => [...prev, userMsg]);
@@ -235,6 +241,7 @@ export function useDisasterChat(options: DisasterChatOptions = {}) {
           currentDistrict: district,
           history: messagesRef.current
             .filter((m) => m.role === "user" || m.role === "assistant")
+            .slice(-20)
             .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
         })) {
           if (chunk.mode === "error") {
@@ -243,7 +250,11 @@ export function useDisasterChat(options: DisasterChatOptions = {}) {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === streamingMsg.id
-                  ? { ...m, content: chunk.text || "Local model unavailable.", streaming: false }
+                  ? {
+                      ...m,
+                      content: chunk.text || "Local model unavailable.",
+                      streaming: false,
+                    }
                   : m,
               ),
             );

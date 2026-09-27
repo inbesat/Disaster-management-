@@ -31,7 +31,9 @@ const QUAKES_TIMEOUT_MS = 8_000;
 
 let cache: { payload: PulsePayload; at: number } | null = null;
 
-async function fetchNews(apiKey: string): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
+async function fetchNews(
+  apiKey: string,
+): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
   const viaNewsData = await fetchNewsViaNewsData(apiKey);
   if (viaNewsData.items.length > 0) return viaNewsData;
 
@@ -46,19 +48,27 @@ async function fetchNews(apiKey: string): Promise<{ status: "live" | "unavailabl
 }
 
 /** Primary feed — NewsData.io Indian disaster headlines. */
-async function fetchNewsViaNewsData(apiKey: string): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
+async function fetchNewsViaNewsData(
+  apiKey: string,
+): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
   if (!apiKey || apiKey.length < 20) {
     return { status: "unavailable", items: [] };
   }
   try {
     const url =
-      "https://newsdata.io/api/1/news?apikey=" + encodeURIComponent(apiKey) +
+      "https://newsdata.io/api/1/news?apikey=" +
+      encodeURIComponent(apiKey) +
       "&q=flood%20OR%20cyclone%20OR%20earthquake&country=in&language=en&size=6";
     const res = await fetch(url, { signal: AbortSignal.timeout(NEWS_TIMEOUT_MS) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as {
       status?: string;
-      results?: Array<{ title?: string; source_id?: string; pubDate?: string; link?: string }>;
+      results?: Array<{
+        title?: string;
+        source_id?: string;
+        pubDate?: string;
+        link?: string;
+      }>;
     };
     const items: PulseNewsItem[] = (data.results ?? [])
       .filter((r): r is typeof r & { title: string } => Boolean(r.title))
@@ -69,7 +79,9 @@ async function fetchNewsViaNewsData(apiKey: string): Promise<{ status: "live" | 
         pubDate: r.pubDate ?? "",
         link: r.link ?? "",
       }));
-    return items.length > 0 ? { status: "live", items } : { status: "unavailable", items: [] };
+    return items.length > 0
+      ? { status: "live", items }
+      : { status: "unavailable", items: [] };
   } catch (error: unknown) {
     safeLog("warn", `[pulse] newsdata feed failed: ${String(error)}`);
     return { status: "unavailable", items: [] };
@@ -77,17 +89,25 @@ async function fetchNewsViaNewsData(apiKey: string): Promise<{ status: "live" | 
 }
 
 /** Fallback feed — SerpApi Google News (same disaster query, India scope). */
-async function fetchNewsViaSerp(apiKey: string): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
+async function fetchNewsViaSerp(
+  apiKey: string,
+): Promise<{ status: "live" | "unavailable"; items: PulseNewsItem[] }> {
   try {
     const url =
       "https://serpapi.com/search.json?engine=google_news" +
       "&q=flood+OR+cyclone+OR+earthquake+India&gl=in&hl=en" +
-      "&api_key=" + encodeURIComponent(apiKey);
+      "&api_key=" +
+      encodeURIComponent(apiKey);
     const res = await fetch(url, { signal: AbortSignal.timeout(NEWS_TIMEOUT_MS) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as {
       error?: string;
-      news_results?: Array<{ title?: string; source?: { name?: string } | string; date?: string; link?: string }>;
+      news_results?: Array<{
+        title?: string;
+        source?: { name?: string } | string;
+        date?: string;
+        link?: string;
+      }>;
     };
     if (data.error) throw new Error(data.error);
     const items: PulseNewsItem[] = (data.news_results ?? [])
@@ -109,7 +129,9 @@ async function fetchNewsViaSerp(apiKey: string): Promise<{ status: "live" | "una
   }
 }
 
-async function fetchQuakes(feedUrl: string | undefined): Promise<{ status: "live" | "unavailable"; items: PulseQuake[] }> {
+async function fetchQuakes(
+  feedUrl: string | undefined,
+): Promise<{ status: "live" | "unavailable"; items: PulseQuake[] }> {
   if (!feedUrl) return { status: "unavailable", items: [] };
   try {
     const res = await fetch(feedUrl, {
@@ -118,7 +140,9 @@ async function fetchQuakes(feedUrl: string | undefined): Promise<{ status: "live
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = (await res.json()) as {
-      features?: Array<{ properties?: { mag?: number | null; place?: string; time?: number } }>;
+      features?: Array<{
+        properties?: { mag?: number | null; place?: string; time?: number };
+      }>;
     };
     const items: PulseQuake[] = (data.features ?? [])
       .map((f) => ({
@@ -142,7 +166,7 @@ export async function GET(): Promise<NextResponse> {
   }
 
   const [news, quakes] = await Promise.all([
-    fetchNews(process.env.NEWSDATA_API_KEY),
+    fetchNews(process.env.NEWSDATA_API_KEY ?? ""),
     fetchQuakes(process.env.USGS_EARTHQUAKE_FEED_URL),
   ]);
 

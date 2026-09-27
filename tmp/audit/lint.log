@@ -1,0 +1,130 @@
+
+./app/(public)/onboarding/page.tsx
+27:18  Warning: 'useAnimation' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/(public)/report/page.tsx
+6:3  Warning: 'Camera' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Warning: 'Info' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'ShieldAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/actions/documents.ts
+154:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./app/layout.tsx
+35:10  Warning: 'Analytics' is defined but never used.  @typescript-eslint/no-unused-vars
+36:10  Warning: 'SpeedInsights' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/AgentCard.tsx
+117:9  Warning: 'StatusIcon' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/OrchestrationFlow.tsx
+224:17  Warning: 'nextComplete' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/PlanApprovalBar.tsx
+36:3  Warning: 'ShieldCheck' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/ai/PlannerLayout.tsx
+32:3  Warning: 'Radio' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/alerts/AlertComposer.tsx
+230:9  Warning: 'useTemplate' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/alerts/DeliveryTracking.tsx
+16:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'Clock' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'Send' is defined but never used.  @typescript-eslint/no-unused-vars
+28:6  Warning: 'ChannelStatus' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/HeroKPIRow.tsx
+6:3  Warning: 'Building2' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/ResponderTracker.tsx
+4:10  Warning: 'Navigation' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/dashboard/SituationHeader.tsx
+30:3  Warning: 'ShieldCheck' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/map/AdvancedLayerControl.tsx
+24:3  Warning: 'GOV_MAP_LAYER_KEYS' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/map/GovMapWorkspace.tsx
+16:3  Warning: 'Layers' is defined but never used.  @typescript-eslint/no-unused-vars
+17:3  Warning: 'MapPin' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/tasks/TaskBoard.tsx
+21:3  Warning: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+23:3  Warning: 'XCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/gov/team/TeamRoster.tsx
+19:3  Warning: 'AlertCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+22:3  Warning: 'Filter' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'User' is defined but never used.  @typescript-eslint/no-unused-vars
+32:3  Warning: 'XCircle' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/landing/layout/Footer.tsx
+4:23  Warning: 'ExternalLink' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/navigation/SidebarHeader.tsx
+17:10  Warning: 'useSidebar' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./components/public/report/CitizenReportForm.tsx
+6:3  Warning: 'Camera' is defined but never used.  @typescript-eslint/no-unused-vars
+7:3  Warning: 'CheckCircle2' is defined but never used.  @typescript-eslint/no-unused-vars
+8:3  Warning: 'ChevronRight' is defined but never used.  @typescript-eslint/no-unused-vars
+9:3  Warning: 'Info' is defined but never used.  @typescript-eslint/no-unused-vars
+10:3  Warning: 'Loader2' is defined but never used.  @typescript-eslint/no-unused-vars
+11:3  Warning: 'ShieldAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+239:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./lib/agents/nodes/action-nodes.ts
+27:40  Warning: '_state' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/agents/nodes/intelligence-nodes.ts
+23:107  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+23:142  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/ai/AIBridge.ts
+152:10  Warning: 'defaultCloudRoute' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/ai/chat-messages.ts
+11:28  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+11:94  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/analytics/tracker.ts
+10:7  Warning: 'POSTHOG_HOST' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+./lib/config/navigation.ts
+22:3  Warning: 'Activity' is defined but never used.  @typescript-eslint/no-unused-vars
+26:3  Warning: 'FileText' is defined but never used.  @typescript-eslint/no-unused-vars
+27:3  Warning: 'Heart' is defined but never used.  @typescript-eslint/no-unused-vars
+30:3  Warning: 'Map' is defined but never used.  @typescript-eslint/no-unused-vars
+36:3  Warning: 'Shield' is defined but never used.  @typescript-eslint/no-unused-vars
+38:3  Warning: 'TriangleAlert' is defined but never used.  @typescript-eslint/no-unused-vars
+42:3  Warning: 'UserX' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/integrations/sources.ts
+41:106  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:89  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:120  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/nova/nova-reply.test.ts
+160:11  Warning: 'result' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+169:73  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./lib/rag/embeddings.ts
+35:10  Warning: 'mockVector' is defined but never used.  @typescript-eslint/no-unused-vars
+180:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/rag/sources-payload.test.ts
+2:39  Warning: 'RagSourcePayload' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/rag/vector-search.ts
+70:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./lib/retrieval/retrieve.ts
+23:7  Warning: 'EMBEDDING_MODEL' is assigned a value but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules

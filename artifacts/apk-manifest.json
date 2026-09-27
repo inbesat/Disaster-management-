@@ -1,0 +1,16 @@
+[
+  {
+    "name": "safesphere.apk",
+    "bytes": 4165300,
+    "sha256": "5cb4c8b6208f3a4da247c1701ba7c7b1652813b1b9a2967bab513e4904f1af13",
+    "signing": "debug",
+    "backend": "https://safesphere0.netlify.app"
+  },
+  {
+    "name": "safesphere-field-ops.apk",
+    "bytes": 77000389,
+    "sha256": "1f6f335bc8f8394ec0c0e588a83352b5fa05e159f995da3abf2c4f967ecee5b1",
+    "signing": "debug",
+    "backend": "https://safesphere0.netlify.app"
+  }
+]

@@ -82,10 +82,10 @@ export function DashboardGrid({ items }: DashboardGridProps) {
       variants={container}
       initial="hidden"
       animate="show"
-      className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-12"
+      className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-12"
     >
       {items.map(({ key, className = "", children }) => (
-        <motion.div key={key} variants={itemVariants} className={className}>
+        <motion.div key={key} variants={itemVariants} className={`min-w-0 ${className}`}>
           {children}
         </motion.div>
       ))}

@@ -128,7 +128,8 @@ describe("Supabase mode (env configured)", () => {
     expect(result.ok).toBe(false);
   });
 
-  it("admits the demo cookie session when no Supabase user is signed in", async () => {
+  it("admits an explicitly enabled demo cookie session", async () => {
+    vi.stubEnv("DEMO_AUTH_ENABLED", "true");
     // govDemoLogin / govLogin write only cookies; the middleware and admin
     // layout accept that session, so the API guard must too.
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });

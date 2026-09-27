@@ -13,14 +13,14 @@
 //     (exposed as triggerCriticalHaptic in hooks/useHaptics.ts)
 //   • POSTs a high-priority SOS_EMERGENCY payload to /api/field/sos
 //   • Offline → the alert is queued via OfflineSyncQueue for replay the
-//     moment connectivity returns, and a red broadcast banner confirms
+//     moment connectivity returns; a local queue is not delivery.
 // ---------------------------------------------------------------------
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Siren, Phone, ChevronRight, MapPin } from "lucide-react";
 import toast from "react-hot-toast";
 import { triggerCriticalHaptic, triggerLightHaptic } from "@/hooks/useHaptics";
-import { OfflineSyncQueue, PATNA_CENTER } from "@/lib/field-offline";
+import { OfflineSyncQueue } from "@/lib/field-offline";
 
 const RESPONDER = "Sunita Das · Team Alpha · NDRF";
 
@@ -37,12 +37,12 @@ export default function ResponderSOS() {
   useEffect(() => {
     if (!open) return;
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setCoords(PATNA_CENTER);
+      setCoords(null);
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => setCoords(PATNA_CENTER),
+      () => setCoords(null),
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
     );
   }, [open]);
@@ -59,8 +59,7 @@ export default function ResponderSOS() {
   const updateSlide = (e: React.PointerEvent | React.TouchEvent) => {
     if (!dragging.current || !trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const clientX =
-      "clientX" in e ? e.clientX : e.touches?.[0]?.clientX ?? rect.left;
+    const clientX = "clientX" in e ? e.clientX : (e.touches?.[0]?.clientX ?? rect.left);
     const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
     setSlide(ratio);
   };
@@ -77,30 +76,47 @@ export default function ResponderSOS() {
   };
 
   async function fire() {
-    setSent(true);
-    triggerCriticalHaptic(); // [500, 200, 500] — SOS pattern
-
+    triggerCriticalHaptic();
+    if (!coords) {
+      toast.error(
+        "GPS is unavailable. Contact the control room directly and share your location.",
+      );
+      return;
+    }
     const payload = {
       type: "SOS_EMERGENCY" as const,
       responder: RESPONDER,
-      lat: coords?.lat ?? PATNA_CENTER.lat,
-      lng: coords?.lng ?? PATNA_CENTER.lng,
+      lat: coords.lat,
+      lng: coords.lng,
       at: new Date().toISOString(),
     };
-
     try {
       const res = await fetch("/api/field/sos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error(`SOS ${res.status}`);
+      if (!res.ok) {
+        toast.error("SOS was not recorded. Contact the control room directly.");
+        return;
+      }
+      setSent(true);
+      toast("SOS recorded. Responder notification is unconfirmed.", { icon: "🚨" });
     } catch {
-      // Offline → queue the critical alert for replay on reconnect.
-      OfflineSyncQueue.enqueue({ url: "/api/field/sos", method: "POST", body: payload });
+      if (!navigator.onLine) {
+        OfflineSyncQueue.enqueue({
+          url: "/api/field/sos",
+          method: "POST",
+          body: payload,
+        });
+        toast(
+          "SOS queued on this device, not delivered. Contact the control room directly.",
+          { icon: "⚠️" },
+        );
+      } else {
+        toast.error("SOS could not be sent. Contact the control room directly.");
+      }
     }
-
-    toast("RESPONDER DOWN — alerting Command Center", { icon: "🚨" });
   }
 
   function close() {
@@ -156,7 +172,7 @@ export default function ResponderSOS() {
                 RESPONDER DOWN
               </p>
               <p className="mt-2 text-lg text-red-100/90">
-                High-priority alert sent to Command Center &amp; nearest units.
+                SOS report recorded. Responder notification is unconfirmed.
               </p>
               <p className="mt-3 flex items-center justify-center gap-1 font-mono text-sm text-red-200/70">
                 <MapPin className="h-4 w-4" />
@@ -187,8 +203,8 @@ export default function ResponderSOS() {
                 Emergency SOS
               </p>
               <p className="mt-1 text-base text-red-100/80">
-                Slide the thumb all the way to alert Command Center with your
-                live location.
+                Slide the thumb all the way to alert Command Center with your live
+                location.
               </p>
 
               {/* Slide-to-trigger track */}
@@ -238,10 +254,17 @@ export default function ResponderSOS() {
       {/* pulsing ring keyframes */}
       <style jsx>{`
         @keyframes sosRing {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 60, 60, 0.7); }
-          50% { box-shadow: 0 0 0 18px rgba(255, 60, 60, 0); }
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(255, 60, 60, 0.7);
+          }
+          50% {
+            box-shadow: 0 0 0 18px rgba(255, 60, 60, 0);
+          }
         }
-        .sos-ring { animation: sosRing 1.4s ease-in-out infinite; }
+        .sos-ring {
+          animation: sosRing 1.4s ease-in-out infinite;
+        }
       `}</style>
     </>
   );

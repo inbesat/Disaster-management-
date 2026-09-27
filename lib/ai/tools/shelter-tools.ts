@@ -12,38 +12,6 @@ export type ShelterSnapshot = {
   facilities: Record<string, boolean> | null;
 };
 
-function mockShelters(district: string): ShelterSnapshot[] {
-  return [
-    {
-      id: "mock-sh-1",
-      name: "District Hospital",
-      district,
-      capacity: 300,
-      currentOccupancy: 120,
-      status: "open",
-      facilities: { water: true, food: true, medical: true, electricity: true },
-    },
-    {
-      id: "mock-sh-2",
-      name: "Govt Senior Secondary School",
-      district,
-      capacity: 400,
-      currentOccupancy: 280,
-      status: "open",
-      facilities: { water: true, food: true, medical: false, electricity: true },
-    },
-    {
-      id: "mock-sh-3",
-      name: "Community Flood Shelter",
-      district,
-      capacity: 250,
-      currentOccupancy: 250,
-      status: "full",
-      facilities: { water: true, food: false, medical: true, electricity: true },
-    },
-  ];
-}
-
 export const getShelterStatus = tool({
   description:
     "Fetches current occupancy and capacity of shelters in a specific district.",
@@ -53,7 +21,7 @@ export const getShelterStatus = tool({
   execute: async ({ district }) => {
     try {
       const rows = await prisma.shelter.findMany({
-        where: { district },
+        where: { district, isDemo: false },
         orderBy: { currentOccupancy: "asc" },
         select: {
           id: true,
@@ -66,7 +34,13 @@ export const getShelterStatus = tool({
         },
       });
 
-      if (!rows.length) return { district, shelters: mockShelters(district) };
+      if (!rows.length)
+        return {
+          district,
+          shelters: [],
+          source: "database",
+          message: "No verified shelters found.",
+        };
 
       return {
         district,
@@ -78,7 +52,13 @@ export const getShelterStatus = tool({
     } catch {
       // DB not reachable (or empty) -> return realistic demo data so the
       // planner can keep reasoning about evacuation options.
-      return { district, shelters: mockShelters(district) };
+      return {
+        district,
+        shelters: [],
+        source: "unavailable",
+        error:
+          "Shelter database unavailable. Do not invent shelter locations or capacity.",
+      };
     }
   },
 });

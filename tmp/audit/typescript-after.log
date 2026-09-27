@@ -1,0 +1,51 @@
+app/(dashboard)/dashboard/page.tsx(38,11): error TS2322: Type '{ columns: { mobile: number; tablet: number; desktop: number; wide: number; }; items: { key: string; className: string; children: Element; }[]; }' is not assignable to type 'IntrinsicAttributes & DashboardGridProps'.
+  Property 'columns' does not exist on type 'IntrinsicAttributes & DashboardGridProps'.
+app/actions/billing.ts(16,7): error TS2322: Type '"2024-06-20"' is not assignable to type '"2026-07-29.dahlia"'.
+app/api/pulse/route.ts(145,15): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+app/api/weather/forecast/route.ts(61,27): error TS2802: Type 'Map<string, { high: number; rain: number; codes: string[]; }>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
+app/api/weather/forecast/route.ts(63,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/api/weather/forecast/route.ts(64,33): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/api/weather/forecast/route.ts(65,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/api/webhooks/stripe/route.ts(13,7): error TS2322: Type '"2024-06-20"' is not assignable to type '"2026-07-29.dahlia"'.
+app/api/webhooks/stripe/route.ts(49,32): error TS2551: Property 'subscription_data' does not exist on type 'Session'. Did you mean 'subscription'?
+app/api/webhooks/stripe/route.ts(59,58): error TS2339: Property 'current_period_end' does not exist on type 'Response<Subscription>'.
+app/api/webhooks/stripe/route.ts(97,53): error TS2339: Property 'current_period_end' does not exist on type 'Subscription'.
+app/api/webhooks/stripe/route.ts(103,15): error TS2322: Type '"active" | "trialing" | OtherString' is not assignable to type '"active" | "past_due" | "canceled" | "trialing"'.
+  Type 'OtherString' is not assignable to type '"active" | "past_due" | "canceled" | "trialing"'.
+components/ai/ChatThread.tsx(17,22): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/ai/ChatThread.tsx(17,56): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/ai/ChatThread.tsx(18,21): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/ai/ChatThread.tsx(25,12): error TS2339: Property 'offline' does not exist on type '{}'.
+components/ai/ChatThread.tsx(26,12): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/ai/ChatThread.tsx(26,38): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/ai/ChatThread.tsx(26,84): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/ai/ChatThread.tsx(41,21): error TS2339: Property 'append' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+components/ai/ChatThread.tsx(43,5): error TS2353: Object literal may only specify known properties, and 'initialMessages' does not exist in type 'UseChatOptions<UIMessage<unknown, UIDataTypes, UITools>>'.
+components/ai/ChatThread.tsx(192,93): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+components/ai/ChatThread.tsx(194,102): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+components/gov/ai/PlannerChat.tsx(88,22): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(88,56): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(89,21): error TS2339: Property 'ragSources' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(104,12): error TS2339: Property 'offline' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(105,12): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(105,38): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(105,84): error TS2339: Property 'aiProvider' does not exist on type '{}'.
+components/gov/ai/PlannerChat.tsx(113,21): error TS2339: Property 'append' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+components/gov/ai/PlannerChat.tsx(115,5): error TS2353: Object literal may only specify known properties, and 'initialMessages' does not exist in type 'UseChatOptions<UIMessage<unknown, UIDataTypes, UITools>>'.
+components/gov/ai/PlannerChat.tsx(143,7): error TS2304: Cannot find name 'setIsTyping'.
+components/gov/ai/PlannerChat.tsx(162,7): error TS2304: Cannot find name 'setIsTyping'.
+components/gov/ai/PlannerChat.tsx(216,89): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+components/gov/ai/PlannerChat.tsx(252,89): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+components/public/WeatherCarousel.tsx(18,15): error TS2459: Module '"@/app/api/weather/forecast/route"' declares 'ForecastDay' locally, but it is not exported.
+components/public/WeatherCarousel.tsx(73,11): error TS2345: Argument of type '{ risk: SeverityLevel; label: string; day: string; date: string; icon: LucideIcon; temp: number; rain: any; }[]' is not assignable to parameter of type 'SetStateAction<CarouselCard[] | null>'.
+  Type '{ risk: SeverityLevel; label: string; day: string; date: string; icon: LucideIcon; temp: number; rain: any; }[]' is not assignable to type 'CarouselCard[]'.
+    Property 'riskLabel' is missing in type '{ risk: SeverityLevel; label: string; day: string; date: string; icon: LucideIcon; temp: number; rain: any; }' but required in type 'CarouselCard'.
+lib/nova/nova-reply.test.ts(19,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '(prompt: string, context: ChatContext) => Promise<AIResponse>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(prompt: string, context: ChatContext) => Promise<AIResponse>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(prompt: string, context: ChatContext): Promise<AIResponse>'.
+lib/nova/nova-reply.test.ts(22,7): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '(prompt: string, context: { currentDistrict: string; }) => { text: string; confidence?: number | undefined; mode?: string | undefined; } | Promise<{ text: string; confidence?: number | undefined; mode?: string | undefined; }>'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(prompt: string, context: { currentDistrict: string; }) => { text: string; confidence?: number | undefined; mode?: string | undefined; } | Promise<{ text: string; confidence?: number | undefined; mode?: string | undefined; }>'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(prompt: string, context: { currentDistrict: string; }): { text: string; confidence?: number | undefined; mode?: string | undefined; } | Promise<{ text: string; confidence?: number | undefined; mode?: string | undefined; }>'.
+lib/rag/sources-payload.ts(2,40): error TS2307: Cannot find module './retrieve' or its corresponding type declarations.
+lib/reports/missing-store.ts(140,18): error TS2802: Type 'MapIterator<MissingReport>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.

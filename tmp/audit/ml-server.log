@@ -1,0 +1,22 @@
+INFO:     Started server process [13796]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+Accept failed on a socket
+socket: <asyncio.TransportSocket fd=748, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>
+Traceback (most recent call last):
+  File "C:\Users\Lenovo\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\proactor_events.py", line 845, in loop
+    conn, addr = f.result()
+                 ~~~~~~~~^^
+  File "C:\Users\Lenovo\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_events.py", line 804, in _poll
+    value = callback(transferred, key, ov)
+  File "C:\Users\Lenovo\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_events.py", line 562, in finish_accept
+    return conn, conn.getpeername()
+                 ~~~~~~~~~~~~~~~~^^
+OSError: [WinError 10014] The system detected an invalid pointer address in attempting to use a pointer argument in a call
+Task exception was never retrieved
+future: <Task finished name='Task-4' coro=<IocpProactor.accept.<locals>.accept_coro() done, defined at C:\Users\Lenovo\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_events.py:564> exception=OSError(14, 'The system detected an invalid pointer address in attempting to use a pointer argument in a call', None, 10014, None)>
+Traceback (most recent call last):
+  File "C:\Users\Lenovo\AppData\Local\Python\pythoncore-3.14-64\Lib\asyncio\windows_events.py", line 567, in accept_coro
+    await future
+OSError: [WinError 10014] The system detected an invalid pointer address in attempting to use a pointer argument in a call

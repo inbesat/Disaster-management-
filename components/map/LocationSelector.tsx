@@ -28,7 +28,7 @@ const LOCATIONS = [
 ] as const;
 
 export default function LocationSelector() {
-  const { current: map } = useMap();
+  const map = useMap().default;
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const location = LOCATIONS.find((l) => l.label === e.target.value);

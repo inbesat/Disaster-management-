@@ -19,6 +19,10 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.safesphere.nativeapp.R;
 import com.safesphere.nativeapp.ai.NovaRuleEngine;
+import com.safesphere.nativeapp.ai.CloudChatClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import okhttp3.Call;
 import com.safesphere.nativeapp.ui.base.BaseFragment;
 
 import java.text.SimpleDateFormat;
@@ -35,6 +39,8 @@ public class NovaChatFragment extends BaseFragment {
 
     private List<ChatMessage> messages = new ArrayList<>();
     private ChatAdapter adapter;
+    private Call pendingCall;
+    private boolean sending;
 
     @Override protected int getLayoutRes() { return R.layout.fragment_mitron_chat; }
 
@@ -49,7 +55,7 @@ public class NovaChatFragment extends BaseFragment {
         toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
         // Welcome message
-        messages.add(new ChatMessage("Hello! I'm Nova — your AI Safety Assistant. I work offline with 61 emergency rules. Ask me about floods, cyclones, earthquakes, first aid, shelters, evacuation, or anything else. If you're in immediate danger, call 112.", true, formatTime(System.currentTimeMillis())));
+        messages.add(new ChatMessage("Hello! I'm Nova — your AI Safety Assistant. I use cloud AI when connected and clearly marked safety rules when offline. Ask me about floods, cyclones, earthquakes, first aid, shelters, evacuation, or anything else. If you're in immediate danger, call 112.", true, formatTime(System.currentTimeMillis())));
         adapter = new ChatAdapter(messages);
         chatRecyclerView.setAdapter(adapter);
 
@@ -88,27 +94,38 @@ public class NovaChatFragment extends BaseFragment {
     }
 
     private void sendMessage(String text) {
+        if (sending || text.trim().isEmpty()) return;
         messages.add(new ChatMessage(text, false, formatTime(System.currentTimeMillis())));
         adapter.notifyItemInserted(messages.size() - 1);
         chatRecyclerView.scrollToPosition(messages.size() - 1);
 
-        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            // Emergency intent pre-check
-            if (NovaRuleEngine.isEmergencyIntent(text)) {
-                String esc = NovaRuleEngine.emergencyEscalation(text);
-                messages.add(new ChatMessage(esc, true, formatTime(System.currentTimeMillis()), "EMERGENCY"));
-                adapter.notifyItemInserted(messages.size() - 1);
-                chatRecyclerView.scrollToPosition(messages.size() - 1);
-                return;
-            }
-
-            // Normal rule response
+        sending = true;
+        chatInput.setText("");
+        if (!CloudChatClient.isOnline(requireContext())) {
             NovaRuleEngine.Result result = NovaRuleEngine.generateResponse(text);
-            String label = result.matched ? "RULE · 90%" : "FALLBACK";
-            messages.add(new ChatMessage(result.text, true, formatTime(System.currentTimeMillis()), label));
-            adapter.notifyItemInserted(messages.size() - 1);
-            chatRecyclerView.scrollToPosition(messages.size() - 1);
-        }, 800);
+            addReply(result.text, "OFFLINE GUIDANCE");
+            return;
+        }
+        JSONArray history = new JSONArray();
+        try {
+            for (int i = Math.max(1, messages.size() - 20); i < messages.size(); i++) {
+                ChatMessage m = messages.get(i);
+                history.put(new JSONObject().put("role", m.isBot ? "assistant" : "user").put("content", m.text));
+            }
+        } catch (Exception e) { addReply("Could not prepare message. Please retry.", "UNAVAILABLE"); return; }
+        pendingCall = new CloudChatClient().send(requireContext(), history, this::addReply);
+    }
+    private void addReply(String text, String source) {
+        sending = false;
+        if (!isAdded() || getView() == null) return;
+        messages.add(new ChatMessage(text, true, formatTime(System.currentTimeMillis()), source));
+        adapter.notifyItemInserted(messages.size() - 1);
+        chatRecyclerView.scrollToPosition(messages.size() - 1);
+    }
+    @Override public void onDestroyView() {
+        if (pendingCall != null) pendingCall.cancel();
+        sending = false;
+        super.onDestroyView();
     }
 
     private String formatTime(long millis) {

@@ -73,27 +73,15 @@ export default function PublicTransparencyFrame({
         />
       )}
 
-      {/* ── Drawer panel — full-height sliding overlay ── */}
-      <aside
-        aria-hidden={!isOpen}
-        className={`fixed top-0 right-0 z-[70] h-[100dvh] w-full border-l border-white/10 bg-[rgb(var(--bg-primary-rgb)/95)] backdrop-blur-xl transition-transform duration-500 ease-out md:w-[400px] ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="relative flex h-full flex-col overflow-hidden">
-          {/* ── Frosted-glass toggle button — left outer edge ── */}
-          <button
-            type="button"
-            onClick={() => setIsOpen((v) => !v)}
-            aria-expanded={isOpen}
-            aria-label={
-              isOpen ? "Close live response panel" : "Open live response panel"
-            }
-            className="absolute top-1/3 -left-12 z-[71] flex h-16 w-12 -translate-y-1/2 items-center justify-center rounded-l-2xl border-y border-l border-white/20 bg-white/10 backdrop-blur-md transition-colors duration-300 hover:bg-white/20"
-          >
-            <BarChart2 aria-hidden className="h-5 w-5 text-white" />
-          </button>
-
+      {/* Render the panel only while open so it cannot widen the document. */}
+      {isOpen && (
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={title}
+          className="fixed top-0 right-0 z-[70] h-[100dvh] w-full border-l border-white/10 bg-[rgb(var(--bg-primary-rgb)/95)] backdrop-blur-xl md:w-[400px]"
+        >
+          <div className="relative flex h-full flex-col overflow-hidden">
           {/* ── Pinned header with close button ── */}
           <div className="flex items-start justify-between gap-3 border-b border-white/10 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3">
             {header}
@@ -112,7 +100,21 @@ export default function PublicTransparencyFrame({
             {children}
           </div>
         </div>
-      </aside>
+        </aside>
+      )}
+
+      {/* ── Desktop drawer trigger ── */}
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-haspopup="dialog"
+          aria-label="Open live response panel"
+          className="fixed right-0 top-1/3 z-[70] hidden h-16 w-12 -translate-y-1/2 items-center justify-center rounded-l-2xl border-y border-l border-white/20 bg-[var(--brand-navy2)] text-white shadow-xl hover:bg-slate-700 md:flex"
+        >
+          <BarChart2 aria-hidden className="h-5 w-5" />
+        </button>
+      )}
 
       {/* ── Mobile floating trigger — visible when drawer is closed ── */}
       {!isOpen && (

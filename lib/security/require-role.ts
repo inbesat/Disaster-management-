@@ -33,7 +33,10 @@ export const ROLE_HIERARCHY: Record<string, number> = {
 /**
  * Helper to check if user's role satisfies allowed roles or hierarchy.
  */
-export function hasRequiredRole(userRole: string, allowedRoles: readonly string[]): boolean {
+export function hasRequiredRole(
+  userRole: string,
+  allowedRoles: readonly string[],
+): boolean {
   if (allowedRoles.includes(userRole)) return true;
 
   const userRank = ROLE_HIERARCHY[userRole] ?? 0;
@@ -74,7 +77,10 @@ export async function requireRole(
 
   if (isGuest) return deny(false);
 
+  const demoEnabled = process.env.DEMO_AUTH_ENABLED === "true";
   const cookieAdmitted = roleCookie !== "" && hasRequiredRole(roleCookie, allowedRoles);
+
+  if (demoEnabled && cookieAdmitted) return { ok: true, role: roleCookie };
 
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -93,7 +99,7 @@ export async function requireRole(
 
     // No real Supabase session — admit the demo cookie session.
     if (!user) {
-      return cookieAdmitted ? { ok: true, role: roleCookie } : deny(false);
+      return demoEnabled && cookieAdmitted ? { ok: true, role: roleCookie } : deny(false);
     }
 
     const { data: profile } = await supabase
@@ -110,8 +116,10 @@ export async function requireRole(
     // degrade to the SAME cookie-only demo admission the middleware applies
     // to /gov pages, instead of 401-ing every gov API route while the UI
     // itself still loads. Anonymous callers remain denied.
-    safeLog("warn", "[requireRole] Supabase lookup failed; admitting demo role cookie", { metadata: { error: String(error) } });
-    return cookieAdmitted ? { ok: true, role: roleCookie } : deny(false);
+    safeLog("warn", "[requireRole] Supabase lookup failed; admitting demo role cookie", {
+      metadata: { error: String(error) },
+    });
+    return demoEnabled && cookieAdmitted ? { ok: true, role: roleCookie } : deny(false);
   }
 }
 
@@ -167,7 +175,9 @@ export async function requireSession(): Promise<RequireRoleResult> {
     } = await supabase.auth.getUser();
     return user ? { ok: true, role: user.id } : deny(false);
   } catch (error: unknown) {
-    safeLog("error", "[requireSession] Supabase lookup failed; denying access", { metadata: { error: String(error) } });
+    safeLog("error", "[requireSession] Supabase lookup failed; denying access", {
+      metadata: { error: String(error) },
+    });
     return deny(false);
   }
 }

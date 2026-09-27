@@ -32,7 +32,7 @@ const ALERT_SEVERITY: Partial<Record<RiskLabel, string>> = {
 export type FloodPredictionResult = {
   riskLevel: RiskLabel;
   confidenceScore: number;
-  source: "ml" | "fallback";
+  source: "ml";
   lat: number;
   lng: number;
   predictedAt: string;
@@ -67,17 +67,6 @@ function buildPayload(
   };
 }
 
-function fallback(lat: number, lng: number): FloodPredictionResult {
-  return {
-    riskLevel: "Safe",
-    confidenceScore: 0,
-    source: "fallback",
-    lat,
-    lng,
-    predictedAt: new Date().toISOString(),
-  };
-}
-
 export async function getFloodPrediction(
   lat: number,
   lng: number,
@@ -109,27 +98,39 @@ export async function getFloodPrediction(
       confidence_score: number;
     };
 
-    const classIndex = Math.min(
-      RISK_LABELS.length - 1,
-      Math.max(0, Math.floor(Number(data.predicted_risk_class) || 0)),
-    );
+    const classIndex = data.predicted_risk_class;
+    const confidenceScore = data.confidence_score;
+    if (
+      !Number.isInteger(classIndex) ||
+      classIndex < 0 ||
+      classIndex >= RISK_LABELS.length ||
+      !Number.isFinite(confidenceScore) ||
+      confidenceScore < 0 ||
+      confidenceScore > 1
+    ) {
+      throw new Error("Invalid model response");
+    }
     const riskLevel = RISK_LABELS[classIndex];
-    const confidenceScore = Number(data.confidence_score) || 0;
-
-    // Elevation-aware alerting: if the risk has *escalated* at this location
-    // into an action band (Warning / Evacuate), push a row into alert_logs so
-    // the orchestrator can fan it out (SMS/push/siren).
-    await maybeTriggerAlert(lat, lng, riskLevel);
-
-    await prisma.floodPrediction.create({
-      data: {
-        lat,
-        lng,
-        predictionTimestamp: new Date(),
-        riskLevel,
-        confidenceScore,
-      },
-    });
+    // Prediction requests never dispatch alerts unless explicitly enabled by an operator.
+    if (process.env.ML_AUTO_ALERTS_ENABLED === "true")
+      await maybeTriggerAlert(lat, lng, riskLevel);
+    try {
+      await prisma.floodPrediction.create({
+        data: {
+          lat,
+          lng,
+          predictionTimestamp: new Date(),
+          riskLevel,
+          confidenceScore,
+          rawModelOutput: {
+            ...data,
+            metadata: { district: nearestDistrict(lat, lng).name, experimental: true },
+          },
+        },
+      });
+    } catch {
+      console.warn("[ml] Prediction generated but history could not be saved.");
+    }
 
     return {
       riskLevel,
@@ -140,8 +141,7 @@ export async function getFloodPrediction(
       predictedAt: new Date().toISOString(),
     };
   } catch (error: unknown) {
-    console.warn("ML service unreachable, returning default 'Safe':", error);
-    return fallback(lat, lng);
+    throw new Error("Flood model unavailable", { cause: error });
   }
 }
 

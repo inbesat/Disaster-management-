@@ -1,0 +1,264 @@
+Deployed title: SafeSphere — AI-Powered Disaster Management Platform
+MASTER BREAKER
+
+Off · live mode
+
+SafeSphere
+Platform
+Communication
+Command Center
+How It Works
+Impact
+FAQ
+EN
+Sign In
+Help
+Download App
+Request Demo
+AI-POWERED DISASTER MANAGEMENT PLATFORM
+Every Second
+Saves Lives.
+No Citizen Left Unwarned.
+
+SafeSphere predicts disasters before they strike and delivers critical alerts across 9 communication channels — FM, TV, SMS, WhatsApp, Telegram and village loudspeakers — reaching every citizen, even where the internet goes dark.
+
+Explore Platform
+Request Demo
+Download App
+50M+
+CITIZENS PROTECTED
+22
+STATES CONNECTED
+9
+ALERT CHANNELS
+98.4%
+DELIVERY SUCCESS
+LIVE NATIONAL FEED
+Updated 4s ago
+Flood · Ganga
+Cyclone · Odisha
+08
+ACTIVE ALERTS
+286
+RESCUE TEAMS
+974
+SHELTERS
+AI Prediction: 96% confidence
+Alert delivered to 12,400 citizens
+0+
+DISTRICTS COVERED
+0hr
+PREDICTION WINDOW
+<0sec
+AI PLANNING
+0%
+RURAL FM REACH
+CORE CAPABILITIES
+Six pillars of disaster resilience
+
+An end-to-end AI platform that predicts, prepares, and protects communities through every phase of a disaster.
+
+Predict
+
+AI models analyze satellite imagery, IoT sensors, and weather data to forecast disasters hours before they strike.
+
+Plan
+
+Dynamic risk maps identify danger zones and calculate optimal evacuation routes in real time.
+
+Respond
+
+Coordinate rescue teams, pre-position supplies, and deploy resources with AI-powered logistics.
+
+Alert
+
+Multilingual AI agent dispatches emergency alerts through 9 channels — FM, TV, SMS, WhatsApp, and more.
+
+Coordinate
+
+Match volunteers with tasks, track shelter capacity, and manage multi-agency response efforts.
+
+Protect
+
+Locate missing persons, reunite families, and ensure vulnerable populations receive priority aid.
+
+TWO MODES, ONE MISSION
+Built for every stakeholder
+
+A citizen-facing app that's simple and calming, paired with a command center that's powerful and data-dense.
+
+9:41
+SAFE
+
+Your area is secure
+
+Alerts
+Report
+Nearby
+WATCH
+
+Heavy rainfall expected in your district
+
+For Citizens
+dashboard.disasterlink.gov.in
+National Dashboard
+
+Real-time monitoring
+
+LIVE
+12
+ACTIVE
+847
+TEAMS
+2.1K
+SHELTERS
+34
+ALERTS
+Live Map View
+Flood - Assam
+CRITICAL
+Cyclone - Odisha
+CRITICAL
+Earthquake - Nepal
+CRITICAL
+For Officials
+LAST-MILE COMMUNICATION
+One alert. Nine channels. Zero citizens missed.
+AI Broadcast
+Agent
+MULTILINGUAL · REDUNDANT
+📻
+FM Radio
+📺
+Television
+✉️
+SMS
+📞
+Voice Calls
+💬
+WhatsApp
+✈️
+Telegram
+🚓
+Police Vehicles
+📢
+Panchayat PA
+🕌
+Religious PA
+
+Every channel fires in parallel within seconds of an AI-verified alert — with automatic fallback so a warning never depends on a single point of failure.
+
+🛰 LIVE OPERATIONS PREVIEW · DEMO DATA
+Inside the SafeSphere Command Center
+
+Real-time detection, prediction, and response coordination — all in one unified intelligence platform.
+
+Live Disaster Map
+
+Monitor disasters, rescue operations, and emergency resources across India in real time.
+
+🗺️
+India — Live Alert Map
+Flood
+Cyclone
+Earthquake
+Shelter
+🔴
+Flood — Bihar
+🟠
+Cyclone — Odisha Coast
+🟡
+Earthquake — Himachal
+🟢
+Safe Shelter — Nagpur
+🚑
+Rescue Team — Gujarat
+🏥
+Relief Camp — Kolkata
+🟠
+Cyclone Watch — Andhra
+🟢
+Safe Shelter — Assam
+Live · Demo Data
+LIVE FEED
+[14:02:33] FLASH FLOOD WARNING ISSUED FOR BIHAR REGION.
+[14:00:12] CYCLONE TRACK UPDATED: LANDFALL EXPECTED ODISHA COAST 18:00 IST.
+[13:45:00] 5 NEW SHELTERS OPENED IN ASSAM.
+[13:30:45] MAGNITUDE 4.2 SEISMIC ACTIVITY DETECTED HIMACHAL PRADESH.
+[14:02:33] FLASH FLOOD WARNING ISSUED FOR BIHAR REGION.
+🚨
+Active Disasters
+0
+📣
+Citizens Alerted
+0
+🚑
+Rescue Teams Deployed
+0
+🏠
+Safe Shelters
+0
+🤖
+AI Alerts Generated Today
+0
+🤖
+AI Prediction Dashboard
+
+Real-time risk analysis powered by satellite + sensor fusion
+
+0%
+Rainfall Risk
+0%
+Flood Probability
+0%
+Cyclone Intensity
+0%
+Heatwave Severity
+EARTHQUAKE ACTIVITY
+18% — Low
+AVG RESPONSE TIME
+3
+Sec
+SATELLITE UPDATES
+Live
+AI PREDICTION CONFIDENCE
+96
+%
+📈
+Flood Risk Trend — 7 Day Forecast
+Risk Index
+🤖
+AI Recommendation Engine
+
+Flood Alert #FL-2291 · Bihar Region · Level 3
+
+Send flood warning to district control room
+Notify district administration & SDRF
+Deploy 15 rescue teams to flood zone
+Open 4 relief camps in nearby blocks
+Alert nearby hospitals to prepare capacity
+Send SMS alerts to affected citizens
+94% confidence
+Emergency Timeline
+
+From first signal to boots on the ground — in under six minutes.
+
+⏱
+Emergency Response Timeline
+
+Flood Alert #FL-2291 · Automated response
+
+🛰
+10:00 AM
+
+Satellite detects heavy rainfall pattern over Bihar region
+
+🤖
+10:02 AM
+
+AI predicts 84% flood probabilit
+Deployed errors: []
+page.goto: Timeout 120000ms exceeded.
+Call log:
+  - navigating to "http://localhost:3000/api/ping", waiting until "load"
+

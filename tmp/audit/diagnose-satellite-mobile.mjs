@@ -1,0 +1,14 @@
+import { chromium } from '@playwright/test';
+const browser=await chromium.launch({headless:true});
+const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,deviceScaleFactor:1});
+await context.addCookies([{name:'role',value:'district_admin',url:'http://localhost:3100'}]);
+const page=await context.newPage();
+await page.goto('http://localhost:3100/satellite',{waitUntil:'domcontentloaded',timeout:120000});
+await page.getByRole('heading',{name:'Satellite & Ground Truth'}).waitFor({timeout:60000});
+await page.waitForFunction(() => !document.body.innerText.includes('Loading NASA feed'),null,{timeout:30000});
+console.log('metrics',await page.evaluate(()=>({innerWidth,outerWidth,screenWidth:screen.width,clientWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,meta:document.querySelector('meta[name="viewport"]')?.getAttribute('content')})));
+console.log('map',await page.getByLabel('Satellite imagery map').boundingBox());
+console.log('aside',await page.locator('aside').last().boundingBox());
+console.log('button',await page.locator('aside li button').first().boundingBox());
+await page.screenshot({path:'tmp/audit/satellite-mobile.png',fullPage:true});
+await browser.close();

@@ -24,6 +24,7 @@ export const STATUS_VALUES = [
   "pending_approval",
   "communicating",
   "resolved",
+  "conflict",
 ] as const;
 export type IncidentStatus = (typeof STATUS_VALUES)[number];
 
@@ -53,22 +54,6 @@ function mergeInventory(
   return { ...left, ...right };
 }
 
-/** Reducer for the `resourceAllocations` array (append, de-dupe by type). */
-function appendAllocations(
-  left: ResourceAllocation[],
-  right: ResourceAllocation[],
-): ResourceAllocation[] {
-  const seen = new Set(left.map((a) => a.resourceType));
-  const merged = [...left];
-  for (const alloc of right) {
-    if (!seen.has(alloc.resourceType)) {
-      merged.push(alloc);
-      seen.add(alloc.resourceType);
-    }
-  }
-  return merged;
-}
-
 export const EmergencyStateAnnotation = Annotation.Root({
   incidentDetails: Annotation<string>({
     reducer: overwrite,
@@ -85,8 +70,12 @@ export const EmergencyStateAnnotation = Annotation.Root({
     default: () => "",
   }),
 
+  proposedAllocations: Annotation<ResourceAllocation[]>({
+    reducer: (_left, right) => right,
+    default: () => [],
+  }),
   resourceAllocations: Annotation<ResourceAllocation[]>({
-    reducer: appendAllocations,
+    reducer: (_left, right) => right,
     default: () => [],
   }),
 
@@ -104,7 +93,7 @@ export const EmergencyStateAnnotation = Annotation.Root({
   // Set by the Allocator when demand exceeds available inventory; non-null
   // means the graph stopped and manual command override is required.
   conflict: Annotation<string | null>({
-    reducer: overwrite,
+    reducer: (_left, right) => right,
     default: () => null,
   }),
 

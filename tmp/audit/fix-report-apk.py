@@ -1,0 +1,2 @@
+from pathlib import Path
+p=Path('AUDIT_REPORT.md');s=p.read_text(encoding='utf-8');s=s.replace('The final web-only PWA and citizen drawer fixes were made after these APK builds; rebuild the native packages before treating them as a final release candidate.','The Capacitor APK is a remote-site wrapper, and the native field app also targets that deployed server; local web changes will become visible to them only after manual server deployment. Rebuild only if native code or the backend URL changes.');p.write_text(s,encoding='utf-8')

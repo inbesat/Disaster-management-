@@ -15,6 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.safesphere.nativeapp.R;
+import com.safesphere.nativeapp.ai.CloudChatClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import okhttp3.Call;
 import com.safesphere.nativeapp.ui.base.BaseFragment;
 
 import java.util.ArrayList;
@@ -28,6 +32,8 @@ public class AiPlannerFragment extends BaseFragment {
     private ImageButton sendBtn, voiceBtn;
     private TextView tokenCounter;
     private ChipGroup promptChips;
+    private Call pendingCall;
+    private boolean sending;
 
     @Override
     protected int getLayoutRes() {
@@ -82,21 +88,33 @@ public class AiPlannerFragment extends BaseFragment {
     }
 
     private void sendMessage(String text) {
-        RecyclerView.Adapter adapter = chatRecyclerView.getAdapter();
-        if (adapter instanceof ChatAdapter) {
-            ((ChatAdapter) adapter).addUserMessage(text);
-            // Simulate AI response
-            new android.os.Handler().postDelayed(() -> {
-                ((ChatAdapter) adapter).addAssistantMessage(generateResponse(text));
-            }, 1500);
-        }
+        if (sending || text.trim().isEmpty()) return;
+        ChatAdapter adapter = (ChatAdapter) chatRecyclerView.getAdapter();
+        if (adapter == null) return;
+        adapter.addUserMessage(text);
+        chatInput.setText("");
+        sending = true;
+        sendBtn.setEnabled(false);
+        JSONArray history = new JSONArray();
+        try {
+            for (int i = Math.max(1, adapter.items.size() - 20); i < adapter.items.size(); i++) {
+                ChatMessage m = adapter.items.get(i);
+                history.put(new JSONObject().put("role", m.role).put("content", m.content));
+            }
+        } catch (Exception e) { sending = false; sendBtn.setEnabled(true); return; }
+        pendingCall = new CloudChatClient().send(requireContext(), history, (reply, source) -> {
+            sending = false;
+            if (!isAdded() || getView() == null) return;
+            sendBtn.setEnabled(true);
+            adapter.addAssistantMessage(reply);
+            tokenCounter.setText(source);
+            chatRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        });
     }
-
-    private String generateResponse(String query) {
-        if (query.toLowerCase().contains("kankarbagh")) {
-            return "🏥 Querying Shelter Database [Patna] … → ✓\n🛰️ Accessing Satellite Flood Data [Patna] … → ✓\n\n**48-Hour Evacuation Plan: Kankarbagh**\n\n**Phase 1 (0-6h): ALERT**\n- Activate sirens & SMS blast to 12,000 residents\n- Deploy 4 NDRF boat teams to entry points\n- Open Central Community Hall (312/450)\n\n**Phase 2 (6-24h): EVACUATE**\n- Bus convoy: 7 buses × 50 capacity = 350\n- Boat extraction: 3 boats for waterlogged zones\n- Medical triage at Riverside High School\n\n**Phase 3 (24-48h): MONITOR**\n- Satellite flood tracking every 2h\n- Resource reallocation via optimizer\n- Family reunification at Civic Center";
-        }
-        return "I'll help you with that evacuation plan. Let me gather the latest data for your district.";
+    @Override public void onDestroyView() {
+        if (pendingCall != null) pendingCall.cancel();
+        sending = false;
+        super.onDestroyView();
     }
 
     // Data classes & Adapters
@@ -106,7 +124,7 @@ public class AiPlannerFragment extends BaseFragment {
         List<ChatMessage> items = new ArrayList<>();
         ChatAdapter(List<ChatMessage> items) { this.items = items; }
         void addUserMessage(String text) { items.add(new ChatMessage("user", text, null)); notifyItemInserted(items.size()-1); }
-        void addAssistantMessage(String text) { items.add(new ChatMessage("assistant", text, Arrays.asList("Shelter DB", "Satellite Data"))); notifyItemInserted(items.size()-1); }
+        void addAssistantMessage(String text) { items.add(new ChatMessage("assistant", text, null)); notifyItemInserted(items.size()-1); }
         @NonNull @Override public VH onCreateViewHolder(@NonNull ViewGroup p, int v) { View view = LayoutInflater.from(p.getContext()).inflate(R.layout.item_chat_message, p, false); return new VH(view); }
         @Override public void onBindViewHolder(@NonNull VH h, int pos) { ChatMessage m = items.get(pos); h.role.setText(m.role.equals("user") ? "You" : "AI"); h.content.setText(m.content); h.itemView.setBackgroundColor(h.itemView.getContext().getColor(m.role.equals("user") ? R.color.bgSurface : R.color.bgSecondary)); }
         @Override public int getItemCount() { return items.size(); }
@@ -114,7 +132,7 @@ public class AiPlannerFragment extends BaseFragment {
     }
 
     static class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.VH> {
-        List<String> items = Arrays.asList("🏥 Shelter Database [Patna] — 450 capacity", "🛰️ Satellite Flood Data [Patna] — 0.8m rise");
+        List<String> items = new ArrayList<>();
         @NonNull @Override public VH onCreateViewHolder(@NonNull ViewGroup p, int v) { View view = LayoutInflater.from(p.getContext()).inflate(R.layout.item_source, p, false); return new VH(view); }
         @Override public void onBindViewHolder(@NonNull VH h, int pos) { h.text.setText(items.get(pos)); }
         @Override public int getItemCount() { return items.size(); }

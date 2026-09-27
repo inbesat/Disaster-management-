@@ -1,0 +1,132 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.11 E:/Hackathons/disaster management/disaster-response-platform
+
+ ❯ lib/security/require-role.test.ts (13 tests | 1 failed) 32ms
+     × admits the demo cookie session when no Supabase user is signed in 11ms
+ ❯ lib/ai-bridge/cloud-provider.test.ts (6 tests | 6 failed) 15ms
+     × reports online against the browser network state 9ms
+     × collects text parts from the whole-body JSON parts array 2ms
+     × parses the line-oriented UIMessage stream protocol 1ms
+     × marks HTTP errors as error responses (no throw) 1ms
+     × surfaces network failures as error responses 1ms
+     × includes hidden context in the outgoing request body 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > reports online against the browser network state
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:32:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > collects text parts from the whole-body JSON parts array
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:44:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > parses the line-oriented UIMessage stream protocol
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:60:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > marks HTTP errors as error responses (no throw)
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:68:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > surfaces network failures as error responses
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:79:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  lib/ai-bridge/cloud-provider.test.ts > CloudAIProvider > includes hidden context in the outgoing request body
+TypeError: Cannot read properties of undefined (reading 'fetchImpl')
+ ❯ CloudAIProvider.<instance_members_initializer> lib/ai-bridge/cloud-provider.ts:121:18
+    119|
+    120|   private doFetch: (input: string, init?: RequestInit) => Promise<Resp…
+    121|     this.options.fetchImpl ?? (globalThis.fetch as typeof fetch);
+       |                  ^
+    122|
+    123|   getStatus(): ProviderStatus {
+ ❯ new CloudAIProvider lib/ai-bridge/cloud-provider.ts:113:3
+ ❯ lib/ai-bridge/cloud-provider.test.ts:88:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  lib/security/require-role.test.ts > Supabase mode (env configured) > admits the demo cookie session when no Supabase user is signed in
+AssertionError: expected { ok: false, status: 401, …(1) } to deeply equal { ok: true, role: 'super_admin' }
+
+- Expected
++ Received
+
+  {
+-   "ok": true,
+-   "role": "super_admin",
++   "error": "Unauthorized: a government session is required.",
++   "ok": false,
++   "status": 401,
+  }
+
+ ❯ lib/security/require-role.test.ts:136:42
+    134|     // layout accept that session, so the API guard must too.
+    135|     getUserMock.mockResolvedValue({ data: { user: null }, error: null …
+    136|     cookieStore.set("role", "super_admin");
+       |                                          ^
+    137|     expect(await requireRole(GOV_ROLES)).toEqual({ ok: true, role: "su…
+    138|     cookieStore.set("role", "district_admin");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  2 failed | 160 passed (162)
+      Tests  7 failed | 1308 passed (1315)
+   Start at  20:53:13
+   Duration  276.86s (transform 67.44s, setup 0ms, import 346.37s, tests 19.52s, environment 38ms)
+

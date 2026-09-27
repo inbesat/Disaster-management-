@@ -59,7 +59,7 @@ const CLOSED_MARGIN = 0.1;
 /** How long the panel takes to fly off-screen before unmounting. */
 const CLOSE_ANIM_MS = 420;
 /** Canned reply delay — lets the typing dots breathe like a real chat. */
-const TYPING_MS = 1800;
+const TYPING_MS = 150;
 
 const spring = { type: "spring", stiffness: 300, damping: 25 } as const;
 const none = { duration: 0 } as const;
@@ -272,12 +272,12 @@ export function NovaChat() {
       }
     }
     try {
-      return await routeChatQuery(trimmed, CHAT_DISTRICT);
+      return await routeChatQuery(trimmed, CHAT_DISTRICT, { history: messages.filter(m => m.content).slice(-12).map(m => ({ role: m.role === "ai" ? "assistant" : "user", content: m.content! })) });
     } catch (err) {
       // Never swallow backend failures silently — a missing server API key
       // or a 5xx from /api/chat must be visible in the browser console.
       console.error("[NovaChat] cloud chat failed, using local fallback:", err);
-      return { text: t("nova_reply"), source: "local", engineUsed: "local-fallback" };
+      return { text: "AI is temporarily unavailable. Please retry. For immediate danger, use SOS or call your local emergency number.", source: "local", engineUsed: "local-fallback" };
     }
   };
 
@@ -561,7 +561,7 @@ export function NovaChat() {
               {/* Composer — quick prompts above, mic + input + send below.
                   `relative` anchors VoiceInput's floating listening strip. */}
               <div className="relative shrink-0 border-t border-white/10 px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+14px)]">
-                <QuickPrompts onSelect={(prompt, reply) => sendPrompt(prompt, reply)} disabled={typing} />
+                <QuickPrompts onSelect={(prompt) => sendPrompt(prompt)} disabled={typing} />
 
                 <div className="flex items-end gap-2">
                   {/* Scan-ID trigger — opens the offline OCR scanner. */}

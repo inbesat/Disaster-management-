@@ -1,0 +1,6 @@
+lib/nova/nova-reply.test.ts(32,41): error TS2345: Argument of type '{ text: string; mode: "cloud"; error: false; }' is not assignable to parameter of type 'AIResponse'.
+  Property 'durationMs' is missing in type '{ text: string; mode: "cloud"; error: false; }' but required in type 'AIResponse'.
+lib/nova/nova-reply.test.ts(53,41): error TS2345: Argument of type '{ text: string; mode: "error"; error: true; }' is not assignable to parameter of type 'AIResponse'.
+  Property 'durationMs' is missing in type '{ text: string; mode: "error"; error: true; }' but required in type 'AIResponse'.
+lib/nova/nova-reply.test.ts(135,41): error TS2345: Argument of type '{ text: string; mode: "cloud"; error: false; }' is not assignable to parameter of type 'AIResponse'.
+  Property 'durationMs' is missing in type '{ text: string; mode: "cloud"; error: false; }' but required in type 'AIResponse'.

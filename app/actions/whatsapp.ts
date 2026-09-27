@@ -23,6 +23,9 @@ export type EnableWhatsAppAlertsResult = {
 
 export async function enableWhatsAppAlerts(): Promise<EnableWhatsAppAlertsResult> {
   const phone = cookies().get("citizen_phone")?.value ?? "";
+  if (!/^\+?[0-9]{10,15}$/.test(phone)) {
+    return { ok: false, phone: "", error: "A valid phone number is required" };
+  }
 
   try {
     const supabase = createClient();
@@ -40,14 +43,14 @@ export async function enableWhatsAppAlerts(): Promise<EnableWhatsAppAlertsResult
         "[whatsapp] could not persist whatsapp_alerts (table may be un-migrated).",
         error.message,
       );
-      return { ok: true, phone, error: error.message };
+      return { ok: false, phone, error: error.message };
     }
 
     return { ok: true, phone };
   } catch (error: unknown) {
     console.warn("[whatsapp] server sync failed:", error);
     return {
-      ok: true,
+      ok: false,
       phone,
       error: error instanceof Error ? error.message : "Unknown error",
     };

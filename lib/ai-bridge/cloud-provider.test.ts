@@ -50,10 +50,10 @@ describe("CloudAIProvider", () => {
   it("parses the line-oriented UIMessage stream protocol", async () => {
     const fetchImpl = vi.fn(async () =>
       sseResponse([
-        "data: {\"type\":\"text\",\"text\":\"Evacuate the waterfront.\"}",
-        "data: {\"type\":\"tool-call\",\"toolCallId\":\"t1\"}",
+        'data: {"type":"text","text":"Evacuate the waterfront."}',
+        'data: {"type":"tool-call","toolCallId":"t1"}',
         "",
-        "data: {\"type\":\"text\",\"text\":\" Then head north.\"}",
+        'data: {"type":"text","text":" Then head north."}',
         "",
       ]),
     );
@@ -84,7 +84,9 @@ describe("CloudAIProvider", () => {
   });
 
   it("includes hidden context in the outgoing request body", async () => {
-    const fetchImpl = vi.fn<typeof fetch>(async () => jsonResponse([{ type: "text", text: "ok" }]));
+    const fetchImpl = vi.fn<typeof fetch>(async () =>
+      jsonResponse([{ type: "text", text: "ok" }]),
+    );
     const provider = new CloudAIProvider({ endpoint: "/api/chat", fetchImpl });
     await provider.generateResponse("what next?", {
       currentDistrict: "Patna",
@@ -98,5 +100,25 @@ describe("CloudAIProvider", () => {
     expect(body.messages[1]).toEqual({ role: "user", content: "what next?" });
     expect(body.currentDistrict).toBe("Patna");
     expect(body.provider).toBe("groq-llama3");
+  });
+  it("reads current SDK text-delta events", async () => {
+    const provider = new CloudAIProvider({
+      fetchImpl: vi.fn(async () =>
+        sseResponse([
+          'data: {"type":"text-start","id":"a"}',
+          'data: {"type":"text-delta","id":"a","delta":"Live answer"}',
+          "data: [DONE]",
+        ]),
+      ),
+    });
+    expect((await provider.generateResponse("help", {})).text).toBe("Live answer");
+  });
+  it("surfaces errors even when the HTTP status is successful", async () => {
+    const provider = new CloudAIProvider({
+      fetchImpl: vi.fn(
+        async () => new Response(JSON.stringify({ error: "Provider unavailable" })),
+      ),
+    });
+    expect((await provider.generateResponse("help", {})).mode).toBe("error");
   });
 });

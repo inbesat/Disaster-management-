@@ -4,13 +4,12 @@ package com.safesphere.nativeapp.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.safesphere.nativeapp.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -18,33 +17,42 @@ import java.lang.String;
 
 public final class FragmentAdminDashboardBinding implements ViewBinding {
   @NonNull
-  private final CoordinatorLayout rootView;
+  private final LinearLayout rootView;
 
   @NonNull
-  public final RecyclerView adminActionsRecyclerView;
+  public final TextView adminSubtitle;
 
   @NonNull
-  public final RecyclerView adminKpiRecyclerView;
+  public final LinearLayout primaryActions;
 
   @NonNull
-  public final RecyclerView adminOpsRecyclerView;
+  public final LinearLayout secondaryActions;
 
   @NonNull
-  public final MaterialToolbar adminToolbar;
+  public final ItemSimpleStatBinding statAlerts;
 
-  private FragmentAdminDashboardBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull RecyclerView adminActionsRecyclerView, @NonNull RecyclerView adminKpiRecyclerView,
-      @NonNull RecyclerView adminOpsRecyclerView, @NonNull MaterialToolbar adminToolbar) {
+  @NonNull
+  public final ItemSimpleStatBinding statHealth;
+
+  @NonNull
+  public final ItemSimpleStatBinding statReports;
+
+  private FragmentAdminDashboardBinding(@NonNull LinearLayout rootView,
+      @NonNull TextView adminSubtitle, @NonNull LinearLayout primaryActions,
+      @NonNull LinearLayout secondaryActions, @NonNull ItemSimpleStatBinding statAlerts,
+      @NonNull ItemSimpleStatBinding statHealth, @NonNull ItemSimpleStatBinding statReports) {
     this.rootView = rootView;
-    this.adminActionsRecyclerView = adminActionsRecyclerView;
-    this.adminKpiRecyclerView = adminKpiRecyclerView;
-    this.adminOpsRecyclerView = adminOpsRecyclerView;
-    this.adminToolbar = adminToolbar;
+    this.adminSubtitle = adminSubtitle;
+    this.primaryActions = primaryActions;
+    this.secondaryActions = secondaryActions;
+    this.statAlerts = statAlerts;
+    this.statHealth = statHealth;
+    this.statReports = statReports;
   }
 
   @Override
   @NonNull
-  public CoordinatorLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -69,32 +77,48 @@ public final class FragmentAdminDashboardBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.adminActionsRecyclerView;
-      RecyclerView adminActionsRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (adminActionsRecyclerView == null) {
+      id = R.id.adminSubtitle;
+      TextView adminSubtitle = ViewBindings.findChildViewById(rootView, id);
+      if (adminSubtitle == null) {
         break missingId;
       }
 
-      id = R.id.adminKpiRecyclerView;
-      RecyclerView adminKpiRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (adminKpiRecyclerView == null) {
+      id = R.id.primaryActions;
+      LinearLayout primaryActions = ViewBindings.findChildViewById(rootView, id);
+      if (primaryActions == null) {
         break missingId;
       }
 
-      id = R.id.adminOpsRecyclerView;
-      RecyclerView adminOpsRecyclerView = ViewBindings.findChildViewById(rootView, id);
-      if (adminOpsRecyclerView == null) {
+      id = R.id.secondaryActions;
+      LinearLayout secondaryActions = ViewBindings.findChildViewById(rootView, id);
+      if (secondaryActions == null) {
         break missingId;
       }
 
-      id = R.id.admin_toolbar;
-      MaterialToolbar adminToolbar = ViewBindings.findChildViewById(rootView, id);
-      if (adminToolbar == null) {
+      id = R.id.statAlerts;
+      View statAlerts = ViewBindings.findChildViewById(rootView, id);
+      if (statAlerts == null) {
         break missingId;
       }
+      ItemSimpleStatBinding binding_statAlerts = ItemSimpleStatBinding.bind(statAlerts);
 
-      return new FragmentAdminDashboardBinding((CoordinatorLayout) rootView,
-          adminActionsRecyclerView, adminKpiRecyclerView, adminOpsRecyclerView, adminToolbar);
+      id = R.id.statHealth;
+      View statHealth = ViewBindings.findChildViewById(rootView, id);
+      if (statHealth == null) {
+        break missingId;
+      }
+      ItemSimpleStatBinding binding_statHealth = ItemSimpleStatBinding.bind(statHealth);
+
+      id = R.id.statReports;
+      View statReports = ViewBindings.findChildViewById(rootView, id);
+      if (statReports == null) {
+        break missingId;
+      }
+      ItemSimpleStatBinding binding_statReports = ItemSimpleStatBinding.bind(statReports);
+
+      return new FragmentAdminDashboardBinding((LinearLayout) rootView, adminSubtitle,
+          primaryActions, secondaryActions, binding_statAlerts, binding_statHealth,
+          binding_statReports);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

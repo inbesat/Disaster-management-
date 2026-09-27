@@ -15,8 +15,7 @@ const ADMIN_ROLES = ["super_admin", "district_admin"] as const;
 // knowledge base (emergency_documents, pgvector vector(1536)).
 //
 // Pipeline: PDF buffer → extract text → chunk → embed → raw SQL INSERT.
-// Every DB failure degrades to a mock success so the hackathon demo never
-// crashes (mirrors the mock-fallback convention used across app/actions).
+// Database failures are reported honestly; updates preserve the prior document.
 // ---------------------------------------------------------------------
 
 // ---------------------------------------------------------------------
@@ -26,9 +25,7 @@ const ADMIN_ROLES = ["super_admin", "district_admin"] as const;
 // ---------------------------------------------------------------------
 async function computeEmbeddingVersion(sourceKey: string): Promise<number> {
   try {
-const rows = await prisma.$queryRaw<
-      Array<{ current: number | bigint }>
-    >`
+    const rows = await prisma.$queryRaw<Array<{ current: number | bigint }>>`
       SELECT COALESCE(MAX(embedding_version), 0)::int AS current
       FROM public.emergency_documents
       WHERE metadata->>'source_key' = ${sourceKey}
@@ -52,9 +49,7 @@ export type IngestDocumentResult = {
 
 const DEFAULT_DOCUMENT_TYPE = "procedure";
 
-export async function ingestDocument(
-  formData: FormData,
-): Promise<IngestDocumentResult> {
+export async function ingestDocument(formData: FormData): Promise<IngestDocumentResult> {
   // Authorization check - only admins can ingest documents
   const auth = await requireRole(ADMIN_ROLES);
   if (!auth.ok) {
@@ -70,11 +65,14 @@ export async function ingestDocument(
   }
 
   const file = formData.get("file") as File | null;
-  const title = sanitizeInput(String(formData.get("title") ?? "Untitled document")).trim().slice(0, 300);
+  const title = sanitizeInput(String(formData.get("title") ?? "Untitled document"))
+    .trim()
+    .slice(0, 300);
   const districtRaw = formData.get("district");
-  const district = districtRaw && String(districtRaw).trim().length
-    ? sanitizeInput(String(districtRaw)).trim().slice(0, 200)
-    : null;
+  const district =
+    districtRaw && String(districtRaw).trim().length
+      ? sanitizeInput(String(districtRaw)).trim().slice(0, 200)
+      : null;
   const documentTypeRaw = formData.get("document_type");
   const documentType =
     documentTypeRaw && String(documentTypeRaw).trim()
@@ -82,18 +80,42 @@ export async function ingestDocument(
       : DEFAULT_DOCUMENT_TYPE;
 
   if (!file) {
-    return { ok: false, ingested: 0, chunks: 0, title, district, documentType, message: "No file provided." };
+    return {
+      ok: false,
+      ingested: 0,
+      chunks: 0,
+      title,
+      district,
+      documentType,
+      message: "No file provided.",
+    };
   }
 
   // Validate file type
   if (file.type !== "application/pdf") {
-    return { ok: false, ingested: 0, chunks: 0, title, district, documentType, message: "Only PDF files are supported." };
+    return {
+      ok: false,
+      ingested: 0,
+      chunks: 0,
+      title,
+      district,
+      documentType,
+      message: "Only PDF files are supported.",
+    };
   }
 
   // Validate file size (max 50MB)
   const MAX_FILE_SIZE = 50 * 1024 * 1024;
   if (file.size > MAX_FILE_SIZE) {
-    return { ok: false, ingested: 0, chunks: 0, title, district, documentType, message: "File too large. Maximum size is 50MB." };
+    return {
+      ok: false,
+      ingested: 0,
+      chunks: 0,
+      title,
+      district,
+      documentType,
+      message: "File too large. Maximum size is 50MB.",
+    };
   }
 
   // 1) Extract + chunk. Any empty result short-circuits cleanly.
@@ -101,14 +123,23 @@ export async function ingestDocument(
   const text = await extractTextFromPDF(buffer);
   const chunks = await chunkText(text);
   if (chunks.length === 0) {
-    return { ok: false, ingested: 0, chunks: 0, title, district, documentType, message: "No text extracted from the PDF." };
+    return {
+      ok: false,
+      ingested: 0,
+      chunks: 0,
+      title,
+      district,
+      documentType,
+      message: "No text extracted from the PDF.",
+    };
   }
 
-  // 2) Embed every chunk (falls back to mock vectors on missing/failed key).
-  const embedded = await generateEmbeddings(chunks);
-  if (embedded.length === 0) {
-    return { ok: false, ingested: 0, chunks: 0, title, district, documentType, message: "No embeddings generated." };
-  }
+  // 2) Prefer real embeddings, preserving keyword ingestion during provider outages.
+  const embedded = await generateEmbeddings(chunks).catch(() => []);
+  const semantic = embedded.length === chunks.length;
+  const rows = semantic
+    ? embedded
+    : chunks.map((text) => ({ text, embedding: null as number[] | null }));
 
   // 3) Persist each chunk as its own row (embedding → pgvector).
   let ingested = 0;
@@ -119,41 +150,62 @@ export async function ingestDocument(
     // vectors instead of mixing old + new chunks together.
     const sourceKey = `${documentType}:${title}${district ? `:${district}` : ""}`;
     const version = await computeEmbeddingVersion(sourceKey);
-    await prisma.$executeRaw`
+    await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`
       DELETE FROM public.emergency_documents
       WHERE metadata->>'source_key' = ${sourceKey}
     `;
 
-    const versionedMetadata = JSON.stringify({
-      district,
-      source: "document-ingestor",
-      document_type: documentType,
-      source_key: sourceKey,
-      embedding_version: version,
-    });
+      const versionedMetadata = JSON.stringify({
+        district,
+        source: "document-ingestor",
+        document_type: documentType,
+        source_key: sourceKey,
+        embedding_version: version,
+      });
 
-    for (const { text: chunkTextValue, embedding } of embedded) {
-      // The pgvector column isn't directly exposed through the typed client,
-      // so insert with raw SQL, casting the array literal to vector(1536).
-      await prisma.$executeRaw`
+      for (const { text: chunkTextValue, embedding } of rows) {
+        // The pgvector column isn't directly exposed through the typed client,
+        // so insert with raw SQL, casting the array literal to vector(1536).
+        await tx.$executeRaw`
         INSERT INTO public.emergency_documents (title, doc_type, content, metadata, embedding, embedding_source, embedding_version)
         VALUES (
           ${title},
           ${documentType},
           ${sanitizeInput(chunkTextValue).slice(0, 8000)},
           ${versionedMetadata}::jsonb,
-          (${`[${embedding.join(",")}]`})::vector(1536),
+          (${embedding ? `[${embedding.join(",")}]` : null})::vector(1536),
           ${sourceKey},
           ${version}
         )
       `;
-      ingested++;
-    }
+        ingested++;
+      }
+    });
   } catch (error: unknown) {
-    console.warn("[documents] ingestDocument fell back to mock success.", error);
-    return { ok: true, ingested, chunks: chunks.length, title, district, documentType, message: "DB bypassed — simulated ingestion." };
+    console.warn("[documents] document transaction failed.");
+    return {
+      ok: false,
+      ingested: 0,
+      chunks: chunks.length,
+      title,
+      district,
+      documentType,
+      message:
+        "Document was not saved. Check database connectivity; the previous version is preserved.",
+    };
   }
 
   revalidatePath("/documents");
-  return { ok: true, ingested, chunks: chunks.length, title, district, documentType };
+  return {
+    ok: true,
+    ingested,
+    chunks: chunks.length,
+    title,
+    district,
+    documentType,
+    message: semantic
+      ? "Document saved with semantic search."
+      : "Document saved for keyword search. Semantic embeddings are unavailable; retry backfill when the provider is available.",
+  };
 }

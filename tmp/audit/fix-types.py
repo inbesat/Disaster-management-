@@ -1,0 +1,22 @@
+from pathlib import Path
+import re,json
+for name in ['components/gov/ai/PlannerChat.tsx','components/ai/ChatThread.tsx']:
+ p=Path(name);s=p.read_text().replace('type UIDataTypes,','').replace(', type UIDataTypes','').replace('UIDataTypes["metadata"]','Record<string, unknown>');s=s.replace('const { messages, append, status } = useChat({','const { messages, sendMessage, status, error } = useChat<UIMessage<Record<string, unknown>>>({');s=s.replace('initialMessages:','messages:').replace('as UIMessage,','as UIMessage<Record<string, unknown>>,');s=re.sub(r'    body: \(\) => \(\{.*?    \}\),\n','',s,flags=re.S);s=s.replace('setIsTyping(true);','setDraft("");');s=re.sub(r'append\(\{ role: "user", content: (\w+) \},','void sendMessage({ text: \\1 },',s);s=s.replace('[append,','[sendMessage,');s=s.replace('msg.createdAt ?? Date.now()','Date.now()');s=s.replace('const contentPart = msg.parts.find((p) => p.type === "text");\n          const content = contentPart?.text ?? "";','const content = msg.parts.filter((p) => p.type === "text").map((p) => p.text).join("");');s=s.replace('      {/* Messages */}','      {error && <p role="alert" className="px-4 py-2 text-sm text-red-400">The AI request failed. Please retry shortly.</p>}\n      {/* Messages */}');s=s.replace('return DEFAULT_SOURCES;','return [];').replace('DEFAULT_SOURCES.map((s) => ({ title: s.title, docType: null, score: null, snippet: "" }))','[]');
+ if name.endswith('PlannerChat.tsx'):
+  s=s.replace('  DEFAULT_SOURCES,\n','');s=s.replace('import VoiceInput','import ReactMarkdown from "react-markdown";\nimport remarkGfm from "remark-gfm";\nimport VoiceInput',1);a=s.index('function renderMarkdown(');b=s.index('function mapMetadata',a);s=s[:a]+'''function renderMarkdown(text: string) {
+  return <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-invert prose-sm max-w-none">{text}</ReactMarkdown>;
+}
+
+'''+s[b:];s=s.replace(' className="prose prose-invert prose-sm max-w-none"','');
+ p.write_text(s)
+p=Path('components/dashboard/DashboardGrid.tsx');s=p.read_text().replace('xl:grid-cols-12','lg:grid-cols-12').replace('className={className}','className={`min-w-0 ${className}`}');p.write_text(s)
+p=Path('app/(dashboard)/dashboard/page.tsx');s=p.read_text().replace('          columns={{ mobile: 1, tablet: 2, desktop: 12, wide: 12 }}\n','');p.write_text(s)
+p=Path('lib/rag/sources-payload.ts');s=p.read_text().replace('"./retrieve"','"@/lib/retrieval/retrieve"');p.write_text(s)
+p=Path('components/public/WeatherCarousel.tsx');s=p.read_text().replace('label: string','riskLabel: string').replace('label: "','riskLabel: "');p.write_text(s)
+p=Path('app/api/weather/forecast/route.ts');s=p.read_text().replace('type ForecastDay =','export type ForecastDay =');p.write_text(s)
+p=Path('app/api/pulse/route.ts');s=p.read_text().replace('fetchNews(process.env.NEWSDATA_API_KEY)','fetchNews(process.env.NEWSDATA_API_KEY ?? "")');p.write_text(s)
+p=Path('tsconfig.json');d=json.loads(p.read_text());d['compilerOptions']['target']='ES2022';p.write_text(json.dumps(d,indent=2)+'\n')
+p=Path('lib/nova/nova-reply.test.ts');s=p.read_text().replace('ReturnType<typeof vi.fn>;','ReturnType<typeof vi.fn<CloudProviderLike["generateResponse"]>>;',1).replace('ReturnType<typeof vi.fn>;','ReturnType<typeof vi.fn<RuleFallbackLike["generateResponse"]>>;',1);s=s.replace('expect.anything()', 'expect.anything()');p.write_text(s)
+for name in ['app/actions/billing.ts','app/api/webhooks/stripe/route.ts']:
+ p=Path(name);s=p.read_text().replace('apiVersion: "2024-06-20",','');s=s.replace('session.subscription_data?.metadata?.supabase_user_id','session.metadata?.supabase_user_id || session.client_reference_id');s=s.replace('subscription.current_period_end','subscription.items.data[0]?.current_period_end ?? 0').replace('subData.current_period_end','subData.items.data[0]?.current_period_end ?? 0');s=s.replace('new Date(subscription.items.data[0]?.current_period_end ?? 0 * 1000)','new Date((subscription.items.data[0]?.current_period_end ?? 0) * 1000)').replace('new Date(subData.items.data[0]?.current_period_end ?? 0 * 1000)','new Date((subData.items.data[0]?.current_period_end ?? 0) * 1000)');s=s.replace('status = subData.status;','status = subData.status === "trialing" ? "trialing" : "active";');p.write_text(s)
+print('Fixed SDK chat UI crashes, unsafe markdown rendering, dashboard grid, forecast and current Stripe typings.')

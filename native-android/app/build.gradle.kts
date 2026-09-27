@@ -12,8 +12,9 @@ android {
         applicationId = "com.safesphere.nativeapp"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
+        resValue("string", "api_base_url", providers.gradleProperty("SAFESPHERE_SERVER_URL").getOrElse("https://safesphere0.netlify.app"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {

@@ -1,0 +1,29 @@
+  ▲ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Custom worker found: E:\Hackathons\disaster management\disaster-response-platform\worker\index.js
+> [PWA] Build custom worker: E:\Hackathons\disaster management\disaster-response-platform\public\worker-Ph-5tmgz8nuE3bxWuzPnr.js
+> [PWA] Auto register service worker is disabled, please call following code in componentDidMount callback or useEffect hook
+> [PWA]   window.workbox.register()
+> [PWA] Service worker: E:\Hackathons\disaster management\disaster-response-platform\public\sw.js
+> [PWA]   url: /sw.js
+> [PWA]   scope: /
+> [PWA] Fallback to precache routes when fetch failed from cache or network:
+> [PWA]   document (page): /~offline
+
+> Build error occurred
+TypeError: Cannot read properties of undefined (reading 'precacheFallback')
+    at E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next-pwa@5.6.0_@babel+core@_541bc18a4eb3a6c0856d30060d8e697d\node_modules\next-pwa\index.js:315:31
+    at Array.forEach (<anonymous>)
+    at Object.webpack (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next-pwa@5.6.0_@babel+core@_541bc18a4eb3a6c0856d30060d8e697d\node_modules\next-pwa\index.js:314:30)
+    at getBaseWebpackConfig (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\build\webpack-config.js:1838:32)
+    at async Promise.all (index 0)
+    at async Span.traceAsyncFn (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\trace\trace.js:154:20)
+    at async webpackBuildImpl (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\build\webpack-build\impl.js:136:21)
+    at async E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\build\index.js:1006:111
+    at async Span.traceAsyncFn (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\trace\trace.js:154:20)
+    at async build (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\build\index.js:368:9)

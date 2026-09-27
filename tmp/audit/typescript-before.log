@@ -1,0 +1,20 @@
+DisasterMap_part1.tsx(1000,6): error TS17008: JSX element 'MapProvider' has no corresponding closing tag.
+DisasterMap_part1.tsx(1034,8): error TS17008: JSX element 'Map' has no corresponding closing tag.
+DisasterMap_part1.tsx(1501,1): error TS1005: '/' expected.
+DisasterMap_part1.tsx(1501,1): error TS1005: '</' expected.
+DisasterMap_part2.tsx(1,36): error TS1005: ',' expected.
+DisasterMap_part2.tsx(2,35): error TS1005: ',' expected.
+DisasterMap_part2.tsx(4,31): error TS1005: ':' expected.
+DisasterMap_part2.tsx(6,22): error TS1136: Property assignment expected.
+DisasterMap_part2.tsx(6,25): error TS1005: ';' expected.
+DisasterMap_part2.tsx(6,49): error TS1128: Declaration or statement expected.
+DisasterMap_part2.tsx(7,11): error TS1109: Expression expected.
+DisasterMap_part2.tsx(9,11): error TS1128: Declaration or statement expected.
+DisasterMap_part2.tsx(10,9): error TS1109: Expression expected.
+DisasterMap_part2.tsx(10,10): error TS1128: Declaration or statement expected.
+DisasterMap_part2.tsx(12,9): error TS2657: JSX expressions must have one parent element.
+DisasterMap_part2.tsx(27,7): error TS1128: Declaration or statement expected.
+DisasterMap_part2.tsx(140,7): error TS2657: JSX expressions must have one parent element.
+DisasterMap_part2.tsx(163,5): error TS1128: Declaration or statement expected.
+DisasterMap_part2.tsx(164,3): error TS1109: Expression expected.
+DisasterMap_part2.tsx(165,1): error TS1128: Declaration or statement expected.

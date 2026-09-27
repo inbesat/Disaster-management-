@@ -97,7 +97,7 @@ export default function SOSCountdown({
         Sending {actionLabel} in {remaining}&hellip;
       </p>
       <p className="mt-2 max-w-xs text-xs font-medium text-[var(--dl-text-muted)]">
-        A rescue team is about to be dispatched to your saved location.
+        Your request will be sent with your current location. Dispatch is not confirmed.
       </p>
 
       {/* Giant ghost CANCEL */}

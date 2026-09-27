@@ -1,0 +1,26 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 107.2s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 46.7s (172 modules)
+ ○ Compiling /api/chat ...
+ ✓ Compiled /api/chat in 69.8s (472 modules)
+ GET /api/ping 200 in 84470ms
+[ai-provider] env status → GROQ_API_KEY=ok GROQ_API_KEY_BACKUP=ok OPENROUTER_API_KEY=ok OPENROUTER_API_KEY_BACKUP=ok BLUESMINDS_API_KEY=ok (5 usable)
+ POST /api/chat 200 in 102300ms
+ POST /api/chat 200 in 3948ms
+   Reload env: .env.local
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled in 196.7s (847 modules)
+ ✓ Compiled in 12.3s (375 modules)
+ ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 64.8s

@@ -1,0 +1,9 @@
+
+Running 2 tests using 1 worker
+
+(node:14392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:9:7 › Mobile Device Experience › 1. Verify public dashboard responsiveness & touch targets on mobile (575ms)
+  ok 2 [Mobile Chrome (Pixel 5)] › tests\mobile-device.spec.ts:37:7 › Mobile Device Experience › 2. Verify mobile offline status banner and PWA readiness (4.8s)
+
+  2 passed (6.3s)

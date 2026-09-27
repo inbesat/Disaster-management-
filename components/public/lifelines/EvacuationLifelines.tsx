@@ -4,7 +4,7 @@
 // components/public/lifelines/EvacuationLifelines.tsx — citizen lifelines.
 //
 // Two critical, mobile-first actions for the public dashboard:
-//   1. "Find Nearest Safe Shelter" — requests browser geolocation, then
+//   1. "Explore Demo Shelter Map" — requests browser geolocation, then
 //      hands off to /public/map?action=find-route&lat={lat}&lng={lng}
 //      (the map auto-routes to the nearest open shelter). Falls back to
 //      the plain map if GPS is denied/unavailable.
@@ -35,7 +35,8 @@ const NOTIF_KEY = "citizen_notification_prefs";
 
 // Control-room WhatsApp number (E.164, no "+"). Override via env, else the
 // national disaster helpline placeholder used across the app.
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_SOS_NUMBER ?? "919999999999";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_SOS_NUMBER ?? "";
+const WHATSAPP_SOS_CONFIGURED = /^\d{10,15}$/.test(WHATSAPP_NUMBER) && WHATSAPP_NUMBER !== "919999999999";
 
 const SOS_MESSAGE =
   "EMERGENCY SOS: I am in danger and need immediate rescue. Please track my phone location.";
@@ -85,9 +86,14 @@ export default function EvacuationLifelines() {
   async function subscribeWhatsApp() {
     if (subscribed) return;
     try {
-      await enableWhatsAppAlerts();
+      const result = await enableWhatsAppAlerts();
+      if (!result.ok) {
+        toast.error("WhatsApp alert preference could not be saved. Alerts are not active.");
+        return;
+      }
     } catch {
-      /* local store still applies below */
+      toast.error("WhatsApp alert preference could not be saved. Alerts are not active.");
+      return;
     }
 
     try {
@@ -102,7 +108,7 @@ export default function EvacuationLifelines() {
     }
 
     setSubscribed(true);
-    toast.success("You are now subscribed to district alerts!");
+    toast.success("Preference saved. WhatsApp delivery is not yet confirmed.");
   }
 
   const sosHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(SOS_MESSAGE)}`;
@@ -123,14 +129,13 @@ export default function EvacuationLifelines() {
               Evacuation
             </p>
             <h2 className="mt-0.5 text-base font-bold text-white">
-              Find Nearest Safe Shelter
+              Explore Demo Shelter Map
             </h2>
           </div>
         </div>
 
         <p className="mt-3 text-sm leading-relaxed text-[var(--dl-text-muted)]">
-          We&rsquo;ll use your live location and draw you a safe route to the
-          closest open shelter on the map.
+          The map uses illustrative shelter and route data. Verify official local advisories before travelling.
         </p>
 
         <button
@@ -147,7 +152,7 @@ export default function EvacuationLifelines() {
           ) : (
             <>
               <Navigation aria-hidden className="h-5 w-5" />
-              Find Nearest Safe Shelter
+              Explore Demo Shelter Map
             </>
           )}
         </button>
@@ -181,7 +186,7 @@ export default function EvacuationLifelines() {
             {subscribed ? (
               <>
                 <Check aria-hidden className="h-5 w-5" />
-                Subscribed to alerts
+                Preference saved
               </>
             ) : (
               <>
@@ -191,13 +196,13 @@ export default function EvacuationLifelines() {
             )}
           </button>
 
-          <a
+          {WHATSAPP_SOS_CONFIGURED ? <a
             href={sosHref}
             className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3.5 text-base font-bold text-white transition hover:bg-red-500 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
           >
             <ShieldAlert aria-hidden className="h-5 w-5" />
             SOS via WhatsApp
-          </a>
+          </a> : <p role="status" className="rounded-lg border border-amber-400/40 p-3 text-sm font-semibold text-amber-100">WhatsApp SOS is not configured. Use local emergency contacts directly.</p>}
         </div>
       </div>
     </section>

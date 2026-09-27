@@ -1,0 +1,6 @@
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/chat/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/ping/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'

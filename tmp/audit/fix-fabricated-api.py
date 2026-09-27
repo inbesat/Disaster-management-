@@ -1,0 +1,13 @@
+from pathlib import Path
+p=Path('app/api/public/shelters/route.ts');s=p.read_text();a=s.index('    // Prisma can be unreachable');b=s.index('\n  }\n}',a);s=s[:a]+'''    console.error("[public/shelters] Database unavailable", error);
+    return NextResponse.json({ ok: false, shelters: [], source: "unavailable", error: "Shelter information is temporarily unavailable. Contact local authorities before travelling." }, { status: 503 });'''+s[b:];s=s.replace('import { CITIZEN_SHELTERS } from "@/lib/map/citizen-shelters";\n','');p.write_text(s)
+p=Path('app/api/predictions/history/route.ts');s=p.read_text();a=s.index('// Plausible mock risk-index curve');b=s.index('export async function GET',a);s=s[:a]+s[b:];s=s.replace('const daysParam = Number(request.nextUrl.searchParams.get("days"));','const daysParam = Number(request.nextUrl.searchParams.get("days") ?? 7);').replace('where: { predictionTimestamp: { gte: since } },','where: { predictionTimestamp: { gte: since }, isDemo: false },');a=s.index('    // No real predictions yet');b=s.index('    // Bucket predictions',a);s=s[:a]+'''    if (rows.length === 0) return NextResponse.json({ source: "unavailable", points: [], total: 0 });
+
+'''+s[b:];a=s.index('    // Prisma can be unreachable');b=s.index('\n  }\n}',a);s=s[:a]+'''    warnDbUnavailableOnce("predictions/history", error);
+    return NextResponse.json({ source: "unavailable", points: [], error: "Prediction history is unavailable" }, { status: 503 });'''+s[b:];p.write_text(s)
+p=Path('app/api/fm/stations/route.ts');s=p.read_text().replace('import { MOCK_FM_STATIONS } from "@/lib/fm/mock-stations";\n','').replace('return NextResponse.json({ ok: true, stations: MOCK_FM_STATIONS, source: "mock" });','return NextResponse.json({ ok: false, stations: [], source: "unavailable", error: "Station registry unavailable; no broadcast destination was verified." }, { status: 503 });');p.write_text(s)
+p=Path('app/api/ingest/social/route.ts');s=p.read_text().replace('export async function GET(): Promise<NextResponse> {','export async function GET(): Promise<NextResponse> {\n  if (process.env.DEMO_DATA_ENABLED !== "true") return NextResponse.json({ ok: false, error: "Social-media demo simulation is disabled." }, { status: 404 });');s=s.replace('source: "social";', 'source: "demo-social";').replace('source: "social",','source: "demo-social",');p.write_text(s)
+p=Path('.env.example');s=p.read_text();
+if 'DEMO_DATA_ENABLED=' not in s:s+='\n# Explicitly enable only when demonstrating simulated social data.\nDEMO_DATA_ENABLED=false\n'
+p.write_text(s)
+print('Removed fabricated public shelters, prediction history and FM station fallbacks; gated social simulation.')

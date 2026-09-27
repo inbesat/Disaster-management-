@@ -10,6 +10,8 @@ import {
   ListChecks,
   ScrollText,
   Activity,
+  Satellite,
+  Settings,
   BarChart3,
   Radio,
   Volume2,
@@ -34,6 +36,8 @@ const NAV_ITEMS = [
   { href: "/broadcast-monitor", label: "Broadcast Monitor", icon: PhoneCall },
   { href: "/broadcast-history", label: "Broadcast History", icon: History },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/satellite", label: "Satellite", icon: Satellite },
+  { href: "/settings/profile", label: "Settings", icon: Settings },
   { href: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { href: "/health", label: "System Health", icon: Activity },
 ] as const;

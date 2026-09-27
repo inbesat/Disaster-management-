@@ -1,5 +1,5 @@
 import type { SimilarDocument } from "./vector-search";
-import type { RetrievedDocument } from "./retrieve";
+import type { RetrievedDocument } from "@/lib/retrieval/retrieve";
 
 export type RagSourcePayload = {
   title: string;

@@ -8,7 +8,6 @@ import PublicSidebar from "@/components/public/PublicSidebar";
 import { SOSProvider } from "@/components/public/sos/SOSContext";
 import SOSModal from "@/components/public/sos/SOSModal";
 import EmergencyModeBanner from "@/components/public/sos/EmergencyModeBanner";
-import LocationTracker from "@/components/public/sos/LocationTracker";
 import SafetyNudge from "@/components/public/sos/SafetyNudge";
 import ShakeToSOSHost from "@/components/public/sos/ShakeToSOSHost";
 import NovaChat from "@/components/public/NovaChat";
@@ -74,7 +73,6 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
           fixed and pointer-events-none so empty space never blocks taps). */}
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
         <EmergencyModeBanner />
-        <LocationTracker />
       </div>
 
       {/* Phase 5 · Step 8 — periodic safety check-in (also triggered via

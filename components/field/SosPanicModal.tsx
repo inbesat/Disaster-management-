@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Siren, X, MapPin, User, Clock } from "lucide-react";
-import { PATNA_CENTER, OfflineSyncQueue } from "@/lib/field-offline";
+import { OfflineSyncQueue } from "@/lib/field-offline";
 
 const RESPONDER_NAME = "Sunita Das · Team Alpha";
 const HOLD_MS = 2000;
@@ -19,6 +19,7 @@ export default function SosPanicModal() {
   const [open, setOpen] = useState(false);
   const [armed, setArmed] = useState(false);
   const [broadcast, setBroadcast] = useState(false);
+  const [dispatchError, setDispatchError] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [holdProgress, setHoldProgress] = useState(0);
   const holdStart = useRef<number | null>(null);
@@ -27,12 +28,12 @@ export default function SosPanicModal() {
   // Capture best-known GPS up front so the payload is ready when armed.
   const refreshCoords = () => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setCoords(PATNA_CENTER);
+      setCoords(null);
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => setCoords(PATNA_CENTER),
+      () => setCoords(null),
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
     );
   };
@@ -68,34 +69,47 @@ export default function SosPanicModal() {
   }
 
   async function dispatch() {
+    setDispatchError(null);
+    if (!coords) {
+      setDispatchError(
+        "GPS is unavailable. Contact the control room directly and share your location.",
+      );
+      return;
+    }
     const payload: SosPayload = {
       type: "SOS_EMERGENCY",
       responder: RESPONDER_NAME,
-      lat: coords?.lat ?? PATNA_CENTER.lat,
-      lng: coords?.lng ?? PATNA_CENTER.lng,
+      lat: coords.lat,
+      lng: coords.lng,
       at: new Date().toISOString(),
     };
-
-    // Simulate the critical dispatch to the District Control Room.
     try {
       const res = await fetch("/api/field/sos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error(`Dispatch ${res.status}`);
+      if (!res.ok) {
+        setDispatchError("SOS was not recorded. Contact the control room directly.");
+        return;
+      }
+      setBroadcast(true);
+      setCoords(null);
+      setOpen(false);
     } catch {
-      // Offline → queue for replay; ESCC will pick it up on reconnect.
-      OfflineSyncQueue.enqueue({
-        url: "/api/field/sos",
-        method: "POST",
-        body: payload,
-      });
+      if (!navigator.onLine) {
+        OfflineSyncQueue.enqueue({
+          url: "/api/field/sos",
+          method: "POST",
+          body: payload,
+        });
+        setDispatchError(
+          "SOS is queued on this device, not delivered. Contact the control room directly.",
+        );
+      } else {
+        setDispatchError("SOS could not be sent. Contact the control room directly.");
+      }
     }
-
-    setBroadcast(true);
-    setCoords(null);
-    setOpen(false);
   }
 
   function close() {
@@ -117,13 +131,12 @@ export default function SosPanicModal() {
         SOS
       </button>
 
-      {/* Flashing broadcast confirmation banner (persists after triggered) */}
+      {/* Confirmation that the SOS report was recorded, not delivered. */}
       {broadcast && !open && (
         <div className="sos-flash fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-3 bg-red-600 px-4 py-3 text-center text-white">
           <Siren className="h-6 w-6 shrink-0" />
           <span className="text-lg font-black">
-            🚨 EMERGENCY SIGNAL BROADCASTED. CONTROL ROOM &amp; NEARBY UNITS
-            NOTIFIED.
+            🚨 SOS REPORT RECORDED. RESPONDER NOTIFICATION IS UNCONFIRMED.
           </span>
         </div>
       )}
@@ -150,7 +163,8 @@ export default function SosPanicModal() {
             </div>
             <h2 className="mt-4 text-2xl font-black text-red-300">SOS EMERGENCY</h2>
             <p className="mt-1 text-center text-base text-red-200/80">
-              This broadcasts your location to the District Control Room now.
+              This records an SOS report. Contact the control room directly for immediate
+              help.
             </p>
 
             <div className="mt-4 w-full space-y-1 rounded-xl border-2 border-red-500/40 bg-red-950 p-4 text-sm font-semibold text-red-100">
@@ -169,6 +183,15 @@ export default function SosPanicModal() {
                 {new Date().toLocaleTimeString()}
               </p>
             </div>
+
+            {dispatchError && (
+              <p
+                role="alert"
+                className="mt-4 rounded-lg border border-red-400 bg-red-950 p-3 text-sm font-bold text-white"
+              >
+                {dispatchError}
+              </p>
+            )}
 
             {/* Hold-to-confirm (accidental trigger protection) */}
             <button
@@ -199,12 +222,22 @@ export default function SosPanicModal() {
       {/* pulse + flash keyframes */}
       <style jsx>{`
         @keyframes sosPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 60, 60, 0.7); }
-          50% { box-shadow: 0 0 0 24px rgba(255, 60, 60, 0); }
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(255, 60, 60, 0.7);
+          }
+          50% {
+            box-shadow: 0 0 0 24px rgba(255, 60, 60, 0);
+          }
         }
         @keyframes sosFlash {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.4;
+          }
         }
         .sos-pulse {
           animation: sosPulse 1.4s ease-in-out infinite;

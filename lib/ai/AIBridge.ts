@@ -61,9 +61,7 @@ export function checkHardwareCapability(): HardwareCapability {
   };
   const webgpu = !!nav.gpu?.requestAdapter;
   const memoryGb =
-    typeof nav.deviceMemory === "number" && nav.deviceMemory > 0
-      ? nav.deviceMemory
-      : 2;
+    typeof nav.deviceMemory === "number" && nav.deviceMemory > 0 ? nav.deviceMemory : 2;
   return { webgpu, memoryGb, supported: webgpu && memoryGb >= 4 };
 }
 
@@ -129,7 +127,9 @@ async function loadOfflineContext(district: string): Promise<string> {
  * Loads the raw fresh shelter rows for a district — used by the offline
  * logic engine to answer "nearest shelter" from real cached data.
  */
-async function loadShelterContext(district: string): Promise<Array<OfflineRecord<unknown>>> {
+async function loadShelterContext(
+  district: string,
+): Promise<Array<OfflineRecord<unknown>>> {
   try {
     const db = getOfflineDb();
     return freshRows(await db.shelters.where("district").equals(district).toArray());
@@ -140,6 +140,7 @@ async function loadShelterContext(district: string): Promise<Array<OfflineRecord
 
 /** Dependency overrides so the router is testable without real engines. */
 export interface RouteChatDeps {
+  history?: import("@/lib/ai-bridge/types").ChatMessage[];
   isOnline?: () => boolean;
   capability?: () => HardwareCapability;
   cloudRoute?: (message: string, district: string) => Promise<AIResponse>;
@@ -172,9 +173,13 @@ export async function routeChatQuery(
   district: string,
   deps: RouteChatDeps = {},
 ): Promise<RouteChatResult> {
-  const isOnline = deps.isOnline ?? (() => (typeof navigator !== "undefined" ? navigator.onLine : true));
+  const isOnline =
+    deps.isOnline ?? (() => (typeof navigator !== "undefined" ? navigator.onLine : true));
   const capability = deps.capability ?? checkHardwareCapability;
-  const cloudRoute = deps.cloudRoute ?? defaultCloudRoute;
+  const cloudRoute =
+    deps.cloudRoute ??
+    ((message: string, district: string) =>
+      getAIBridge().route(message, { currentDistrict: district, history: deps.history }));
   const localGenerate = deps.localGenerate ?? defaultLocalGenerate;
   const shelterContext = deps.shelterContext ?? loadShelterContext;
   const offlineContext = deps.offlineContext ?? loadOfflineContext;
@@ -182,12 +187,17 @@ export async function routeChatQuery(
   // ---- Cloud path: the standard /api/chat planner. -------------------
   if (isOnline()) {
     const response = await cloudRoute(userMessage, district);
+    if (response.error) throw new Error(response.text);
     const local = response.mode === "local";
     return {
       text: response.text,
       source: local ? "local" : "cloud",
       // The bridge may step down to local if the cloud call errored.
-      engineUsed: local ? "local-gemma" : "cloud",
+      engineUsed: local
+        ? response.source === "rule-based"
+          ? "local-fallback"
+          : "local-gemma"
+        : "cloud",
     };
   }
 

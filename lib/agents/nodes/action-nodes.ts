@@ -1,189 +1,73 @@
-import type {
-  EmergencyState,
-  ResourceAllocation,
-} from "@/lib/agents/graph-state";
+import type { EmergencyState } from "@/lib/agents/graph-state";
 
-// ---------------------------------------------------------------------
-// lib/agents/nodes/action-nodes.ts
-// Downstream agents in the response graph.
-//
-//   allocatorNode    — maps the drafted evacuation plan to concrete resource
-//                      deployments, then pauses requesting human approval.
-//   validatorNode    — cross-checks the plan + allocations for conflicts
-//                      (e.g. a full shelter) and flags them for a human
-//                      admin BEFORE anything is approved.
-//   communicatorNode — fan-out stage: broadcasts alerts to responders and
-//                      marks the incident resolved (run externally / manually
-//                      once the human approves the allocation).
-//
-// All use a mock processing delay to keep the streamed UI animation honest.
-// ---------------------------------------------------------------------
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * Allocator Agent — reads the evacuation plan and generates a concrete set of
- * resource allocations (boats, medical kits, water, transport). Respects the
- * "Resource Hoarding Limit" (max % of inventory usable without approval) and
- * compares demand against `availableInventory`.
- *
- * When demand exceeds what's available (after the hoarding cap), the Allocator
- * STOPS the graph: it sets `status: "conflict"` + a `conflict` message so the
- * pipeline halts and a manual command override is requested. Otherwise it ends
- * in `pending_approval`, leaving a Human-in-the-Loop pause.
- */
 export async function allocatorNode(
   state: EmergencyState,
 ): Promise<Partial<EmergencyState>> {
-  const sleepMs = 1800;
-  await sleep(sleepMs);
-
-  const risk = state.riskLevel || "HIGH";
-  const hoardingLimit = Math.max(0, Math.min(100, state.hoardingLimitPercent ?? 100));
+  if (state.conflict) return {};
   const inventory = state.availableInventory ?? {};
-  const hasInventory = Object.keys(inventory).length > 0;
-
-  const boatCount = risk === "CRITICAL" ? 80 : risk === "HIGH" ? 50 : 20;
-
-  // Proposed demand before any availability check.
-  const requested: ResourceAllocation[] = [
-    {
-      resourceType: "NDRF Rescue Boats",
-      quantity: boatCount,
-      targetZone: "KatQ high-severity wards",
-      eta: "T+2h",
-    },
-    {
-      resourceType: "Medical First-Aid Kits",
-      quantity: 200,
-      targetZone: "Routing primary shelter",
-      eta: "T+3h",
-    },
-    {
-      resourceType: "Bottled Water Pallets",
-      quantity: 150,
-      targetZone: "Kankarbagh & Paras Primary Shelter",
-      eta: "T+6h",
-    },
-    {
-      resourceType: "Transport Buses",
-      quantity: 12,
-      targetZone: "Mass evacuation convoy",
-      eta: "T+1h",
-    },
-  ];
-
-  // Clamp each allocation to the hoarding-limit allowance; record deficits.
-  const deficits: string[] = [];
-  const resourceAllocations: ResourceAllocation[] = requested.map((alloc) => {
-    const available = Number(inventory[alloc.resourceType]);
-    if (Number.isNaN(available)) {
-      // No inventory snapshot for this type → assume it's fully available.
-      return alloc;
-    }
-    const allowance = Math.floor(available * (hoardingLimit / 100));
-    if (allowance < alloc.quantity) {
-      deficits.push(
-        `${alloc.quantity} ${alloc.resourceType} needed but only ${allowance} available`,
+  const limit = Math.max(0, Math.min(100, state.hoardingLimitPercent ?? 100));
+  const remaining = Object.fromEntries(
+    Object.entries(inventory).map(([key, value]) => [
+      key,
+      Math.max(0, Math.floor((value * limit) / 100)),
+    ]),
+  );
+  const problems: string[] = [];
+  const resourceAllocations = (state.proposedAllocations ?? []).map((item) => {
+    const available = remaining[item.resourceType];
+    const allowance = Number.isFinite(available) ? Math.max(0, available) : 0;
+    if (item.quantity > allowance)
+      problems.push(
+        `${item.resourceType}: requested ${item.quantity}, verified allowance ${allowance}`,
       );
-      return { ...alloc, quantity: Math.max(0, allowance) };
-    }
-    return alloc;
+    const quantity = Math.min(item.quantity, allowance);
+    remaining[item.resourceType] = Math.max(0, (available || 0) - quantity);
+    return { ...item, quantity };
   });
-
-  // CONFLICT — the pipeline must stop and ask for a manual override.
-  if (deficits.length > 0) {
-    const conflict =
-      `Allocator Agent reports severe resource deficit: ${deficits.join("; ")}. ` +
-      "Manual Command Override Required.";
-    return {
-      resourceAllocations,
-      status: "conflict",
-      conflict,
-      logs: [conflict],
-    };
-  }
-
-  const log =
-    hasInventory
-      ? `Allocator Agent: Assigning ${boatCount} NDRF boats and 200 medical kits (hoarding limit ${hoardingLimit}%)...`
-      : "Allocator Agent: Assigning 50 NDRF boats and 200 medical kits to highest-severity zones...";
-
+  if (!Object.keys(inventory).length)
+    problems.push("No inventory snapshot supplied; availability is unverified");
   return {
     resourceAllocations,
-    status: "pending_approval",
-    logs: [log],
+    status: problems.length ? "conflict" : "pending_approval",
+    conflict: problems.length ? problems.join("; ") : null,
+    logs: [
+      problems.length
+        ? `Allocator: review required. ${problems.join("; ")}`
+        : "Allocator: proposed quantities checked against supplied inventory; nothing dispatched.",
+    ],
   };
 }
-
-/**
- * Communicator Agent — broadcasts alerts (SMS to field responders, browser
- * push, control-room tickers / sirens) and closes the loop by moving the
- * incident to `resolved`. Helpful as the terminal step after approval.
- */
-export async function communicatorNode(
-  state: EmergencyState,
-): Promise<Partial<EmergencyState>> {
-  const sleepMs = 900;
-  await sleep(sleepMs);
-
-  const incidentHint = (state.incidentDetails ?? "").slice(0, 48) || "active incident";
-  const log =
-    `Communicator Agent: Broadcasting SMS alerts to field responders and activating sirens for "${incidentHint}"...`;
-
-  return {
-    status: "resolved",
-    logs: [log],
-  };
-}
-
-/**
- * Validator Agent — runs after the Allocator and before the human
- * checkpoint. Cross-checks the drafted plan against shelter capacity and
- * flags any conflict for a human admin. If the Allocator already reported a
- * deficit conflict, the Validator holds (passes through) so the override
- * flow is unchanged. A deterministic keyword sniff on the incident details
- * lets judges force the "full shelter chosen" scenario described in B10.
- */
 export async function validatorNode(
   state: EmergencyState,
 ): Promise<Partial<EmergencyState>> {
-  const sleepMs = 1000;
-  await sleep(sleepMs);
-
-  // Allocator already flagged a resource deficit — hold for manual override.
-  if (state.status === "conflict" || state.conflict) {
-    return {
-      logs: [
-        "Validator Agent: Allocator conflict detected — holding pipeline for manual override.",
-      ],
-    };
-  }
-
-  const text = (state.incidentDetails ?? "").toLowerCase();
-  const capacityFlag = /(full shelter|shelter (is |is at )?full|at capacity|over capacity|capacity reached|no space left)/.test(
-    text,
-  );
-
-  if (capacityFlag) {
-    const conflict =
-      "Validator Agent: Primary shelter is at full capacity — the relocation plan conflicts with available shelter capacity. Flagging for human review.";
+  if (state.conflict)
+    return { logs: ["Validator: holding for human review of the reported conflict."] };
+  if (/full shelter|at capacity|over capacity|no space left/i.test(state.incidentDetails))
     return {
       status: "conflict",
-      conflict,
-      logs: [conflict],
+      conflict: "Reported shelter capacity conflict requires review.",
+      logs: [
+        "Validator: reported capacity problem; confirm an alternative before approval.",
+      ],
     };
-  }
-
-  const log =
-    "Validator Agent: Cross-checked plan against shelter capacity and route feasibility — no conflicts found.";
-
   return {
     status: "pending_approval",
-    logs: [log],
+    logs: [
+      "Validator: quantity checks complete. Route safety and shelter capacity require verification by a commander.",
+    ],
   };
 }
-
-export const ALLOCATOR_DELAY_MS = 1800;
-export const VALIDATOR_DELAY_MS = 1000;
-export const COMMUNICATOR_DELAY_MS = 900;
+/** This stage does not claim delivery without receipts from a broadcast service. */
+export async function communicatorNode(
+  _state: EmergencyState,
+): Promise<Partial<EmergencyState>> {
+  return {
+    status: "pending_approval",
+    logs: [
+      "Communicator: draft ready. Use the approved broadcast flow to send and track delivery.",
+    ],
+  };
+}
+export const ALLOCATOR_DELAY_MS = 0;
+export const VALIDATOR_DELAY_MS = 0;
+export const COMMUNICATOR_DELAY_MS = 0;

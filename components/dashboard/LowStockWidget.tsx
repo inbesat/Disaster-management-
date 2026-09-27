@@ -22,6 +22,7 @@ type Shortage = {
 export default function LowStockWidget() {
   const [resources, setResources] = useState<InventoryResource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -31,6 +32,7 @@ export default function LowStockWidget() {
       })
       .catch((error) => {
         console.error("Failed to load inventory:", error);
+        if (active) setUnavailable(true);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -65,23 +67,30 @@ export default function LowStockWidget() {
 
       {loading && <p className="mt-3 text-sm text-slate-400">Checking inventory…</p>}
 
-      {!loading && shortages.length === 0 && (
+      {unavailable && (
+        <p role="status" className="mt-3 text-sm text-amber-300">
+          Inventory is unavailable. Stock levels cannot be verified.
+        </p>
+      )}
+
+      {!loading && !unavailable && shortages.length === 0 && (
         <p className="mt-3 text-sm text-slate-400">
           All critical categories above threshold. ✓
         </p>
       )}
 
-      {shortages.map((s) => (
-        <div
-          key={s.category}
-          role="alert"
-          className="mt-3 animate-pulse rounded-lg border-2 border-severity-red-600 bg-severity-red-600/15 px-4 py-3"
-        >
-          <p className="text-sm font-black uppercase tracking-wider text-severity-red-400">
-            ⚠️ CRITICAL SHORTAGE: Only {s.available} {s.label} remaining in District.
-          </p>
-        </div>
-      ))}
+      {!unavailable &&
+        shortages.map((s) => (
+          <div
+            key={s.category}
+            role="alert"
+            className="mt-3 animate-pulse rounded-lg border-2 border-severity-red-600 bg-severity-red-600/15 px-4 py-3"
+          >
+            <p className="text-sm font-black uppercase tracking-wider text-severity-red-400">
+              ⚠️ CRITICAL SHORTAGE: Only {s.available} {s.label} remaining in District.
+            </p>
+          </div>
+        ))}
     </div>
   );
 }

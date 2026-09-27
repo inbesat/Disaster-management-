@@ -66,9 +66,9 @@ const SHELTERS: Shelter[] = [
 
 export function NearbySheltersList() {
   return (
-    <section aria-label="Nearby shelters" className="space-y-3">
+    <section aria-label="Illustrative demo shelters" className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="eoc-label text-[var(--dl-text-muted)]">NEARBY SHELTERS</p>
+        <p className="eoc-label text-[var(--dl-text-muted)]">DEMO SHELTERS · UNVERIFIED</p>
         <Link
           href="/public/map"
           className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--dl-orange-light)] transition hover:text-[var(--dl-orange)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dl-orange)]"
@@ -77,6 +77,8 @@ export function NearbySheltersList() {
           View All on Map
         </Link>
       </div>
+
+      <p className="text-xs font-medium text-amber-200">Names, distances and bed counts are sample data. Check official local sources before travelling.</p>
 
       <ul className="space-y-2.5">
         {SHELTERS.map((shelter) => {

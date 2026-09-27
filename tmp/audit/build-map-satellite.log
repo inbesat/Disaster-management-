@@ -1,0 +1,192 @@
+
+> disaster-response-platform@0.1.0 build E:\Hackathons\disaster management\disaster-response-platform
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+> [PWA] Compile server
+> [PWA] Compile server
+> [PWA] Compile client (static)
+> [PWA] Custom worker found: E:\Hackathons\disaster management\disaster-response-platform\worker\index.js
+> [PWA] Build custom worker: E:\Hackathons\disaster management\disaster-response-platform\public\worker-n1-Asn0N06b8naguyelHM.js
+> [PWA] Auto register service worker is disabled, please call following code in componentDidMount callback or useEffect hook
+> [PWA]   window.workbox.register()
+> [PWA] Service worker: E:\Hackathons\disaster management\disaster-response-platform\public\sw.js
+> [PWA]   url: /sw.js
+> [PWA]   scope: /
+> [PWA] Fallback to precache routes when fetch failed from cache or network:
+> [PWA]   document (page): /~offline
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (107kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (258kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Compiled with warnings
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/error.tsx
+
+/_next/static/chunks/12cbcdcd.9e4609a8614da058.js is 6.03 MB, and won't be precached. Configure maximumFileSizeToCacheInBytes to change this limit.
+
+./lib/monitoring/sentry.ts
+Critical dependency: the request of a dependency is an expression
+
+Import trace for requested module:
+./lib/monitoring/sentry.ts
+./app/error.tsx
+
+   Linting and checking validity of types ...
+
+<--- Last few GCs --->
+
+[9452:000001C217C76000]   113745 ms: Scavenge (interleaved) 979.8 (1046.0) -> 952.0 (1061.5) MB, pooled: 0 MB, 33.65 / 0.00 ms  (average mu = 0.990, current mu = 0.971) allocation failure; 
+[9452:000001C217C76000]   114015 ms: Scavenge (interleaved) 1002.4 (1068.5) -> 984.2 (1090.3) MB, pooled: 0 MB, 33.90 / 0.00 ms  (average mu = 0.990, current mu = 0.971) allocation failure; 
+
+FATAL ERROR: NewSpace::EnsureCurrentCapacity Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[20276:0000019DC4EAE000]   115489 ms: Scavenge (interleaved) 1005.9 (1077.6) -> 980.8 (1086.6) MB, pooled: 0 MB, 22.21 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+[20276:0000019DC4EAE000]   115771 ms: Scavenge (interleaved) 1018.4 (1089.9) -> 1001.4 (1120.6) MB, pooled: 0 MB, 139.53 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+
+
+<--- Last few GCs --->
+
+[20276:0000019DC4EAE000]   115489 ms: Scavenge (interleaved) 1005.9 (1077.6) -> 980.8 (1086.6) MB, pooled: 0 MB, 22.21 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+[20276:0000019DC4EAE000]   115771 ms: Scavenge (interleaved) 1018.4 (1089.9) -> 1001.4 (1120.6) MB, pooled: 0 MB, 139.53 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+
+
+<--- Last few GCs --->
+
+[20276:0000019DC4EAE000]   115489 ms: Scavenge (interleaved) 1005.9 (1077.6) -> 980.8 (1086.6) MB, pooled: 0 MB, 22.21 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+[20276:0000019DC4EAE000]   115771 ms: Scavenge (interleaved) 1018.4 (1089.9) -> 1001.4 (1120.6) MB, pooled: 0 MB, 139.53 / 0.00 ms  (average mu = 0.988, current mu = 0.958) allocation failure; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+FATAL ERROR: Zone Allocation failed - process out of memory
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+----- Native stack trace -----
+
+----- Native stack trace -----
+
+ 1: 00007FF7D6EBC44F 
+ 2: 00007FF7D7B06217 
+ 3: 00007FF7D747FC46 
+ 4: 00007FF7D84A4FF0 
+ 5: 00007FF7D82BEAC9 
+ 6: 00007FF7D7377E06 
+ 7: 00007FF7D73556FF 
+ 8: 00007FF7D7A82553 
+ 9: 00007FF7D7A8462A 
+10: 00007FF7D7506631 
+11: 00007FF7D750472F 
+12: 0000019DFD5375FA 
+ 1: 00007FF7D6EBC44F 
+ 2: 00007FF7D7B06217 
+ 3: 00007FF7D747FC46 
+ 4: 00007FF7D72AC3FC 
+ 5: 00007FF7D730C678 
+ 6: 00007FF7D72E0DCB 
+ 7: 00007FF7D72E09A2 
+ 8: 00007FF7D72E2955 
+ 9: 00007FF7D72E1DFE 
+10: 00007FF7D72F5361 
+11: 00007FF7D72CA1C5 
+12: 00007FF7D72E58F2 
+13: 00007FF7D72F6FB6 
+14: 00007FF7D72F7DB7 
+15: 00007FF7D730C18A 
+16: 00007FF7D72E0DCB 
+17: 00007FF7D72E09A2 
+18: 00007FF7D72E2955 
+19: 00007FF7D72E1DFE 
+20: 00007FF7D72F5361 
+21: 00007FF7D72CA1C5 
+22: 00007FF7D72E58F2 
+23: 00007FF7D72F6FB6 
+24: 00007FF7D72F7DB7 
+25: 00007FF7D730C18A 
+26: 00007FF7D730A253 
+27: 00007FF7D730A03B 
+28: 00007FF7D72E0E58 
+29: 00007FF7D7358F36 
+30: 00007FF7D7357C50 
+31: 00007FF7D7355A4A 
+32: 00007FF7D7A79ECF 
+33: 00007FF7D735752B 
+34: 00007FF7D82E684F 
+35: 00007FF7D6E0CD8E 
+36: 00007FF7D7B5B1A6 
+37: 00007FF7D8DBB0B3 
+38: 00007FFF9EBFCDF7 
+39: 00007FFFA025EE4C 
+ 1: 00007FF7D6EBC44F 
+ 2: 00007FF7D7B06217 
+ 3: 00007FF7D747FC46 
+ 4: 00007FF7D72A3B87 
+ 5: 00007FF7D72AC0EE 
+ 6: 00007FF7D72E0993 
+ 7: 00007FF7D72E2955 
+ 8: 00007FF7D72E1DFE 
+ 9: 00007FF7D72F5361 
+10: 00007FF7D72CA1C5 
+11: 00007FF7D72E58F2 
+12: 00007FF7D72F6FB6 
+13: 00007FF7D72F7DB7 
+14: 00007FF7D730C18A 
+15: 00007FF7D72E0DCB 
+16: 00007FF7D72E09A2 
+17: 00007FF7D72E2955 
+18: 00007FF7D72E1DFE 
+19: 00007FF7D72F5361 
+20: 00007FF7D72CA1C5 
+21: 00007FF7D72E58F2 
+22: 00007FF7D72F6FB6 
+23: 00007FF7D72F7DB7 
+24: 00007FF7D730C18A 
+25: 00007FF7D730A253 
+26: 00007FF7D730A03B 
+27: 00007FF7D72E0E58 
+28: 00007FF7D72E09A2 
+29: 00007FF7D72E2955 
+30: 00007FF7D72E1DFE 
+31: 00007FF7D72F5361 
+32: 00007FF7D72CA1C5 
+33: 00007FF7D72E58F2 
+34: 00007FF7D72F6FB6 
+35: 00007FF7D72F7DB7 
+36: 00007FF7D730C18A 
+37: 00007FF7D72E0DCB 
+38: 00007FF7D7358F36 
+39: 00007FF7D7357C50 
+40: 00007FF7D7355A4A 
+41: 00007FF7D7A79ECF 
+42: 00007FF7D735752B 
+43: 00007FF7D82E684F 
+44: 00007FF7D6E0CD8E 
+45: 00007FF7D7B5B1A6 
+46: 00007FF7D8DBB0B3 
+47: 00007FFF9EBFCDF7 
+48: 00007FFFA025EE4C 
+ 1: 00007FF7D6EBC44F 
+ 2: 00007FF7D7B06217 
+ 3: 00007FF7D7906C07 
+ 4: 00007FF7D78C76A3 
+ 5: 00007FF7D790900A 
+ 6: 00007FF7D7908636 
+ 7: 00007FF7D7919582 
+ 8: 00007FF7D79190AB 
+ 9: 00007FF7D8D9F8ED 
+10: 00007FF7D79046D0 
+11: 00007FF7D791EF1A 
+12: 00007FF7D792B3B6 
+13: 00007FF7D74FD20B 
+14: 000001C2503B75FA 
+Next.js build worker exited with code: 134 and signal: null
+ ELIFECYCLE  Command failed with exit code 134.

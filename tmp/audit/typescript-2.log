@@ -1,0 +1,561 @@
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/access-requests/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/admin-dashboard/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/analytics/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/audit-logs/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/broadcast-history/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/broadcast-monitor/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/bulk-ops/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/districts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/fm-stations/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/health/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/tts-preview/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(admin)/users/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(app)/styleguide/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(auth)/2fa-setup/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(auth)/login/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(auth)/signup/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(auth)/update-password/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/agent-orchestration/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/ai-advisor/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/ai-planner/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/alerts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/allocations/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/casualties/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/command-center/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/compare/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/dashboard/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/dispatch/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/evacuations/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/global-map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/inventory/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/knowledge-base/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/missing-persons/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/ngo-portal/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/admin/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/ai-setup/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/ai/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/billing/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/contacts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/integrations/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/notifications/history/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/notifications/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/organization/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/privacy/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/privacy/policy/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/profile/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/settings/storage/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/shelters/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(dashboard)/triage/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/field/chat/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/field/map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/field/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/field/team/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/request-resources/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(field)/shelter-update/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/access/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/help/[topic]/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/help/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/landing/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/landing/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/onboarding/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/report/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/sos/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/(public)/trust/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/403/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/access-request/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/agents/orchestrate/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/ai/test/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/alerts/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/allocations/optimize/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/assignments/notify/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/assignments/status/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/auth/reset-password/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/approvals/[id]/decide/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/approvals/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/auto-trigger/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/compliance/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/dispatch/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/export/pdf/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/history/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/ivr-fallback/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/logs/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/report/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/fm/test/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/broadcast/rds/push/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/cap/generate/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/casualties/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/chat/sessions/[id]/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/chat/sessions/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/cron/audio-retention/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/cron/ingest/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/demo-request/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/demo/scenario/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/demo/session/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/evacuation-plans/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/broadcast/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/checklist/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/handover/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/photo/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/sos/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/field/status/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/flood/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/fm/coverage/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/fm/import/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/fm/stations/[id]/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/fm/stations/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/gov/export/opendata/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/gov/shelters/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/health/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/ingest/parse/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/ingest/social/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/live-conditions/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/missing-persons/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/predict/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/predictions/history/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/public/shelters/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/pulse/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/push/send/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/push/subscribe/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/rag/search/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/reports/missing/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/retrieval/embed/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/road-closures/[id]/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/road-closures/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/sandbox/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/sandbox/status/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/sessions/[id]/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/sessions/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/shelters/nearest/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/shelters/occupancy/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/sos/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/tts/generate/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/user/delete/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/user/export/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/weather/forecast/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/weather/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/webhooks/sms/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/webhooks/stripe/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/webhooks/twilio/call-status/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/webhooks/voice/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/webhooks/whatsapp/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/api/whatsapp/inbound/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/auth/callback/route.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/debug/performance/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/demo/fm-broadcast/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/demo/insights/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/demo/present/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/demo/summary/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/emergency/offline/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/family/[shareId]/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/ai-planner/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/alerts/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/alerts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/casualties/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/casualties/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/dashboard/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/dashboard/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/login/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/map/compare/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/missing-persons/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/missing-persons/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/ngos/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/ngos/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/overview/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/overview/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/resources/layout.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/resources/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/gov/signup/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/ai/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/alerts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/dashboard/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/donations/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/family/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/login/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/map/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/missing-report/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/onboarding/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/report/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/settings/alerts/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/settings/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/settings/sos-history/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/setup/family/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/setup/location/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'
+error TS6053: File 'E:/Hackathons/disaster management/disaster-response-platform/.next/types/app/public/shelters/page.ts' not found.
+  The file is in the program because:
+    Matched by include pattern '.next/types/**/*.ts' in 'E:/Hackathons/disaster management/disaster-response-platform/tsconfig.json'

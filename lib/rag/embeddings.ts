@@ -4,9 +4,8 @@
 //
 // Uses the OpenAI client (text-embedding-3-small → 1536 dims). If the API key
 // is missing or the call fails (no key, bad key, rate-limit, or a provider
-// that doesn't offer embeddings — e.g. DeepSeek), we return deterministic mock
-// vectors so the hackathon pipeline never crashes and the rest of the chain
-// (chunk → embed → store → retrieve) can still be exercised end-to-end.
+// that does not offer embeddings), ingestion fails explicitly and retrieval
+// can use keyword search over existing documents.
 // ---------------------------------------------------------------------
 
 import OpenAI from "openai";
@@ -24,21 +23,6 @@ const EMBEDDING_DIM = 1536;
 // explicitly overridden.
 const EMBEDDING_BASE_URL =
   process.env.OPENAI_EMBEDDING_BASE_URL || "https://api.openai.com/v1";
-
-// Deterministic pseudo-random in [-1, 1] so mock vectors are stable per chunk
-// (re-ingesting the same document yields the same vectors).
-function seeded(seed: number): number {
-  const x = Math.sin(seed * 9301 + 49297) * 233280;
-  return x - Math.floor(x);
-}
-
-function mockVector(seed: string): number[] {
-  const vector = new Array<number>(EMBEDDING_DIM);
-  for (let i = 0; i < EMBEDDING_DIM; i++) {
-    vector[i] = Number((seeded(seed.charCodeAt(0) * 31 + i) * 2 - 1).toFixed(6));
-  }
-  return vector;
-}
 
 function normalize(vector: number[]): number[] {
   const norm = Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0)) || 1;
@@ -106,21 +90,21 @@ export function getEmbeddingCacheStats(): EmbeddingCacheStats {
     capacity: CACHE_CAP,
     hits: cache.hits,
     misses: cache.misses,
-    hitRate: cache.hits + cache.misses === 0 ? 0 : cache.hits / (cache.hits + cache.misses),
+    hitRate:
+      cache.hits + cache.misses === 0 ? 0 : cache.hits / (cache.hits + cache.misses),
     evictions: 0,
   };
 }
 
 /**
  * Generate an embedding vector for every provided chunk. Returns
- * `{ text, embedding }[]`. On any failure it degrades to deterministic mock
- * vectors so the ingestion flow completes without a hard crash. Identical
+ * `{ text, embedding }[]`. Failure rejects without storing synthetic vectors. Identical
  * text already cached (Step 9) short-circuits to the stored vector.
  */
-export async function generateEmbeddings(
-  textChunks: string[],
-): Promise<EmbeddedChunk[]> {
-  const cleanChunks = (textChunks ?? []).filter((c) => typeof c === "string" && c.length > 0);
+export async function generateEmbeddings(textChunks: string[]): Promise<EmbeddedChunk[]> {
+  const cleanChunks = (textChunks ?? []).filter(
+    (c) => typeof c === "string" && c.length > 0,
+  );
   if (cleanChunks.length === 0) return [];
 
   // Split into chunks already cached (serve instantly) vs. those we must embed.
@@ -149,22 +133,34 @@ export async function generateEmbeddings(
     results.push(item);
   }
 
-  return results;
+  const byText = new Map(results.map((item) => [item.text, item]));
+  return cleanChunks.map((text) => byText.get(text)!);
 }
 
 /** Single OpenAI (or mock) embedding call for a batch of uncached chunks. */
 async function embedBatch(chunks: string[]): Promise<EmbeddedChunk[]> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
-    console.warn("[rag] No OPENAI_API_KEY — returning mock embeddings.");
-    return chunks.map((text) => ({ text, embedding: mockVector(text) }));
+    throw new Error(
+      "No embedding provider configured. Use keyword retrieval until embeddings are configured.",
+    );
   }
 
-  const client = new OpenAI({ apiKey, baseURL: EMBEDDING_BASE_URL });
+  const client = new OpenAI({
+    apiKey,
+    baseURL: process.env.OPENAI_API_KEY
+      ? EMBEDDING_BASE_URL
+      : "https://openrouter.ai/api/v1",
+    timeout: 6000,
+    maxRetries: 0,
+  });
 
   try {
     const response = await client.embeddings.create({
-      model: EMBEDDING_MODEL,
+      model: process.env.OPENAI_API_KEY
+        ? EMBEDDING_MODEL
+        : "openai/text-embedding-3-small",
+      dimensions: EMBEDDING_DIM,
       input: chunks,
     });
     const data = response.data;
@@ -172,11 +168,16 @@ async function embedBatch(chunks: string[]): Promise<EmbeddedChunk[]> {
 
     return chunks.map((text, index) => {
       const raw = data[index]?.embedding;
-      const embedding = Array.isArray(raw) && raw.length > 0 ? normalize(raw) : mockVector(text);
+      if (
+        !Array.isArray(raw) ||
+        raw.length !== EMBEDDING_DIM ||
+        raw.some((v) => !Number.isFinite(v))
+      )
+        throw new Error("Invalid embedding dimensions.");
+      const embedding = normalize(raw);
       return { text, embedding };
     });
   } catch (error: unknown) {
-    console.warn("[rag] Embedding call failed — returning mock embeddings.", error);
-    return chunks.map((text) => ({ text, embedding: mockVector(text) }));
+    throw new Error("Embedding service unavailable; no synthetic vectors were stored.");
   }
 }
