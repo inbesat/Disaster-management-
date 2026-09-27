@@ -25,7 +25,7 @@ import { estimateTokens } from "./estimate-tokens";
 
 /** Spec's disaster-specific system prompt for the local model. */
 export const DISASTER_SYSTEM_PROMPT =
-  "You are DisasterLink AI, an emergency assistant. " +
+  "You are SafeSphere AI, an emergency assistant. " +
   "Use only the provided offline context. Be concise, actionable, and calm. " +
   "If you don't know something, say so clearly. Never hallucinate emergency procedures.";
 

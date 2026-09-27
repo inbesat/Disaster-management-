@@ -24,11 +24,11 @@
 // touches `window` — same convention as DisasterMap / MiniMapCanvas.
 // ---------------------------------------------------------------------
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { AttributionControl, Map } from "react-map-gl/maplibre";
+import { AttributionControl, Map, Marker } from "react-map-gl/maplibre";
 import { MapPin, Users } from "lucide-react";
 import { readCitizenLocation } from "@/hooks/useSafetyStatus";
 import { resolveCitizenMapView } from "@/lib/map/citizen-view";
@@ -38,7 +38,10 @@ import {
   DEFAULT_LAYER_VISIBILITY,
   type LayerVisibility,
 } from "@/components/map/LayerToggle";
-import { classifyCitizenRoute, type RouteSafetyClassification } from "@/lib/map/route-safety";
+import {
+  classifyCitizenRoute,
+  type RouteSafetyClassification,
+} from "@/lib/map/route-safety";
 import { CITIZEN_ROAD_CLOSURES } from "@/lib/map/citizen-road-closures";
 import {
   CITIZEN_SHELTERS,
@@ -54,8 +57,7 @@ import OfflineRouteDirections from "./OfflineRouteDirections";
 import TurnByTurnNav from "./TurnByTurnNav";
 import RoadClosures from "./RoadClosures";
 import FamilyLayer from "./FamilyLayer";
-import ReportIncidentFAB, { type CitizenReportType } from "./ReportIncidentFAB";
-import ReportPins, { type ReportPin } from "./ReportPins";
+import ReportIncidentFAB from "./ReportIncidentFAB";
 
 /** Carto dark-matter — same base layer the gov DisasterMap uses. */
 const CARTO_DARK_STYLE =
@@ -114,40 +116,36 @@ export default function PublicMap({
 
   const navigationShelter =
     navigating && selectedShelterId
-      ? CITIZEN_SHELTERS.find((s) => s.id === selectedShelterId) ?? null
+      ? (CITIZEN_SHELTERS.find((s) => s.id === selectedShelterId) ?? null)
       : null;
 
   // Step 8 — is the Find-My-Family avatar layer visible?
   const [familyVisible, setFamilyVisible] = useState(false);
-
-  // Step 9 — temporary report pins dropped via the reporter FAB. Each
-  // pin auto-expires after 12 s ("temporary" by design).
-  const [pins, setPins] = useState<ReportPin[]>([]);
-  const pinIdRef = useRef(0);
-  const pinTimersRef = useRef<number[]>([]);
-
-  // Clear any pending pin-expiry timers if the map unmounts.
-  useEffect(
-    () => () => {
-      pinTimersRef.current.forEach((timer) => window.clearTimeout(timer));
-    },
-    [],
-  );
-
-  const handleSubmitReport = useCallback(
-    (type: CitizenReportType) => {
-      const id = `pin-${(pinIdRef.current += 1)}`;
-      setPins((prev) => [
-        ...prev,
-        { id, type, lat: origin.lat, lng: origin.lng },
-      ]);
-      const timer = window.setTimeout(() => {
-        setPins((prev) => prev.filter((p) => p.id !== id));
-      }, 12_000);
-      pinTimersRef.current.push(timer);
-    },
-    [origin],
-  );
+  const [verifiedReports, setVerifiedReports] = useState<
+    Array<{ id: string; lat: number; lng: number; reportType: string; priority: string }>
+  >([]);
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const response = await fetch("/api/public/verified-reports", {
+          cache: "no-store",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (active) setVerifiedReports(data.reports ?? []);
+        }
+      } catch {
+        /* Map remains usable offline. */
+      }
+    };
+    void load();
+    const timer = window.setInterval(load, 30_000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, []);
 
   // Binary danger zones — computed once, shared by the overlay and the
   // route renderer so both draw the exact same shapes.
@@ -161,7 +159,7 @@ export default function PublicMap({
   // never disagree.
   const routeSafety = useMemo<RouteSafetyClassification | null>(() => {
     const shelter = selectedShelterId
-      ? CITIZEN_SHELTERS.find((s) => s.id === selectedShelterId) ?? null
+      ? (CITIZEN_SHELTERS.find((s) => s.id === selectedShelterId) ?? null)
       : null;
     if (!shelter) return null;
     return classifyCitizenRoute(
@@ -226,18 +224,30 @@ export default function PublicMap({
         )}
         <EvacuationRoutes classification={routeSafety} />
         {/* Phase 1 · Step 9 — safety-score badge over the route. */}
-        <RouteSafetyOverlay
-          classification={routeSafety}
-          shelterId={selectedShelterId}
-        />
+        <RouteSafetyOverlay classification={routeSafety} shelterId={selectedShelterId} />
         {/* Phase 1 · Step 10 — cached turn-by-turn text while offline. */}
         <OfflineRouteDirections shelterId={selectedShelterId} />
         {/* Step 7 — barricade markers stay on top of the route lines. */}
         <RoadClosures />
         {/* Step 8 — family avatars (mounted only while the layer is on). */}
         {familyVisible && <FamilyLayer origin={origin} />}
-        {/* Step 9 — temporary pins from the reporter FAB. */}
-        <ReportPins pins={pins} />
+        {verifiedReports.map((report) => (
+          <Marker
+            key={report.id}
+            latitude={report.lat}
+            longitude={report.lng}
+            anchor="bottom"
+          >
+            <span
+              role="img"
+              aria-label={`Field verified ${report.reportType.replaceAll("_", " ")}`}
+              title={`Field verified ${report.reportType.replaceAll("_", " ")}`}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border-2 border-white text-white shadow-lg ${report.priority === "critical" ? "bg-rose-600" : report.priority === "high" ? "bg-amber-600" : "bg-emerald-600"}`}
+            >
+              ✓
+            </span>
+          </Marker>
+        ))}
       </Map>
 
       {/* Step 6 — guidance mode: a big arrow, instruction, ETA and a red
@@ -258,7 +268,9 @@ export default function PublicMap({
         type="button"
         onClick={() => setFamilyVisible((v) => !v)}
         aria-pressed={familyVisible}
-        aria-label={familyVisible ? "Hide my family on the map" : "Show my family on the map"}
+        aria-label={
+          familyVisible ? "Hide my family on the map" : "Show my family on the map"
+        }
         title="Find my family"
         className={`absolute bottom-[calc(208px+env(safe-area-inset-bottom))] right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition hover:brightness-110 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--dl-orange)] ${
           familyVisible
@@ -270,7 +282,7 @@ export default function PublicMap({
       </button>
 
       {/* Step 9 — citizen reporter FAB, just above the Locate Me FAB. */}
-      <ReportIncidentFAB onSubmit={handleSubmitReport} />
+      <ReportIncidentFAB />
 
       {/* Legend — binary by design: red is danger, everything else is safe.
           Stacked above the area chip so the BottomNav never hides it. */}
@@ -286,6 +298,9 @@ export default function PublicMap({
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-severity-green-400" />
           Safe
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-emerald-600" /> Field verified report
         </span>
       </div>
 

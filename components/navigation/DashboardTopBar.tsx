@@ -77,7 +77,7 @@ export function DashboardTopBar({
           clock alone lives on the admin-only /dashboard route). timeClassName
           keeps it readable when the top bar re-themes in day-ops. Hidden
           below md where the right utility cluster crowds it. */}
-      <div className="flex shrink-0 items-center gap-4">
+      <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-4">
         {/* Identity — avatar + name (mirrors the old Navbar layout) */}
         <div className="flex items-center gap-2.5">
           {guest ? (
@@ -108,7 +108,7 @@ export function DashboardTopBar({
         <div className="hidden md:block">
           <SyncStatus />
         </div>
-        <PresenceIndicators />
+        <div className="hidden sm:block"><PresenceIndicators /></div>
         <NotificationCenter />
         <div className="hidden md:block">
           <PushNotificationToggle />
@@ -119,13 +119,14 @@ export function DashboardTopBar({
           href="/settings/profile"
           aria-label="Open settings"
           title="Settings"
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface-elevated text-muted transition hover:border-accent hover:text-accent"
+          className="hidden h-10 w-10 items-center justify-center rounded-md border border-border bg-surface-elevated text-muted transition hover:border-accent hover:text-accent sm:flex"
         >
           <Settings className="h-4 w-4" aria-hidden />
         </Link>
 
         {/* Phase 25 · Step 4 — multilingual selector (23 languages) */}
-        <LanguageSelector />
+        <div className="sm:hidden"><LanguageSelector compact /></div>
+        <div className="hidden sm:block"><LanguageSelector /></div>
 
         {/* ThemeToggle removed for demo day — dark mode is LOCKED via
             ThemeProvider forcedTheme="dark". */}

@@ -100,7 +100,7 @@ function BrowserFrame() {
           </div>
           <div className="flex-1 mx-4">
             <div className="bg-slate-700 rounded-md px-3 py-1.5 text-xs text-slate-400">
-              dashboard.disasterlink.gov.in
+              safesphere0.netlify.app
             </div>
           </div>
         </div>
@@ -243,5 +243,3 @@ export default function DualModePreview() {
     </section>
   );
 }
-
-

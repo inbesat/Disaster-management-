@@ -1,134 +1,99 @@
-"use client";
+import Link from "next/link";
+import { prisma } from "@/server/prisma";
+import { demoWhere, resolveDemoScope } from "@/lib/demo/scope";
+import { anonymizePII } from "@/lib/security/sanitize";
 
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Check, MessageSquareWarning, X } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
-
-// ---------------------------------------------------------------------
-// components/gov/dashboard/CrowdReportsWidget.tsx — Phase 7 · Step 4.
-//
-// 1×1 feed of UNVERIFIED citizen reports pouring in from the public app.
-// Every row has two one-tap actions: ✓ Verify (promotes the report to a
-// confirmed incident — row turns green and is flagged) and ✗ Reject
-// (dismisses the row with an exit animation). Both fire a confirmation
-// toast so a live demo reads as instant command feedback.
-// ---------------------------------------------------------------------
-
-type CrowdReport = {
-  id: string;
-  text: string;
-  area: string;
-  time: string;
-  /** Report still awaiting command review. */
-  status: "pending" | "verified";
-};
-
-const INITIAL_REPORTS: CrowdReport[] = [
-  { id: "r1", text: "Road blocked in Sector 4 — bus stuck in water", area: "Sector 4", time: "1m ago", status: "pending" },
-  { id: "r2", text: "Water entering ground floor, families on rooftop", area: "Kankarbagh", time: "4m ago", status: "pending" },
-  { id: "r3", text: "Power line down near Bailey Road crossing", area: "Bailey Road", time: "9m ago", status: "pending" },
-  { id: "r4", text: "Two boats needed at Mohalla crossing", area: "Danapur", time: "16m ago", status: "pending" },
-  { id: "r5", text: "Elderly couple needs evacuation, ground floor", area: "Mithapur", time: "22m ago", status: "pending" },
-];
-
-export function CrowdReportsWidget() {
-  const toast = useToast();
-  const [reports, setReports] = useState(INITIAL_REPORTS);
-  const [verifiedCount, setVerifiedCount] = useState(0);
-
-  const verify = (report: CrowdReport) => {
-    setReports((prev) =>
-      prev.map((r) => (r.id === report.id ? { ...r, status: "verified" } : r)),
+/** Government view of the same reports claimed and verified in the field portal. */
+export default async function CrowdReportsWidget() {
+  let reports: Awaited<ReturnType<typeof prisma.crowdsourcedReport.findMany>> = [];
+  let counts = { pending: 0, verifying: 0, verified: 0, rejected: 0, escalated: 0 };
+  let error = false;
+  try {
+    const scope = demoWhere(resolveDemoScope());
+    const [recent, pending, verifying, verified, rejected, escalated] = await Promise.all(
+      [
+        prisma.crowdsourcedReport.findMany({
+          where: scope,
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        }),
+        prisma.crowdsourcedReport.count({
+          where: { ...scope, workflowStatus: "queued" },
+        }),
+        prisma.crowdsourcedReport.count({
+          where: { ...scope, workflowStatus: { in: ["claimed", "checked_in"] } },
+        }),
+        prisma.crowdsourcedReport.count({
+          where: { ...scope, verificationStatus: "verified" },
+        }),
+        prisma.crowdsourcedReport.count({
+          where: { ...scope, verificationStatus: "rejected" },
+        }),
+        prisma.crowdsourcedReport.count({
+          where: { ...scope, workflowStatus: "escalated" },
+        }),
+      ],
     );
-    setVerifiedCount((c) => c + 1);
-    toast.success({
-      title: "Report verified",
-      description: `${report.area} — promoted to a confirmed incident.`,
-    });
-  };
-
-  const reject = (report: CrowdReport) => {
-    setReports((prev) => prev.filter((r) => r.id !== report.id));
-    toast.error({ title: "Report rejected", description: `${report.area} — dismissed from the feed.` });
-  };
-
+    reports = recent;
+    counts = { pending, verifying, verified, rejected, escalated };
+  } catch {
+    error = true;
+  }
   return (
-    <section className="flex flex-col rounded-[var(--dl-radius-sm)] border border-white/10 bg-white/[0.04] backdrop-blur transition hover:border-white/20">
-      <header className="flex items-center justify-between gap-2 border-b border-white/10 px-5 py-4">
-        <div className="flex items-center gap-2.5">
-          <MessageSquareWarning aria-hidden="true" className="h-4 w-4 text-severity-amber-300" />
-          <h2 className="eoc-label text-white">Crowdsourced Reports</h2>
+    <section className="flex h-full flex-col rounded-xl border border-white/10 bg-white/[0.04] p-4 text-white">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-bold">Citizen reports</h2>
+        <span className="text-xs text-amber-300">{counts.pending} pending</span>
+      </div>
+      {!error && (
+        <div className="mt-3 grid grid-cols-4 gap-1 text-center text-[0.65rem]">
+          <span className="rounded bg-slate-800 p-1">
+            {counts.verifying}
+            <br />
+            in field
+          </span>
+          <span className="rounded bg-emerald-900/40 p-1">
+            {counts.verified}
+            <br />
+            verified
+          </span>
+          <span className="rounded bg-slate-800 p-1">
+            {counts.rejected}
+            <br />
+            rejected
+          </span>
+          <span className="rounded bg-rose-900/40 p-1">
+            {counts.escalated}
+            <br />
+            escalated
+          </span>
         </div>
-        <span className="rounded-full border border-severity-amber-400/30 bg-severity-amber-400/10 px-2.5 py-1 text-[0.6875rem] font-semibold text-severity-amber-300">
-          {reports.filter((r) => r.status === "pending").length} unverified
-        </span>
-      </header>
-
-      <ul className="flex-1 space-y-2 p-3">
-        <AnimatePresence initial={false}>
-          {reports.map((report) => (
-            <motion.li
-              key={report.id}
-              layout
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-              className={`rounded-lg border p-3 transition ${
-                report.status === "verified"
-                  ? "border-severity-green-400/40 bg-severity-green-400/10"
-                  : "border-white/10 bg-black/20 hover:bg-black/30"
-              }`}
-            >
-              <p className="text-[0.8125rem] leading-snug text-white/90">{report.text}</p>
-              <p className="mt-1 text-[0.6875rem] text-[var(--dl-text-muted)]">
-                <span className="font-semibold text-white/60">{report.area}</span>
-                {" · "}
-                {report.time}
-                {report.status === "verified" && (
-                  <span className="ml-2 font-semibold uppercase tracking-wide text-severity-green-300">
-                    · verified
-                  </span>
-                )}
-              </p>
-
-              <div className="mt-2 flex gap-2">
-                {report.status === "verified" ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-severity-green-400/30 bg-severity-green-400/10 px-3 py-1.5 text-xs font-semibold text-severity-green-300">
-                    <Check className="h-3.5 w-3.5" /> Verified — on live map
-                  </span>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => verify(report)}
-                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-severity-green-400/40 bg-severity-green-400/10 px-3 py-1.5 text-xs font-semibold text-severity-green-300 transition hover:bg-severity-green-400/20"
-                    >
-                      <Check className="h-3.5 w-3.5" /> Verify
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => reject(report)}
-                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-severity-red-400/40 bg-severity-red-400/10 px-3 py-1.5 text-xs font-semibold text-severity-red-300 transition hover:bg-severity-red-400/20"
-                    >
-                      <X className="h-3.5 w-3.5" /> Reject
-                    </button>
-                  </>
-                )}
-              </div>
-            </motion.li>
-          ))}
-        </AnimatePresence>
-      </ul>
-
-      {verifiedCount > 0 && (
-        <footer className="border-t border-white/10 px-5 py-3 text-[0.6875rem] text-[var(--dl-text-muted)]">
-          <span className="font-semibold text-severity-green-300">{verifiedCount}</span> verified
-          {verifiedCount === 1 ? " report" : " reports"} promoted to the live map.
-        </footer>
       )}
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-rose-300">
+          Report database unavailable.
+        </p>
+      )}
+      <ul className="mt-3 flex-1 space-y-2">
+        {reports.map((r) => (
+          <li key={r.id} className="rounded-lg border border-white/10 bg-black/20 p-3">
+            <p className="line-clamp-2 text-sm">{anonymizePII(r.rawText)}</p>
+            <p className="mt-2 text-xs text-slate-400">
+              {r.reportType.replaceAll("_", " ")} ·{" "}
+              {r.workflowStatus === "completed" ? r.verificationStatus : r.workflowStatus}
+            </p>
+          </li>
+        ))}
+        {!reports.length && !error && (
+          <li className="text-sm text-slate-400">No citizen reports in this session.</li>
+        )}
+      </ul>
+      <Link
+        href="/portal/admin"
+        className="mt-4 rounded-lg border border-cyan-400/50 px-3 py-2 text-center text-sm font-semibold text-cyan-300"
+      >
+        Review and triage →
+      </Link>
     </section>
   );
 }
-
-export default CrowdReportsWidget;

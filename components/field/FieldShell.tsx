@@ -17,10 +17,10 @@ interface FieldProfile {
 }
 
 const MOCK_PROFILE: FieldProfile = {
-  name: "Sunita Das",
+  name: "Responder",
   role: "Field Responder",
-  district: "Patna District - Team Alpha",
-  team: "NDRF",
+  district: "District not assigned",
+  team: "Field team",
 };
 
 function useIsOnline() {

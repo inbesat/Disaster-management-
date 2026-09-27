@@ -76,6 +76,7 @@ export default function DemoOrchestrator({ className = "" }: DevToolsProps) {
     if (typeof window === "undefined") return;
     const forced = new URLSearchParams(window.location.search).get("devtools") === "1";
     setVisible(process.env.NODE_ENV === "development" || forced);
+    setCollapsed(window.matchMedia("(max-width: 639px)").matches);
   }, [pathname]);
 
   // Keep the master switches in sync when the hotkeys drive the demo.

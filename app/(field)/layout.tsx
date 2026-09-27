@@ -11,9 +11,9 @@ export default async function FieldLayout({ children }: { children: ReactNode })
     data: { user },
   } = await supabase.auth.getUser();
 
-  let name = "Sunita Das";
-  let district = "Patna District - Team Alpha";
-  let team = "NDRF";
+  let name = "Responder";
+  let district = "District not assigned";
+  let team = "Field team";
 
   if (user && !guest) {
     const meta = user.user_metadata ?? {};
@@ -26,7 +26,7 @@ export default async function FieldLayout({ children }: { children: ReactNode })
       .eq("id", user.id)
       .maybeSingle();
 
-    if (profile?.assigned_district) district = `${profile.assigned_district} · Team Alpha`;
+    if (profile?.assigned_district) district = profile.assigned_district;
     if (profile?.organization) team = profile.organization;
   }
 

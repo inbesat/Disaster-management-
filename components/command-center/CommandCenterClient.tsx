@@ -120,6 +120,20 @@ export default function CommandCenterClient({ sidebar, top }: CommandCenterClien
     end: { lat: number; lng: number };
   } | null>(null);
   const [groundReports, setGroundReports] = useState<GroundReport[]>([]);
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const response = await fetch("/api/portal/map-reports", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (active && Array.isArray(payload.reports)) setGroundReports(payload.reports);
+      } catch { /* Keep the map available when the report service is offline. */ }
+    };
+    void load();
+    const timer = window.setInterval(load, 30_000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, []);
 
   const handleEvacRoute = useCallback((result: EvacRouteResult) => {
     setEvacRoute({

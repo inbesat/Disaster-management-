@@ -8,8 +8,31 @@ import { rateLimit } from "@/lib/security/rate-limit";
 import { consumeOtp, generateOtp, issueOtp, normalizePhone } from "@/lib/security/otp";
 import { DEMO_SESSION_COOKIE } from "@/lib/demo/scope";
 import { safeLog } from "@/lib/logger";
+import { prisma } from "@/server/prisma";
 
 const GUEST_COOKIE = "guest_mode";
+
+async function ensureDemoFieldProfile(sessionId: string) {
+  try {
+    await prisma.responderProfile.upsert({
+      where: { id: `demo:${sessionId}` },
+      create: {
+        id: `demo:${sessionId}`,
+        name: "Demo Field Volunteer",
+        organization: "SafeSphere Demo NGO",
+        organizationType: "ngo",
+        district: "Patna",
+        tier: "approved",
+        approvalStatus: "approved",
+        availability: "available",
+        trainingCompletedAt: new Date(),
+      },
+      update: {},
+    });
+  } catch {
+    /* Portal displays the database error; no fake profile is shown. */
+  }
+}
 
 // Shared cookie options for every demo session cookie. `path: "/"` is
 // mandatory — without it Next.js scopes the cookie to the current route
@@ -33,6 +56,15 @@ function setSessionCookie(name: string, value: string, maxAge: number) {
 // options (httpOnly/sameSite/secure/path/maxAge) in one place.
 function setGuestCookie() {
   setSessionCookie(GUEST_COOKIE, "true", 60 * 60 * 24 * 7);
+}
+
+function setDemoScope() {
+  setSessionCookie("demo_mode", "true", 60 * 60 * 24);
+  setSessionCookie(
+    DEMO_SESSION_COOKIE,
+    cookies().get(DEMO_SESSION_COOKIE)?.value ?? randomUUID(),
+    60 * 60 * 24,
+  );
 }
 
 // ---------------------------------------------------------------------
@@ -86,6 +118,9 @@ export async function sendOTP(
   const apiKey = process.env.GETOTP_API_KEY;
 
   if (!apiKey) {
+    if (process.env.DEMO_AUTH_ENABLED !== "true") {
+      return { ok: false, message: "OTP service is not configured." };
+    }
     safeLog("info", "[getotp] DEMO — no GETOTP_API_KEY", { metadata: { phone, code } });
     issueOtp(code, phone);
     return {
@@ -124,6 +159,10 @@ export async function sendOTP(
     issueOtp(code, phone);
     return { ok: true, message: "OTP sent to your phone. It expires in 5 minutes." };
   } catch (error: unknown) {
+    if (process.env.DEMO_AUTH_ENABLED !== "true") {
+      safeLog("warn", "[getotp] API call failed", { metadata: { error: String(error) } });
+      return { ok: false, message: "Could not send an OTP. Please try again later." };
+    }
     safeLog("warn", "[getotp] API call failed — simulating success", {
       metadata: { error: String(error) },
     });
@@ -148,6 +187,7 @@ export async function verifyOTP(code: string): Promise<{ ok: false; message: str
   }
 
   if (process.env.DEMO_AUTH_ENABLED === "true") {
+    setDemoScope();
     setGuestCookie();
     redirect("/command-center");
   }
@@ -188,9 +228,7 @@ export async function verifyOTP(code: string): Promise<{ ok: false; message: str
     if (signedIn) redirect("/command-center");
   }
 
-  // Demo bypass: mark the responder as a guest, exactly like Continue as Guest.
-  setGuestCookie();
-  redirect("/command-center");
+  return { ok: false, message: "Could not verify this code with the sign-in provider." };
 }
 
 export async function signOutAction() {
@@ -213,6 +251,7 @@ export async function setGuestMode() {
   cookies().delete(DEMO_SESSION_COOKIE);
   cookies().delete("citizen_phone");
   cookies().delete("sandbox");
+  if (process.env.DEMO_AUTH_ENABLED === "true") setDemoScope();
   setGuestCookie();
   redirect("/command-center");
 }
@@ -235,6 +274,7 @@ export async function enableGuestMode() {
   cookies().delete("citizen_phone");
   cookies().delete("sandbox");
   setSessionCookie("role", "public", 60 * 60 * 24 * 7);
+  if (process.env.DEMO_AUTH_ENABLED === "true") setDemoScope();
   setGuestCookie();
   redirect("/public/dashboard");
 }
@@ -253,10 +293,11 @@ export async function exitGuestMode() {
 export async function govLogin(
   role: "district_admin" | "super_admin" = "district_admin",
 ) {
+  if (process.env.DEMO_AUTH_ENABLED !== "true")
+    throw new Error("Demo sign-in is disabled. Use an approved account.");
   cookies().delete("guest_mode");
   cookies().delete("view_as_public");
-  cookies().delete("demo_mode");
-  cookies().delete(DEMO_SESSION_COOKIE);
+  setDemoScope();
   cookies().delete("citizen_phone");
   cookies().delete("sandbox");
   setSessionCookie("role", role, 60 * 60 * 24 * 7);
@@ -264,25 +305,98 @@ export async function govLogin(
 }
 
 export async function govDemoLogin() {
+  if (process.env.DEMO_AUTH_ENABLED !== "true")
+    throw new Error("Demo sign-in is disabled.");
   cookies().delete("guest_mode");
   cookies().delete("view_as_public");
   cookies().delete("citizen_phone");
   cookies().delete("sandbox");
-  setSessionCookie("demo_mode", "true", 60 * 60 * 24);
-  setSessionCookie(DEMO_SESSION_COOKIE, randomUUID(), 60 * 60 * 24);
+  setDemoScope();
   setSessionCookie("role", "district_admin", 60 * 60 * 24 * 7);
   redirect("/gov/dashboard");
 }
 
 export async function publicDemoLogin() {
+  if (process.env.DEMO_AUTH_ENABLED !== "true")
+    throw new Error("Demo sign-in is disabled.");
   cookies().delete("guest_mode");
   cookies().delete("view_as_public");
   cookies().delete("citizen_phone");
   cookies().delete("sandbox");
-  setSessionCookie("demo_mode", "true", 60 * 60 * 24);
-  setSessionCookie(DEMO_SESSION_COOKIE, randomUUID(), 60 * 60 * 24);
+  setDemoScope();
   setSessionCookie("role", "public", 60 * 60 * 24 * 7);
   redirect("/public/dashboard");
+}
+
+export async function fieldDemoLogin() {
+  if (process.env.DEMO_AUTH_ENABLED !== "true")
+    throw new Error("Demo access is disabled.");
+  cookies().delete("guest_mode");
+  cookies().delete("view_as_public");
+  cookies().delete("sandbox");
+  setSessionCookie("demo_mode", "true", 60 * 60 * 24);
+  const sessionId = cookies().get(DEMO_SESSION_COOKIE)?.value ?? randomUUID();
+  setSessionCookie(DEMO_SESSION_COOKIE, sessionId, 60 * 60 * 24);
+  setSessionCookie("role", "field_responder", 60 * 60 * 24);
+  await ensureDemoFieldProfile(sessionId);
+  redirect("/portal");
+}
+
+export async function switchDemoPortal(target: "public" | "field" | "gov") {
+  if (
+    process.env.DEMO_AUTH_ENABLED !== "true" ||
+    cookies().get("demo_mode")?.value !== "true" ||
+    !cookies().get(DEMO_SESSION_COOKIE)?.value
+  )
+    throw new Error("A demo session is required.");
+  if (target === "field")
+    await ensureDemoFieldProfile(cookies().get(DEMO_SESSION_COOKIE)!.value);
+  setSessionCookie(
+    "role",
+    target === "field"
+      ? "field_responder"
+      : target === "gov"
+        ? "district_admin"
+        : "public",
+    60 * 60 * 24,
+  );
+  redirect(
+    target === "field"
+      ? "/portal"
+      : target === "gov"
+        ? "/gov/dashboard"
+        : "/public/dashboard",
+  );
+}
+
+export async function fieldLogin(
+  email: string,
+  password: string,
+): Promise<{ ok: false; message: string }> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (error || !data.user) return { ok: false, message: "Invalid credentials." };
+    const { data: profile } = await supabase
+      .from("users")
+      .select("role, is_approved")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    if (profile?.role !== "field_responder" || profile.is_approved !== true) {
+      await supabase.auth.signOut();
+      return { ok: false, message: "Your responder account is not approved yet." };
+    }
+    cookies().delete("guest_mode");
+    cookies().delete("demo_mode");
+    cookies().delete(DEMO_SESSION_COOKIE);
+    setSessionCookie("role", "field_responder", 60 * 60 * 24);
+  } catch {
+    return { ok: false, message: "Sign-in service is unavailable." };
+  }
+  redirect("/portal");
 }
 
 export async function exitDemoMode() {
@@ -318,11 +432,12 @@ export async function clearViewAsPublic() {
 }
 
 export async function publicOtpLogin(phoneNumber: string) {
+  if (process.env.DEMO_AUTH_ENABLED !== "true")
+    throw new Error("Demo OTP sign-in is disabled.");
   const phone = (phoneNumber ?? "").trim().slice(0, 20);
   cookies().delete("guest_mode");
   cookies().delete("view_as_public");
-  cookies().delete("demo_mode");
-  cookies().delete(DEMO_SESSION_COOKIE);
+  setDemoScope();
   cookies().delete("sandbox");
   setSessionCookie("role", "public", 60 * 60 * 24 * 7);
   if (phone) {
@@ -337,6 +452,7 @@ export async function signUpAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
 
   if (process.env.DEMO_AUTH_ENABLED === "true" && fullName && email && password) {
+    setDemoScope();
     setSessionCookie("role", "public", 60 * 60 * 24);
     redirect("/public/dashboard");
   }
@@ -383,6 +499,7 @@ export async function signInAction(formData: FormData) {
   }
 
   if (process.env.DEMO_AUTH_ENABLED === "true") {
+    setDemoScope();
     const role = email.toLowerCase().includes("superadmin")
       ? "super_admin"
       : email.toLowerCase().includes("admin")

@@ -30,7 +30,7 @@ async function syncPreferredLanguage(lang: Locale): Promise<void> {
   }
 }
 
-export default function LanguageSelector() {
+export default function LanguageSelector({ compact = false }: { compact?: boolean }) {
   const { language, setLanguage } = useTranslation();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -82,13 +82,13 @@ export default function LanguageSelector() {
         className="flex min-h-[44px] items-center gap-2 rounded-md border border-border bg-surface-elevated/95 px-3 py-2 text-xs font-medium text-foreground shadow-glow-accent backdrop-blur transition hover:border-accent hover:text-accent"
       >
         <Globe className="h-4 w-4" aria-hidden />
-        <span className="whitespace-nowrap">{activeLabel}</span>
-        <ChevronDown
+        {!compact && <span className="whitespace-nowrap">{activeLabel}</span>}
+        {!compact && <ChevronDown
           className={`h-3.5 w-3.5 transition-transform duration-200 ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden
-        />
+        />}
       </button>
 
       {open && (

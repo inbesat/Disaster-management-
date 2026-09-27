@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Phone } from "lucide-react";
+import Link from "next/link";
 import OfflineBanner from "@/components/field/OfflineBanner";
 import EmergencyRecallBanner from "@/components/field/EmergencyRecallBanner";
 import QuickStatusGrid from "@/components/field/QuickStatusGrid";
@@ -13,13 +14,14 @@ import RecallTestButton from "@/components/field/RecallTestButton";
 import TaskDispatchButton from "@/components/field/TaskDispatchButton";
 
 export const metadata: Metadata = {
-  title: "Field Tasks | DRIP",
+  title: "Field Tasks | SafeSphere",
 };
 
 export default function FieldHomePage() {
   return (
     <div className="space-y-6">
       <OfflineBanner />
+      <Link href="/portal" className="block rounded-xl border-2 border-cyan-400/50 bg-cyan-950/30 p-4 text-center font-bold text-cyan-200">Open public report verification queue →</Link>
 
       <EmergencyRecallBanner />
 

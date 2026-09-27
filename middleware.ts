@@ -20,6 +20,7 @@ const PROTECTED_PATHS = [
   "/inventory",
   "/alerts",
   "/field",
+  "/portal",
   "/shelter-update",
   "/shelters",
   "/evacuations",
@@ -69,6 +70,7 @@ function matchesBase(pathname: string, base: string) {
 }
 
 function isProtected(pathname: string) {
+  if (matchesBase(pathname, "/portal/login")) return false;
   return PROTECTED_PATHS.some((base) => matchesBase(pathname, base));
 }
 
@@ -92,6 +94,13 @@ export async function middleware(request: NextRequest) {
   const isGovRole = (GOV_ROLES as readonly string[]).includes(role);
   const isOnGov = pathname === "/gov" || pathname.startsWith("/gov/");
   const isOnPublic = pathname === "/public" || pathname.startsWith("/public/");
+  const isOnPortal = matchesBase(pathname, "/portal") && !matchesBase(pathname, "/portal/login");
+
+  if (isOnPortal && (isGuest || isSandbox || !["field_responder", "district_admin", "super_admin"].includes(role))) {
+    const url = request.nextUrl.clone();
+    url.pathname = role === "public" ? "/public/dashboard" : "/portal/login";
+    return NextResponse.redirect(url);
+  }
 
   // Fast path: non-sandbox, non-admin API traffic. Public read-only API
   // endpoints (shelters, alerts, predictions, weather, etc.) are open by
@@ -231,6 +240,12 @@ export async function middleware(request: NextRequest) {
   if (isPublicRole && isOnGov) {
     const url = request.nextUrl.clone();
     url.pathname = "/public/dashboard";
+    return NextResponse.redirect(url);
+  }
+
+  if (role === "field_responder" && isOnGov) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/portal";
     return NextResponse.redirect(url);
   }
 
@@ -469,6 +484,7 @@ export const config = {
     "/satellite/:path*",
     "/admin/:path*",
     "/field/:path*",
+    "/portal/:path*",
     "/shelter-update",
     "/shelters",
     "/evacuations",
