@@ -1,0 +1,44 @@
+
+> disaster-response-platform@0.1.0 dev
+> next dev --turbo
+
+  ▲ Next.js 14.2.35 (turbo)
+  - Local:        http://localhost:3001
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Compiled in 8.7s
+ ✓ Ready in 22.4s
+ ○ Compiling /login ...
+ ✓ Compiled /login in 80.6s
+ GET /login?mode=gov 200 in 13807ms
+ ○ Compiling /api/alerts ...
+ POST /login?mode=gov 303 in 4624ms
+ ✓ Compiled in 29.2s
+ ✓ Compiled /api/alerts in 30.1s
+ ✓ Compiled /login in 191ms
+ GET /login?mode=gov 200 in 616ms
+ GET /api/alerts?limit=50 503 in 1367ms
+ GET /api/alerts?limit=50 503 in 1442ms
+ GET /api/alerts?limit=50 503 in 1482ms
+ ○ Compiling /api/predictions/history ...
+ ✓ Compiled /api/predictions/history in 2.2s
+ GET /api/predictions/history?days=2 503 in 2704ms
+ GET /api/predictions/history?days=2 503 in 2708ms
+ GET /api/predictions/history?days=2 503 in 2930ms
+ GET /api/weather?lat=9.9816&lng=76.2999 200 in 3132ms
+ GET /api/weather?lat=25.5941&lng=85.1376 200 in 3308ms
+ GET /api/weather?lat=26.3161&lng=91.5984 200 in 3308ms
+ ○ Compiling /api/evacuation-plans ...
+ GET /api/evacuation-plans 200 in 1113ms
+ GET /api/evacuation-plans 200 in 1431ms
+ GET /api/evacuation-plans 200 in 1520ms
+ ✓ Compiled /api/evacuation-plans in 1558ms
+ GET /api/public/shelters 503 in 2244ms
+ GET /api/public/shelters 503 in 2278ms
+ GET /api/public/shelters 503 in 2316ms
+ GET /api/public/shelters 503 in 1235ms
+ GET /api/public/shelters 503 in 892ms
+ GET /api/public/shelters 503 in 941ms
+ ○ Compiling /api/retrieval/embed ...
+ ✓ Compiled /api/retrieval/embed in 6.1s
