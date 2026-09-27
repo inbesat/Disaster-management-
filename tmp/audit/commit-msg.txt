@@ -1,0 +1,20 @@
+fix(build): declare turf sub-packages to unblock Vercel compile
+
+Vercel failed with "Cannot find module '@turf/distance'" in
+app/(dashboard)/dispatch/page.tsx. The source deep-imports 11 @turf
+sub-packages, but package.json only declared @turf/turf.
+
+These resolved locally only because node_modules was hoisted. On Vercel's
+strict, isolated pnpm install the transitive packages are not reachable
+from the project root, so every deep import failed. @types/geojson was
+missing for the same reason and would have been the next error.
+
+Declared, at the versions already resolved in the lockfile:
+  - 11 @turf/* sub-packages (dependencies)
+  - @types/geojson (devDependencies; backs 25 type-only imports)
+  - playwright, sharp (devDependencies; used by scripts/)
+
+Added scripts/check-phantom-deps.mjs to catch this class of bug before
+deploy. It fails on any bare import missing from package.json and has a
+self-test. Note it was not in CI: .github/workflows/ci.yml only triggers
+on main/master, so this branch was never type-checked.

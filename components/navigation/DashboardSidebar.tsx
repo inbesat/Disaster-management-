@@ -12,7 +12,6 @@
 
 "use client";
 
-import { useMemo } from "react";
 import type { Role } from "@/lib/validations/user";
 import {
   NAV_SECTION_LABELS,
@@ -86,14 +85,8 @@ export function DashboardSidebar({
   // Global keyboard shortcuts
   useHotkeys(NAV_SHORTCUTS);
 
-  // Dedupe shortcut hints
-  const shortcutAssigned = useMemo(() => {
-    const assigned = new Set<string>();
-    for (const href of Object.values(NAV_SHORTCUT_LABELS)) {
-      assigned.add(href);
-    }
-    return assigned;
-  }, []);
+  // Recompute on every render so server and client show the same hints.
+  const shortcutAssigned = new Set<string>();
 
   return (
     <Sidebar
