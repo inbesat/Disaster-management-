@@ -1,81 +1,63 @@
-"use client";
-
-// ---------------------------------------------------------------------
-// components/dashboard/ResponderStatusBoard.tsx — UI/UX Phase 4 · Step 7.
-//
-// "Active Field Units" board — dense flex-wrap grid of mock responder
-// avatars with StatusDot presence indicators (online = pulsing green,
-// busy = amber) plus a trailing "+12 offline" muted count.
-// ---------------------------------------------------------------------
-
+import Link from "next/link";
 import Panel from "@/components/ui/Panel";
-import StatusDot, { type PresenceStatus } from "@/components/ui/StatusDot";
-import { initialsFor } from "@/lib/settings/avatar";
+import { prisma } from "@/server/prisma";
+import { resolveDemoScope } from "@/lib/demo/scope";
 
-type MockUnit = {
-  name: string;
-  role: string;
-  status: PresenceStatus;
-};
-
-const MOCK_UNITS: MockUnit[] = [
-  { name: "R. Sinha", role: "Team Alpha", status: "online" },
-  { name: "A. Mehta", role: "Boat-2", status: "online" },
-  { name: "D. Patel", role: "Medical", status: "busy" },
-  { name: "V. Kumar", role: "Team Alpha", status: "online" },
-  { name: "M. Sheikh", role: "Crane-1", status: "busy" },
-  { name: "I. Hussain", role: "Boat-1", status: "online" },
-  { name: "K. Nair", role: "Triage", status: "online" },
-  { name: "P. Das", role: "Civic", status: "busy" },
-];
-
-export function ResponderStatusBoard() {
+export default async function ResponderStatusBoard() {
+  const scope = resolveDemoScope();
+  let responders: Array<{
+    id: string;
+    name: string;
+    organization: string;
+    availability: string;
+  }> = [];
+  let unavailable = false;
+  try {
+    responders = await prisma.responderProfile.findMany({
+      where: {
+        approvalStatus: "approved",
+        ...(scope.demo
+          ? { id: `demo:${scope.sessionId}` }
+          : { NOT: { id: { startsWith: "demo:" } } }),
+      },
+      select: { id: true, name: true, organization: true, availability: true },
+      orderBy: { name: "asc" },
+      take: 20,
+    });
+  } catch {
+    unavailable = true;
+  }
   return (
     <Panel
-      className=""
-      title="Active Field Units"
+      title="Field Responders"
       action={
-        <span
-          className="flex h-6 items-center justify-center rounded-full bg-accent-success/15 px-2 text-[11px] font-bold tabular-nums text-accent-success"
-          title={`${MOCK_UNITS.length} units reachable on comms`}
-        >
-          {MOCK_UNITS.length} on comms
-        </span>
+        <Link href="/directory" className="text-xs text-cyan-300">
+          View team →
+        </Link>
       }
     >
-      <ul className="flex flex-wrap gap-x-3 gap-y-4" aria-label="Active field responders">
-        {MOCK_UNITS.map((unit) => (
-          <li
-            key={unit.name}
-            className="flex flex-col items-center gap-1"
-            title={`${unit.name} · ${unit.role}`}
-          >
-            <span className="relative">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface-elevated text-xs font-semibold text-slate-100">
-                {initialsFor(unit.name)}
-              </span>
-              {/* Presence dot anchored to the avatar's bottom-right edge */}
-              <span className="absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-secondary">
-                <StatusDot status={unit.status} name={unit.name} />
-              </span>
-            </span>
-            <span className="max-w-14 truncate text-eoc-tiny text-muted">{unit.name}</span>
-          </li>
-        ))}
-
-        {/* Offline tail — remainder of the unit roster */}
-        <li
-          className="flex h-11 flex-col items-center justify-center gap-1 px-1"
-          title="12 units have no open comms channel"
-        >
-          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-border text-eoc-tiny font-semibold tabular-nums text-muted">
-            +12
-          </span>
-          <span className="text-eoc-tiny text-muted">offline</span>
-        </li>
-      </ul>
+      {unavailable ? (
+        <p className="text-sm text-slate-400">Responder records are unavailable.</p>
+      ) : responders.length ? (
+        <ul className="flex flex-wrap gap-4">
+          {responders.map((responder) => (
+            <li
+              key={responder.id}
+              className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2"
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${responder.availability === "available" ? "bg-emerald-400" : "bg-amber-400"}`}
+              />
+              <span className="text-sm">{responder.name}</span>
+              <span className="text-xs text-slate-400">{responder.organization}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-slate-400">
+          No approved responders in this session yet.
+        </p>
+      )}
     </Panel>
   );
 }
-
-export default ResponderStatusBoard;

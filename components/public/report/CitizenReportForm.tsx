@@ -15,7 +15,7 @@ const REPORT_TYPES = [
 
 type Gps = { lat: number; lng: number };
 
-export function CitizenReportForm({ initialType }: { initialType?: string }) {
+export function CitizenReportForm({ initialType, trackingHref = "/public/reports", trackingLabel = "Track My Reports" }: { initialType?: string; trackingHref?: string; trackingLabel?: string }) {
   const [reportType, setReportType] = useState<CitizenReportInput["reportType"]>(
     REPORT_TYPES.some((t) => t.value === initialType)
       ? (initialType as CitizenReportInput["reportType"])
@@ -131,10 +131,10 @@ export function CitizenReportForm({ initialType }: { initialType?: string }) {
           </p>
         )}
         <Link
-          href="/public/reports"
+          href={trackingHref}
           className="w-full rounded-eoc border border-accent px-4 py-3 font-semibold text-accent"
         >
-          Track My Reports
+          {trackingLabel}
         </Link>
         <button
           type="button"
@@ -294,10 +294,10 @@ export function CitizenReportForm({ initialType }: { initialType?: string }) {
             {loading ? "Submitting…" : "Submit Report"}
           </button>
           <Link
-            href="/public/reports"
+              href={trackingHref}
             className="block text-center text-sm text-accent underline"
           >
-            Track reports from this browser
+              {trackingLabel}
           </Link>
           <p className="text-center text-xs text-slate-500">
             Emergency? Call the District Control Room{" "}

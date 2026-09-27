@@ -77,7 +77,9 @@ export async function requireRole(
 
   if (isGuest) return deny(false);
 
-  const demoEnabled = process.env.DEMO_AUTH_ENABLED === "true";
+  const demoEnabled =
+    cookieStore.get("demo_mode")?.value === "true" &&
+    Boolean(cookieStore.get("demo_session_id")?.value);
   const cookieAdmitted = roleCookie !== "" && hasRequiredRole(roleCookie, allowedRoles);
 
   if (demoEnabled && cookieAdmitted) return { ok: true, role: roleCookie };

@@ -299,6 +299,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Demo logins use their own scoped cookie session. Do not wait for a
+  // Supabase identity or approval record when entering a demo portal.
+  if (
+    request.cookies.get("demo_mode")?.value === "true" &&
+    request.cookies.get("demo_session_id")?.value &&
+    (role === PUBLIC_ROLE || ROLES.includes(role as Role))
+  ) {
+    if (adminRequested && !ADMIN_ROLES.includes(role as (typeof ADMIN_ROLES)[number])) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/403";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

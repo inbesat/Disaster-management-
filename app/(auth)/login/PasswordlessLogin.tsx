@@ -6,9 +6,7 @@ import { sendOTP, verifyOTP } from "@/app/actions/auth";
 
 // ---------------------------------------------------------------------
 // Passwordless Field Access (Enterprise Security · GetOTP).
-// Two-step flow: phone number → "Send OTP" swaps the UI to a 6-digit code
-// input → "Verify & Login" signs the responder in (or falls back to the
-// guest_mode demo bypass server-side).
+// Two-step demo flow: any phone number, then any six-digit code.
 // ---------------------------------------------------------------------
 
 export default function PasswordlessLogin() {
@@ -57,7 +55,7 @@ export default function PasswordlessLogin() {
         Passwordless Field Access
       </h2>
       <p className="mt-1 text-sm text-slate-400">
-        One-time code by SMS — no password needed for responders on the move.
+        Enter any phone number and six-digit code. No SMS is sent in this demo.
       </p>
 
       {step === "phone" ? (
@@ -90,7 +88,7 @@ export default function PasswordlessLogin() {
             disabled={loading}
             className="w-full rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-accent/80 disabled:opacity-50"
           >
-            {loading ? "Sending…" : "Send OTP"}
+            {loading ? "Continuing…" : "Continue"}
           </button>
         </form>
       ) : (
@@ -113,7 +111,7 @@ export default function PasswordlessLogin() {
               className={`${inputClass} text-center text-lg tracking-[0.5em]`}
             />
             <p className="mt-1 text-xs text-slate-500">
-              Sent to {phone || "your phone"} — expires in 5 minutes.
+              No code was sent to {phone || "your phone"}; any six digits work.
             </p>
           </div>
 

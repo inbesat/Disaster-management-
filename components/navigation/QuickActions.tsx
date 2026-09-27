@@ -10,46 +10,32 @@
 "use client";
 
 import { AlertTriangle, Bot, Siren } from "lucide-react";
+import Link from "next/link";
 import { useSidebar } from "./sidebar-context";
-import useToast from "@/hooks/useToast";
 
 export function QuickActions() {
   const { collapsed } = useSidebar();
-  const toast = useToast();
-
   const actions = [
     {
       label: "Send Alert",
       icon: Siren,
       color: "bg-blue-500/15 text-blue-400 hover:bg-blue-500/25",
       collapsedColor: "bg-blue-500/15 text-blue-400 hover:bg-blue-500/25",
-      onClick: () =>
-        toast.warning({
-          title: "Emergency alert queued",
-          description: "Broadcast dispatched to the EOC for review.",
-        }),
+      href: "/gov/alerts",
     },
     {
       label: "Run AI Plan",
       icon: Bot,
       color: "bg-purple-500/15 text-purple-400 hover:bg-purple-500/25",
       collapsedColor: "bg-purple-500/15 text-purple-400 hover:bg-purple-500/25",
-      onClick: () =>
-        toast.info({
-          title: "Run AI Plan",
-          description: "Planner started — generating response plan.",
-        }),
+      href: "/gov/ai-planner",
     },
     {
       label: "Report Incident",
       icon: AlertTriangle,
       color: "bg-red-500/15 text-red-400 hover:bg-red-500/25",
       collapsedColor: "bg-red-500/15 text-red-400 hover:bg-red-500/25",
-      onClick: () =>
-        toast.error({
-          title: "Incident report",
-          description: "Opening incident report form.",
-        }),
+      href: "/incident-report",
     },
   ];
 
@@ -58,15 +44,14 @@ export function QuickActions() {
     return (
       <div className="mx-2 mb-1 flex flex-col gap-1">
         {actions.map((action) => (
-          <button
+          <Link
             key={action.label}
-            type="button"
+            href={action.href}
             aria-label={action.label}
-            onClick={action.onClick}
             className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-150 ${action.collapsedColor}`}
           >
             <action.icon className="h-4 w-4" aria-hidden />
-          </button>
+          </Link>
         ))}
       </div>
     );
@@ -80,15 +65,14 @@ export function QuickActions() {
       </p>
       <div className="space-y-1">
         {actions.map((action) => (
-          <button
+          <Link
             key={action.label}
-            type="button"
-            onClick={action.onClick}
+            href={action.href}
             className={`flex h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-semibold transition-all duration-150 hover:shadow-[0_0_12px_rgba(255,255,255,0.05)] ${action.color}`}
           >
             <action.icon className="h-4 w-4 shrink-0" aria-hidden />
             {action.label}
-          </button>
+          </Link>
         ))}
       </div>
     </div>

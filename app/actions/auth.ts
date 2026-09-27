@@ -4,8 +4,6 @@ import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { rateLimit } from "@/lib/security/rate-limit";
-import { consumeOtp, generateOtp, issueOtp, normalizePhone } from "@/lib/security/otp";
 import { DEMO_SESSION_COOKIE } from "@/lib/demo/scope";
 import { safeLog } from "@/lib/logger";
 import { prisma } from "@/server/prisma";
@@ -68,165 +66,39 @@ function setDemoScope() {
 }
 
 // ---------------------------------------------------------------------
-// GetOTP passwordless responder login (Enterprise Security).
-//
-// Flow: sendOTP(phone) → GetOTP sends a 6-digit code by SMS; the user
-// types it into the login page; verifyOTP(code) validates it and signs
-// the responder in.
-//
-// CRITICAL HACKATHON FALLBACK: if GETOTP_API_KEY is missing the OTP is
-// never sent — we log it safely and simulate success so the demo
-// keeps working. The same fallback triggers on any API failure.
-//
-// GetOTP API (api.otp.dev): POST /v1/verifications with an X-OTP-Key
-// header. We generate the code locally and pass it as the `code` field so
-// the SMS always carries OUR code and verification stays a simple
-// in-memory lookup (plus an optional Supabase sign-in attempt).
+// Temporary demo phone login. No SMS is sent or checked.
 // ---------------------------------------------------------------------
-
-const GETOTP_SEND_URL =
-  process.env.GETOTP_SEND_URL ?? "https://api.otp.dev/v1/verifications";
-const GETOTP_CHANNEL = process.env.GETOTP_CHANNEL ?? "sms";
-const GETOTP_SENDER = process.env.GETOTP_SENDER ?? "GetOTP";
-
-/**
- * Send a 6-digit OTP to the given phone number via GetOTP.
- * Fails open: missing key or API error → log the code and simulate success.
- */
 export async function sendOTP(
   phoneNumber: string,
 ): Promise<{ ok: boolean; message: string }> {
-  const phone = normalizePhone(phoneNumber);
-  if (!phone) {
+  if (!phoneNumber?.trim()) {
     return {
       ok: false,
-      message: "Enter a valid phone number (digits only, with country code).",
+      message: "Enter any phone number to continue.",
     };
   }
-
-  // Abuse guard: max 3 send requests per phone per 10 minutes (reuses the
-  // shared in-memory rate limiter from lib/security/rate-limit.ts).
-  const sendBudget = rateLimit(`getotp:send:${phone}`, 3, 10 * 60 * 1000);
-  if (!sendBudget.success) {
-    return {
-      ok: false,
-      message: "Too many OTP requests. Wait a few minutes and try again.",
-    };
-  }
-
-  const code = generateOtp(6);
-  const apiKey = process.env.GETOTP_API_KEY;
-
-  if (!apiKey) {
-    safeLog("info", "[getotp] DEMO BYPASS — no GETOTP_API_KEY, simulating success", { metadata: { phone, code } });
-    issueOtp(code, phone);
-    return {
-      ok: true,
-      message: "OTP sent (demo) — check the server console for the code.",
-    };
-  }
-
-  try {
-    const res = await fetch(GETOTP_SEND_URL, {
-      method: "POST",
-      headers: {
-        "X-OTP-Key": apiKey,
-        accept: "application/json",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          channel: GETOTP_CHANNEL,
-          sender: GETOTP_SENDER,
-          phone,
-          // Template UUID comes from the GetOTP dashboard. Until a real
-          // template is configured the API rejects the call and we fall
-          // back to the demo path below.
-          ...(process.env.GETOTP_TEMPLATE_ID
-            ? { template: process.env.GETOTP_TEMPLATE_ID }
-            : {}),
-          code,
-        },
-      }),
-      signal: AbortSignal.timeout(5000),
-    });
-
-    if (!res.ok) throw new Error(`GetOTP returned ${res.status}`);
-
-    issueOtp(code, phone);
-    return { ok: true, message: "OTP sent to your phone. It expires in 5 minutes." };
-  } catch (error: unknown) {
-    safeLog("warn", "[getotp] API call failed — simulating success", {
-      metadata: { error: String(error) },
-    });
-    safeLog("info", "[getotp] DEMO FALLBACK", { metadata: { phone, code } });
-    issueOtp(code, phone);
-    return {
-      ok: true,
-      message: "OTP sent (fallback demo) — check the server console for the code.",
-    };
-  }
+  return { ok: true, message: "Demo access: no SMS was sent. Enter any six digits." };
 }
 
-/**
- * Verify the OTP code and sign the responder in.
- * On success, tries a real Supabase phone login first; falls back to the
- * guest_mode cookie (demo bypass) when that is not possible.
- */
 export async function verifyOTP(code: string): Promise<{ ok: false; message: string }> {
   const token = (code ?? "").trim().replace(/\D/g, "");
   if (!/^\d{6}$/.test(token)) {
     return { ok: false, message: "Enter the code from your phone (6 digits)." };
   }
 
-  // DEMO BYPASS — any 6-digit code signs in.
   setDemoScope();
   setGuestCookie();
   redirect("/command-center");
-
-  // Brute-force guard: max 5 verify attempts per code per minute.
-  const attemptBudget = rateLimit(`getotp:verify:${token}`, 5, 60 * 1000);
-  if (!attemptBudget.success) {
-    return { ok: false, message: "Too many attempts. Request a new code." };
-  }
-
-  // Consume the code (single-use). null for unknown/expired/malformed.
-  const phone = consumeOtp(token);
-  if (!phone) {
-    return { ok: false, message: "Invalid or expired code. Request a new one." };
-  }
-  // Phone is guaranteed non-null here for the real-mode Supabase path below.
-
-  // Real-mode path: the phone must be a Supabase Auth user that received a
-  // matching code. Since GetOTP (not Supabase) generated this code, this
-  // usually fails and we fall through to the demo guest login below.
-  const realMode = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.GETOTP_API_KEY);
-  if (realMode) {
-    let signedIn = false;
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.verifyOtp({
-        phone: phone!,
-        token,
-        type: "sms",
-      });
-      signedIn = !error;
-    } catch (error: unknown) {
-      safeLog(
-        "warn",
-        "[getotp] Supabase OTP sign-in failed — falling back to guest demo",
-        { metadata: { error: String(error) } },
-      );
-    }
-    if (signedIn) redirect("/command-center");
-  }
-
-  return { ok: false, message: "Could not verify this code with the sign-in provider." };
 }
 
 export async function signOutAction() {
-  const supabase = createClient();
-  await supabase.auth.signOut();
+  if (cookies().get("demo_mode")?.value !== "true") {
+    try {
+      await createClient().auth.signOut();
+    } catch {
+      // Local sign-out must still work when Supabase is offline.
+    }
+  }
   cookies().delete(GUEST_COOKIE);
   cookies().delete("role");
   cookies().delete("view_as_public");
@@ -318,7 +190,7 @@ export async function publicDemoLogin() {
   redirect("/public/dashboard");
 }
 
-export async function fieldDemoLogin() {
+export async function fieldDemoLogin(): Promise<never> {
   cookies().delete("guest_mode");
   cookies().delete("view_as_public");
   cookies().delete("sandbox");
@@ -357,36 +229,12 @@ export async function switchDemoPortal(target: "public" | "field" | "gov") {
 }
 
 export async function fieldLogin(
-  email: string,
-  password: string,
+  _email: string,
+  _password: string,
 ): Promise<{ ok: false; message: string }> {
-  if (process.env.DEMO_AUTH_ENABLED === "true") {
-    await fieldDemoLogin();
-  }
-  try {
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    if (error || !data.user) return { ok: false, message: "Invalid credentials." };
-    const { data: profile } = await supabase
-      .from("users")
-      .select("role, is_approved")
-      .eq("id", data.user.id)
-      .maybeSingle();
-    if (profile?.role !== "field_responder" || profile.is_approved !== true) {
-      await supabase.auth.signOut();
-      return { ok: false, message: "Your responder account is not approved yet." };
-    }
-    cookies().delete("guest_mode");
-    cookies().delete("demo_mode");
-    cookies().delete(DEMO_SESSION_COOKIE);
-    setSessionCookie("role", "field_responder", 60 * 60 * 24);
-  } catch {
-    return { ok: false, message: "Sign-in service is unavailable." };
-  }
-  redirect("/portal");
+  // Temporary demo sign-in: entered values are deliberately not verified.
+  // The portal remains scoped to this browser's demo session.
+  return fieldDemoLogin();
 }
 
 export async function exitDemoMode() {
