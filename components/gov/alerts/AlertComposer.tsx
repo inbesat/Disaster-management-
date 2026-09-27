@@ -702,7 +702,7 @@ export function AlertComposer() {
               <div className="h-2 w-2 rounded-full bg-red-400" />
               <div className="h-2 w-2 rounded-full bg-amber-400" />
               <div className="h-2 w-2 rounded-full bg-emerald-400" />
-              <span className="ml-auto text-[0.5rem] font-mono text-slate-600">DisasterLink</span>
+              <span className="ml-auto text-[0.5rem] font-mono text-slate-600">SafeSphere</span>
             </div>
 
             {/* Alert header */}

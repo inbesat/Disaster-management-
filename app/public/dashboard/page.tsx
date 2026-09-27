@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { switchDemoPortal } from "@/app/actions/auth";
 import { ArrowRight, Bell, HeartHandshake, MapPin, Siren } from "lucide-react";
 import AITeaser from "@/components/public/AITeaser";
 import BandwidthGate from "@/components/public/BandwidthGate";
@@ -85,9 +87,12 @@ const MODULES = [
 }[];
 
 export default function PublicDashboardPage() {
+  const demo = cookies().get("demo_mode")?.value === "true";
   return (
     <div className="relative w-full min-h-screen flex flex-col bg-primary">
     <main className="relative flex w-full flex-1 flex-col bg-[var(--dl-navy)] pb-[140px] px-4 md:px-8 text-[var(--dl-text-on-navy)]">
+      {demo && <div className="mx-auto flex w-full max-w-7xl flex-wrap gap-3 pt-3 text-xs text-amber-200"><span>Isolated demo session</span><form action={switchDemoPortal.bind(null, "field")}><button className="underline">Field responder view</button></form><form action={switchDemoPortal.bind(null, "gov")}><button className="underline">Government view</button></form></div>}
+      <div className="mx-auto flex w-full max-w-7xl justify-end pt-4"><Link href="/public/reports" className="rounded-lg border border-cyan-400/50 px-4 py-2 text-sm font-semibold text-cyan-200">My reports and verification status →</Link></div>
       {/* Ambient backdrop */}
       <div
         aria-hidden="true"

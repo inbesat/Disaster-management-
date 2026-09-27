@@ -86,7 +86,7 @@ export async function requireRole(
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
-    return cookieAdmitted
+    return demoEnabled && cookieAdmitted
       ? { ok: true, role: roleCookie }
       : deny(roleCookie !== "" && roleCookie !== "public");
   }

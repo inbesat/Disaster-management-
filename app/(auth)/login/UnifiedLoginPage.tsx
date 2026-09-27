@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 import { publicOtpLogin, govLogin, enableGuestMode } from "@/app/actions/auth";
 
-type LoginMode = "citizen" | "gov";
+type LoginMode = "citizen" | "gov" | "field";
 
 /** Demo role options for the gov form (Phase 7 · Step 10). */
 const DEMO_ROLES = [
@@ -50,13 +50,13 @@ export default function UnifiedLoginPage() {
   const searchParams = useSearchParams();
   const modeParam = searchParams.get("mode");
   const initialMode: LoginMode =
-    modeParam === "gov" ? "gov" : "citizen";
+    modeParam === "gov" ? "gov" : modeParam === "field" ? "field" : "citizen";
 
   const [mode, setMode] = useState<LoginMode>(initialMode);
 
   // Sync mode with URL query param when it changes (e.g. back/forward nav).
   useEffect(() => {
-    const next = modeParam === "gov" ? "gov" : "citizen";
+    const next = modeParam === "gov" ? "gov" : modeParam === "field" ? "field" : "citizen";
     setMode(next);
   }, [modeParam]);
 
@@ -95,7 +95,7 @@ export default function UnifiedLoginPage() {
           <div
             role="tablist"
             aria-label="Login mode"
-            className="mt-6 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-white/5 p-1"
+            className="mt-6 grid grid-cols-3 gap-1 rounded-xl border border-white/10 bg-white/5 p-1"
           >
             <button
               type="button"
@@ -127,11 +127,12 @@ export default function UnifiedLoginPage() {
               <ShieldCheck aria-hidden className="h-4 w-4" />
               Government
             </button>
+            <button type="button" role="tab" aria-selected={mode === "field"} data-testid="mode-field" onClick={() => setMode("field")} className={`rounded-lg px-2 py-2.5 text-xs font-semibold transition sm:text-sm ${mode === "field" ? "bg-cyan-500 text-slate-950" : "text-[var(--dl-text-muted)] hover:text-white"}`}>Field teams</button>
           </div>
 
           {/* ---- Active form panel ---- */}
           <div role="tabpanel" className="mt-6">
-            {mode === "citizen" ? <CitizenForm /> : <GovForm />}
+            {mode === "citizen" ? <CitizenForm /> : mode === "gov" ? <GovForm /> : <div><p className="eoc-label text-cyan-300">FIELD RESPONDER ACCESS</p><h2 className="mt-3 text-xl font-bold text-white">Verify public reports on site</h2><p className="mt-2 text-sm text-slate-300">For approved NGOs, police, medical and rescue teams.</p><Link href="/portal/login" className="mt-5 block rounded-xl bg-cyan-400 px-4 py-3 text-center font-bold text-slate-950">Open field portal →</Link></div>}
           </div>
 
           {/* ---- Divider ---- */}

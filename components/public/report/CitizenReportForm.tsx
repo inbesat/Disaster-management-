@@ -1,15 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { LocateFixed, MapPin, MessageSquareText, Upload } from "lucide-react";
-import {
-  Camera,
-  CheckCircle2,
-  ChevronRight,
-  Info,
-  Loader2,
-  ShieldAlert,
-} from "lucide-react";
 import PublicBackButton from "@/components/public/PublicBackButton";
 import { submitCitizenReport, type CitizenReportInput } from "@/app/actions/reports";
 
@@ -22,16 +15,22 @@ const REPORT_TYPES = [
 
 type Gps = { lat: number; lng: number };
 
-export function CitizenReportForm() {
-  const [reportType, setReportType] =
-    useState<CitizenReportInput["reportType"]>("flooding");
+export function CitizenReportForm({ initialType }: { initialType?: string }) {
+  const [reportType, setReportType] = useState<CitizenReportInput["reportType"]>(
+    REPORT_TYPES.some((t) => t.value === initialType)
+      ? (initialType as CitizenReportInput["reportType"])
+      : "flooding",
+  );
   const [rawText, setRawText] = useState("");
   const [gps, setGps] = useState<Gps | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [imageName, setImageName] = useState<string | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [receiptMessage, setReceiptMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [receiptId, setReceiptId] = useState("");
 
   function useMyLocation() {
     setGpsError(null);
@@ -59,7 +58,17 @@ export function CitizenReportForm() {
   function onImage(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (
+      file.size > 5 * 1024 * 1024 ||
+      !["image/jpeg", "image/png", "image/webp"].includes(file.type)
+    ) {
+      setGpsError("Photo must be a JPG, PNG or WebP image under 5 MB.");
+      e.target.value = "";
+      return;
+    }
+    setGpsError(null);
     setImageName(file.name);
+    setImageFile(file);
     const reader = new FileReader();
     reader.onload = () => setImageDataUrl(reader.result as string);
     reader.readAsDataURL(file);
@@ -73,16 +82,23 @@ export function CitizenReportForm() {
     }
     setLoading(true);
     try {
-      const result = await submitCitizenReport({
-        lat: gps.lat,
-        lng: gps.lng,
-        reportType,
-        rawText,
-        source: "app",
-        imageUrl: imageDataUrl,
-      });
-      if (result.ok) setSubmitted(true);
-      else setGpsError(result.message ?? "Something went wrong.");
+      const photoData = new FormData();
+      if (imageFile) photoData.set("photo", imageFile);
+      const result = await submitCitizenReport(
+        {
+          lat: gps.lat,
+          lng: gps.lng,
+          reportType,
+          rawText,
+          source: "app",
+        },
+        photoData,
+      );
+      if (result.ok) {
+        setReceiptId(result.id);
+        setReceiptMessage(result.message ?? "");
+        setSubmitted(true);
+      } else setGpsError(result.message ?? "Something went wrong.");
     } catch (err: unknown) {
       setGpsError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -107,7 +123,19 @@ export function CitizenReportForm() {
           </svg>
         </div>
         <h1 className="text-2xl font-bold text-foreground">Report Submitted</h1>
+        <p className="break-all text-xs text-slate-400">Reference ID: {receiptId}</p>
         <p className="text-slate-300">Stay Safe.</p>
+        {receiptMessage && (
+          <p role="status" className="text-sm text-amber-300">
+            {receiptMessage}
+          </p>
+        )}
+        <Link
+          href="/public/reports"
+          className="w-full rounded-eoc border border-accent px-4 py-3 font-semibold text-accent"
+        >
+          Track My Reports
+        </Link>
         <button
           type="button"
           onClick={() => {
@@ -116,6 +144,7 @@ export function CitizenReportForm() {
             setGps(null);
             setImageName(null);
             setImageDataUrl(null);
+            setImageFile(null);
             setGpsError(null);
           }}
           className="mt-2 w-full rounded-eoc bg-accent py-3 text-sm font-semibold text-slate-950 transition hover:bg-accent/80"
@@ -242,6 +271,19 @@ export function CitizenReportForm() {
                 className="mt-3 h-40 w-full rounded-eoc border border-border object-cover"
               />
             )}
+            {imageDataUrl && (
+              <button
+                type="button"
+                onClick={() => {
+                  setImageDataUrl(null);
+                  setImageName(null);
+                  setImageFile(null);
+                }}
+                className="mt-2 text-sm text-accent underline"
+              >
+                Remove photo
+              </button>
+            )}
           </div>
 
           <button
@@ -251,6 +293,12 @@ export function CitizenReportForm() {
           >
             {loading ? "Submitting…" : "Submit Report"}
           </button>
+          <Link
+            href="/public/reports"
+            className="block text-center text-sm text-accent underline"
+          >
+            Track reports from this browser
+          </Link>
           <p className="text-center text-xs text-slate-500">
             Emergency? Call the District Control Room{" "}
             <a href="tel:1070" className="font-semibold text-severity-red-400">

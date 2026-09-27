@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
               <Lock className="h-4 w-4 text-cyan-400" /> 1. Overview & Purpose
             </h2>
             <p className="mt-2">
-              SafeSphere (DisasterLink AI) collects and processes personal data strictly necessary for disaster response, emergency warning dissemination, and life safety coordination. We adhere to the principles of data minimization, purpose limitation, and storage limitation under GDPR and India&apos;s DPDP Act 2023.
+              SafeSphere collects and processes personal data for disaster response, emergency warnings, and life safety coordination.
             </p>
           </section>
 

@@ -117,6 +117,7 @@ const allowedOrigin =
       : "https://safesphere0.netlify.app";
 
 const nextConfig = {
+  experimental: { serverActions: { bodySizeLimit: "6mb" } },
   // Require compiler validation for releases
   typescript: {
     ignoreBuildErrors: false,

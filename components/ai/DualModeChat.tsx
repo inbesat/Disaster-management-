@@ -66,7 +66,7 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
             <Bot className="h-10 w-10 text-accent-purple/60" aria-hidden />
-            <p className="text-sm font-semibold text-slate-300">DisasterLink AI</p>
+            <p className="text-sm font-semibold text-slate-300">SafeSphere AI</p>
             <p className="max-w-xs text-xs text-muted">
               Ask about flood risk, shelters, or evacuation routes. Works the same
               online and offline.
@@ -112,7 +112,7 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
                 if (e.key === "Enter") handleSend();
               }}
               placeholder={
-                aiMode !== "cloud" ? "Offline — local model ready…" : "Message DisasterLink AI…"
+                aiMode !== "cloud" ? "Offline — local model ready…" : "Message SafeSphere AI…"
               }
               className="min-w-0 flex-1 bg-transparent text-sm text-slate-50 outline-none placeholder:text-muted"
             />

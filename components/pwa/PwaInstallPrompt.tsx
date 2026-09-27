@@ -7,7 +7,7 @@
 // Design per spec:
 //   • Bottom sheet sliding up from the bottom.
 //   • App logo (72×72).
-//   • Title: "Install DisasterLink for Offline Access".
+//   • Title: "Install SafeSphere for Offline Access".
 //   • Bullet points: "Works without internet", "Local AI assistant",
 //     "Instant alerts".
 //   • "Install Now" primary button (orange) + "Maybe Later" secondary.
@@ -70,7 +70,7 @@ export default function PwaInstallPrompt() {
     window.setTimeout(() => setConfetti(false), 1800);
     toast.success({
       title: "Installed ✓",
-      description: "DisasterLink is on your home screen.",
+      description: "SafeSphere is on your home screen.",
     });
   }, [toast]);
 
@@ -135,10 +135,10 @@ export default function PwaInstallPrompt() {
                   id="pwa-install-title"
                   className="text-lg font-black leading-snug text-white"
                 >
-                  Install DisasterLink for Offline Access
+                  Install SafeSphere for Offline Access
                 </h2>
                 <p className="mt-1 text-xs leading-relaxed text-[var(--dl-text-muted)]">
-                  DisasterLink keeps working through blackouts and network
+                  SafeSphere keeps working through blackouts and network
                   drops — it&apos;s a real app on your phone.
                 </p>
               </div>

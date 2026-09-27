@@ -596,10 +596,64 @@ model CrowdsourcedReport {
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
   isDemo             Boolean  @default(false) @map("is_demo")
   sessionId          String?  @map("session_id")
+  reporterTokenHash  String?  @map("reporter_token_hash")
+  workflowStatus     String   @default("queued") @map("workflow_status") // queued | claimed | checked_in | completed | escalated
+  priority           String   @default("normal") // normal | high | critical
+  assignedResponderId String? @map("assigned_responder_id")
+  claimedAt          DateTime? @map("claimed_at") @db.Timestamptz
+  checkedInAt        DateTime? @map("checked_in_at") @db.Timestamptz
+  completedAt        DateTime? @map("completed_at") @db.Timestamptz
+  verdictNote        String? @map("verdict_note")
+  evidenceUrl        String? @map("evidence_url")
+  disputeCount        Int     @default(0) @map("dispute_count")
+  priorResponderId    String? @map("prior_responder_id")
+  verificationEvents ReportVerificationEvent[]
 
   @@index([reportType])
   @@index([verificationStatus, createdAt])
+  @@index([workflowStatus, priority, createdAt])
+  @@index([reporterTokenHash, createdAt])
   @@map("crowdsourced_reports")
+}
+
+model ResponderProfile {
+  id               String   @id
+  name             String
+  organization     String
+  organizationType String   @map("organization_type")
+  district         String
+  phone            String?
+  designation      String?
+  badgeId          String?  @map("badge_id")
+  serviceRadiusKm  Int     @default(20) @map("service_radius_km")
+  tier             String  @default("probation") // probation | approved | trusted; never self-approved
+  trainingCompletedAt DateTime? @map("training_completed_at") @db.Timestamptz
+  reliabilityScore Int     @default(50) @map("reliability_score")
+  totalVerifications Int  @default(0) @map("total_verifications")
+  availability     String   @default("available") // available | unavailable
+  approvalStatus   String   @default("pending") @map("approval_status") // pending | approved | rejected
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([district, approvalStatus, availability])
+  @@map("responder_profiles")
+}
+
+model ReportVerificationEvent {
+  id          String   @id @default(uuid()) @db.Uuid
+  reportId    String   @map("report_id") @db.Uuid
+  report      CrowdsourcedReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  actorId     String   @map("actor_id")
+  action      String
+  note        String?
+  lat         Float?
+  lng         Float?
+  evidenceUrl String?  @map("evidence_url")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([reportId, createdAt])
+  @@index([actorId, createdAt])
+  @@map("report_verification_events")
 }
 
 // ---------------------------------------------------------------------
