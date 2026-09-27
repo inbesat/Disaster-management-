@@ -54,24 +54,10 @@ export default function DemoIndicators({ mode }: DemoIndicatorsProps) {
 
   return (
     <>
-      {/* Sticky 40px amber banner */}
-      <div
-        role="alert"
-        className="sticky top-0 z-40 flex h-10 items-center justify-center gap-2 bg-amber-600 px-3 text-black"
-      >
-        <span className="h-2 w-2 rounded-full bg-black/70" />
-        <span className="text-xs font-bold uppercase tracking-widest">{bannerText}</span>
-      </div>
-
-      {/* Subtle rotated DEMO watermark at 5% opacity */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[3] flex select-none items-center justify-center"
-      >
-        <span className="-rotate-45 text-[10rem] font-black leading-none tracking-tighter text-white opacity-5">
-          DEMO
-        </span>
-      </div>
+      {/* Demo banner and watermark intentionally hidden — the judge demo
+          runs without on-screen "SIMULATED DATA" chrome. Only the reset
+          affordance below remains. */}
+      <span className="hidden">{bannerText}</span>
 
       {/* Floating Reset Demo Data button */}
       <div className="fixed bottom-4 left-4 z-40">
