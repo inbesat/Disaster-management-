@@ -103,12 +103,6 @@ export function DemoController({ className = "" }: DemoControllerProps) {
       aria-label="Demo controller"
       className={`fixed inset-x-0 bottom-0 z-[9999] flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 border-t border-white/10 bg-black/70 px-3 py-1.5 backdrop-blur-sm ${className}`}
     >
-      {/* Subtle watermark */}
-      <span className="select-none text-eoc-tiny font-bold uppercase tracking-[0.25em] text-white/40">
-        Demo Mode Active
-      </span>
-      <span className="hidden h-3 w-px bg-white/15 sm:block" aria-hidden />
-
       {SCENARIOS.map((scenario) => (
         <button
           key={scenario.key}

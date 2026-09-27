@@ -779,7 +779,7 @@ export default function CitizenSettingsPanel({
             <div className="divide-y divide-white/5 rounded-[var(--dl-radius-sm)] border border-white/10 bg-white/5">
               <ToggleRow
                 label="Demo Mode"
-                caption="Shows the floating red 'Demo' tab + DEMO MODE watermark app-wide."
+                caption="Shows the floating scenario controls."
                 checked={demoMode}
                 tone="red"
                 onChange={(next) => {

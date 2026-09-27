@@ -42,8 +42,6 @@ import {
 import { getDemoMode, trackAnalytics } from "@/lib/demo/analytics";
 import { showToast } from "@/components/ui/Toast";
 
-const WATERMARK_SPOTS = Array.from({ length: 24 }, (_, i) => i);
-
 type DemoButtonState = { offline: boolean; battery: boolean };
 const IDLE_BUTTONS: DemoButtonState = { offline: false, battery: false };
 
@@ -75,25 +73,9 @@ export default function DemoMode() {
 
   return (
     <>
-      {/* Diagonal DEMO MODE watermark — covers the whole app, inert. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[70] overflow-hidden"
-      >
-        {WATERMARK_SPOTS.map((i) => (
-          <span
-            key={i}
-            className="absolute block whitespace-nowrap text-6xl font-black uppercase tracking-widest text-red-500/[0.05]"
-            style={{
-              left: `${(i % 6) * 18}%`,
-              top: `${Math.floor(i / 6) * 26}%`,
-              transform: "rotate(-28deg)",
-            }}
-          >
-            Demo Mode
-          </span>
-        ))}
-      </div>
+      {/* Diagonal watermark intentionally removed — the judge demo runs
+          without on-screen "Demo Mode" chrome. The floating control panel
+          below still toggles scenarios. */}
 
       <div className="fixed left-0 top-1/2 z-[80] flex -translate-y-1/2 items-center">
         <AnimatePresence mode="wait">

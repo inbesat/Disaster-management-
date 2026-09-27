@@ -360,6 +360,9 @@ export async function fieldLogin(
   email: string,
   password: string,
 ): Promise<{ ok: false; message: string }> {
+  if (process.env.DEMO_AUTH_ENABLED === "true") {
+    await fieldDemoLogin();
+  }
   try {
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({

@@ -42,3 +42,67 @@
  GET /api/public/shelters 503 in 941ms
  ○ Compiling /api/retrieval/embed ...
  ✓ Compiled /api/retrieval/embed in 6.1s
+ GET /login?mode=gov 200 in 867ms
+ GET /login? 200 in 1113ms
+ GET /api/alerts?limit=50 503 in 979ms
+ GET /api/alerts?limit=50 503 in 979ms
+ GET /api/alerts?limit=50 503 in 980ms
+ GET /api/predictions/history?days=2 503 in 891ms
+ GET /api/predictions/history?days=2 503 in 970ms
+ GET /api/predictions/history?days=2 503 in 969ms
+ GET /api/weather?lat=25.5941&lng=85.1376 200 in 1058ms
+ GET /api/weather?lat=9.9816&lng=76.2999 200 in 1091ms
+ GET /api/weather?lat=26.3161&lng=91.5984 200 in 1352ms
+ GET /api/evacuation-plans 200 in 1119ms
+ GET /api/public/shelters 503 in 1218ms
+ GET /api/public/shelters 503 in 1337ms
+ GET /api/evacuation-plans 200 in 1652ms
+ GET /api/evacuation-plans 200 in 1670ms
+ GET /api/public/shelters 503 in 1675ms
+ GET /api/public/shelters 503 in 925ms
+ GET /api/public/shelters 503 in 888ms
+ GET /api/public/shelters 503 in 899ms
+ GET /api/retrieval/embed?district=Patna 401 in 357ms
+ GET /api/retrieval/embed?district=Kamrup 401 in 435ms
+ GET /api/retrieval/embed?district=Ernakulam 401 in 456ms
+ GET /login?mode=gov 200 in 633ms
+ GET /login? 200 in 996ms
+ GET /api/alerts?limit=50 503 in 1057ms
+ GET /api/alerts?limit=50 503 in 1127ms
+ GET /api/alerts?limit=50 503 in 1060ms
+ GET /api/predictions/history?days=2 503 in 964ms
+ GET /api/predictions/history?days=2 503 in 1030ms
+ GET /api/predictions/history?days=2 503 in 1031ms
+ GET /api/weather?lat=25.5941&lng=85.1376 200 in 1130ms
+ GET /api/weather?lat=9.9816&lng=76.2999 200 in 1171ms
+ GET /api/weather?lat=26.3161&lng=91.5984 200 in 1310ms
+ GET /api/evacuation-plans 200 in 940ms
+ GET /api/evacuation-plans 200 in 1027ms
+ GET /api/public/shelters 503 in 1028ms
+ GET /api/evacuation-plans 200 in 1221ms
+ GET /api/public/shelters 503 in 1222ms
+ GET /api/public/shelters 503 in 1357ms
+ GET /api/public/shelters 503 in 708ms
+ GET /api/public/shelters 503 in 728ms
+ GET /api/public/shelters 503 in 805ms
+ GET /api/retrieval/embed?district=Patna 401 in 476ms
+ GET /api/retrieval/embed?district=Ernakulam 401 in 502ms
+ GET /api/retrieval/embed?district=Kamrup 401 in 612ms
+ ✓ Compiled in 5.2s
+ ○ Compiling /login ...
+ ✓ Compiled /login in 820ms
+ GET /login?mode=gov 200 in 3478ms
+ ○ Compiling /gov/overview ...
+ ✓ Compiled /gov/overview in 1506ms
+ GET /api/alerts?limit=50 503 in 3161ms
+ GET /api/alerts?limit=50 503 in 3167ms
+ GET /api/alerts?limit=50 503 in 3207ms
+ GET /api/weather?lat=9.9816&lng=76.2999 200 in 5464ms
+ GET /api/weather?lat=25.5941&lng=85.1376 200 in 5465ms
+ GET /api/predictions/history?days=2 200 in 5468ms
+ GET /api/predictions/history?days=2 200 in 5471ms
+ POST /login?mode=gov 303 in 8020ms
+ ✓ Compiled in 1944ms
+ ✓ Compiled in 2.4s
+ ✓ Compiled in 4s
+ ✓ Compiled in 9.4s

@@ -4,17 +4,8 @@
 // components/demo/DemoIndicators.tsx — Phase 2 · Step 6 · Persistent demo
 // UI indicators.
 //
-// While `demo_mode` is active (gated server-side in app/layout.tsx) this
-// renders three gentle reminders that the judges are in a sandbox:
-//
-//   1. Sticky 40px top banner — solid amber (bg-amber-600) reading
-//      "GOVERNMENT DEMO MODE · SIMULATED DATA" (or the CITIZEN
-//      equivalent).
-//   2. A huge "DEMO" watermark, rotated -45° at 5% opacity, pinned over
-//      the whole viewport behind the content.
-//   3. A floating "Reset Demo Data" button bottom-left — wipes the
-//      localStorage scenario seed and calls exitDemoMode() (clears the
-//      demo cookies, returns to the /demo landing).
+// Provides the scenario reset control while `demo_mode` is active.
+// The full-width banner and viewport watermark are deliberately absent.
 //
 // Renders nothing outside demo mode.
 // ---------------------------------------------------------------------
@@ -28,7 +19,7 @@ import { trackAnalytics } from "@/lib/demo/analytics";
 export type DemoIndicatorMode = "government" | "citizen";
 
 type DemoIndicatorsProps = {
-  /** Which identity the sandbox is wearing — drives the banner copy. */
+  /** Identity used when recording a scenario reset. */
   mode: DemoIndicatorMode;
 };
 
@@ -47,32 +38,8 @@ export default function DemoIndicators({ mode }: DemoIndicatorsProps) {
     }
   }
 
-  const bannerText =
-    mode === "citizen"
-      ? "CITIZEN DEMO MODE · SIMULATED DATA"
-      : "GOVERNMENT DEMO MODE · SIMULATED DATA";
-
   return (
     <>
-      {/* Sticky 40px amber banner */}
-      <div
-        role="alert"
-        className="sticky top-0 z-40 flex h-10 items-center justify-center gap-2 bg-amber-600 px-3 text-black"
-      >
-        <span className="h-2 w-2 rounded-full bg-black/70" />
-        <span className="text-xs font-bold uppercase tracking-widest">{bannerText}</span>
-      </div>
-
-      {/* Subtle rotated DEMO watermark at 5% opacity */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[3] flex select-none items-center justify-center"
-      >
-        <span className="-rotate-45 text-[10rem] font-black leading-none tracking-tighter text-white opacity-5">
-          DEMO
-        </span>
-      </div>
-
       {/* Floating Reset Demo Data button */}
       <div className="fixed bottom-4 left-4 z-40">
         <button
