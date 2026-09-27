@@ -410,8 +410,8 @@ function GovForm() {
       setError("Enter a valid official email address.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (!password) {
+      setError("Enter any password to continue.");
       return;
     }
     setError(null);
@@ -440,7 +440,7 @@ function GovForm() {
         Responder / Official Sign In
       </h2>
       <p className="mt-1 text-sm text-[var(--dl-text-on-navy)]">
-        Role-assigned credentials required. Contact your district admin for access.
+        Enter your email and any password to continue.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">

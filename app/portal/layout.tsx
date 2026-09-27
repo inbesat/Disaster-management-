@@ -28,8 +28,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         </div>
       </header>
       {demo && (
-        <div className="border-b border-amber-400/30 bg-amber-950/30 px-4 py-2 text-center text-sm text-amber-100">
-          Demo session ·{" "}
+        <div className="border-b border-white/10 bg-slate-950 px-4 py-2 text-center text-sm text-slate-300">
           <form action={switchDemoPortal.bind(null, "public")} className="inline">
             <button className="underline">Citizen view</button>
           </form>{" "}

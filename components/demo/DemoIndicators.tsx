@@ -4,17 +4,8 @@
 // components/demo/DemoIndicators.tsx — Phase 2 · Step 6 · Persistent demo
 // UI indicators.
 //
-// While `demo_mode` is active (gated server-side in app/layout.tsx) this
-// renders three gentle reminders that the judges are in a sandbox:
-//
-//   1. Sticky 40px top banner — solid amber (bg-amber-600) reading
-//      "GOVERNMENT DEMO MODE · SIMULATED DATA" (or the CITIZEN
-//      equivalent).
-//   2. A huge "DEMO" watermark, rotated -45° at 5% opacity, pinned over
-//      the whole viewport behind the content.
-//   3. A floating "Reset Demo Data" button bottom-left — wipes the
-//      localStorage scenario seed and calls exitDemoMode() (clears the
-//      demo cookies, returns to the /demo landing).
+// Provides the scenario reset control while `demo_mode` is active.
+// The full-width banner and viewport watermark are deliberately absent.
 //
 // Renders nothing outside demo mode.
 // ---------------------------------------------------------------------
@@ -28,7 +19,7 @@ import { trackAnalytics } from "@/lib/demo/analytics";
 export type DemoIndicatorMode = "government" | "citizen";
 
 type DemoIndicatorsProps = {
-  /** Which identity the sandbox is wearing — drives the banner copy. */
+  /** Identity used when recording a scenario reset. */
   mode: DemoIndicatorMode;
 };
 
@@ -47,18 +38,8 @@ export default function DemoIndicators({ mode }: DemoIndicatorsProps) {
     }
   }
 
-  const bannerText =
-    mode === "citizen"
-      ? "CITIZEN DEMO MODE · SIMULATED DATA"
-      : "GOVERNMENT DEMO MODE · SIMULATED DATA";
-
   return (
     <>
-      {/* Demo banner and watermark intentionally hidden — the judge demo
-          runs without on-screen "SIMULATED DATA" chrome. Only the reset
-          affordance below remains. */}
-      <span className="hidden">{bannerText}</span>
-
       {/* Floating Reset Demo Data button */}
       <div className="fixed bottom-4 left-4 z-40">
         <button
