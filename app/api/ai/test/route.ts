@@ -30,6 +30,13 @@ async function isOperator(): Promise<boolean> {
   const cookieStore = await cookies();
   // Guest (auth-bypassed demo) mode mirrors the chat route's default.
   if (cookieStore.get("guest_mode")?.value === "true") return true;
+  if (
+    process.env.DEMO_AUTH_ENABLED === "true" &&
+    cookieStore.get("demo_mode")?.value === "true" &&
+    ["district_admin", "super_admin", "field_responder"].includes(
+      cookieStore.get("role")?.value ?? "",
+    )
+  ) return true;
   try {
     const supabase = createClient();
     const {

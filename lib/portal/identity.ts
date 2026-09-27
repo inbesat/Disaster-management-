@@ -8,7 +8,7 @@ export async function responderIdentity() {
   const auth = await requireRole(["field_responder", "district_admin", "super_admin"]);
   if (!auth.ok) return null;
   const scope = resolveDemoScope();
-  if (scope.demo && scope.sessionId && process.env.DEMO_AUTH_ENABLED === "true") {
+  if (scope.demo && scope.sessionId) {
     return { id: `demo:${scope.sessionId}`, role: auth.role, scope };
   }
   try {

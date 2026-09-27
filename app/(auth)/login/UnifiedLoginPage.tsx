@@ -263,8 +263,7 @@ function CitizenForm() {
           Welcome, neighbor
         </h2>
         <p className="mt-1 text-sm leading-relaxed text-[var(--dl-text-on-navy)]">
-          No passwords here. Enter your phone number and we&apos;ll send a
-          one-time code — it takes seconds.
+          Enter any phone number to continue. No SMS is sent in this demo.
         </p>
 
         <form onSubmit={handlePhoneSubmit} className="mt-5 space-y-4">
@@ -304,11 +303,11 @@ function CitizenForm() {
             data-testid="citizen-send-otp"
             className="flex w-full items-center justify-center gap-2 rounded-[var(--dl-radius-sm)] bg-[var(--dl-orange)] px-4 py-3.5 text-base font-bold text-white transition hover:bg-[#EA5B0C] disabled:opacity-60"
           >
-            Send OTP
+            Continue
             <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </button>
           <p className="text-center text-xs text-[var(--dl-text-muted)]">
-            Free of charge. Your number is only used for emergency alerts.
+            Any six digits will work on the next screen.
           </p>
         </form>
       </>
@@ -406,8 +405,8 @@ function GovForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Enter a valid official email address.");
+    if (!email.trim()) {
+      setError("Enter any email or name to continue.");
       return;
     }
     if (!password) {
@@ -459,7 +458,8 @@ function GovForm() {
             <input
               id="gov-email"
               data-testid="gov-email"
-              type="email"
+              type="text"
+              inputMode="email"
               autoComplete="email"
               required
               value={email}

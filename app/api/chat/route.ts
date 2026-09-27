@@ -163,7 +163,7 @@ export async function POST(req: Request): Promise<Response> {
         `Missing/placeholder keys: ${missing.join(", ") || "(none declared)"}. ` +
         "Set OPENROUTER_API_KEY, GROQ_API_KEY, or BLUESMINDS_API_KEY in .env.local and restart the dev server.",
     );
-    return new Response(JSON.stringify({ error: "API Key Configuration Error" }), {
+    return new Response(JSON.stringify({ error: "AI is not configured on this server. Add a Groq, OpenRouter, or Bluesminds key to the deployment environment and restart the service." }), {
       status: 503,
       headers: { "Content-Type": "application/json" },
     });

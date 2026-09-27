@@ -1,6 +1,7 @@
 "use client";
 
 import { Boxes, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 // ---------------------------------------------------------------------
@@ -120,12 +121,12 @@ export function ResourceWidget() {
           ))}
         </div>
 
-        <a
-          href="#"
+        <Link
+          href="/inventory"
           className="mt-3 flex items-center gap-1 text-xs font-semibold text-blue-400 transition hover:text-blue-300"
         >
           View Inventory <ChevronRight className="h-3 w-3" />
-        </a>
+        </Link>
       </div>
     </section>
   );

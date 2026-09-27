@@ -179,7 +179,7 @@ export const NAVIGATION_ROUTES: NavRoute[] = [
   },
   {
     label: "Predictions",
-    href: "/dashboard",
+    href: "/predictions",
     icon: BarChart3,
     section: "intelligence",
     allowedRoles: ["district_admin", "super_admin"],

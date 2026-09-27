@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bot, Download, Plus, Siren, Truck, X } from "lucide-react";
-import { useToast } from "@/hooks/useToast";
+import { useRouter } from "next/navigation";
 
 // ---------------------------------------------------------------------
 // components/gov/dashboard/QuickActionDock.tsx — Phase 7 · Step 7.
@@ -28,7 +28,7 @@ type DockAction = {
 };
 
 export function QuickActionDock() {
-  const toast = useToast();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const dockRef = useRef<HTMLDivElement>(null);
 
@@ -57,10 +57,7 @@ export function QuickActionDock() {
       icon: Siren,
       tone: "border-severity-red-400/40 bg-severity-red-400/15 text-severity-red-300 hover:bg-severity-red-400/25",
       fire: () => {
-        toast.warning({
-          title: "Alert broadcast",
-          description: "Ganga danger advisory pushed to 12,480 residents.",
-        });
+        router.push("/gov/alerts");
         setOpen(false);
       },
     },
@@ -71,10 +68,7 @@ export function QuickActionDock() {
       icon: Truck,
       tone: "border-severity-amber-400/40 bg-severity-amber-400/15 text-severity-amber-300 hover:bg-severity-amber-400/25",
       fire: () => {
-        toast.success({
-          title: "Resource deployment staged",
-          description: "4 boats + 2 NDRF teams queued for Sector 4.",
-        });
+        router.push("/allocations");
         setOpen(false);
       },
     },
@@ -85,24 +79,18 @@ export function QuickActionDock() {
       icon: Bot,
       tone: "border-severity-purple-400/40 bg-severity-purple-400/15 text-severity-purple-300 hover:bg-severity-purple-400/25",
       fire: () => {
-        toast.success({
-          title: "AI plan generation started",
-          description: "Sector 4 evacuation plan — drafting with live data.",
-        });
+        router.push("/gov/ai-planner");
         setOpen(false);
       },
     },
     {
       id: "export",
-      label: "Export Report",
-      hint: "Situation report PDF",
+      label: "View Printable Report",
+      hint: "Broadcast history for printing",
       icon: Download,
       tone: "border-[var(--dl-blue-light)]/40 bg-[var(--dl-blue)]/15 text-[var(--dl-blue-light)] hover:bg-[var(--dl-blue)]/25",
       fire: () => {
-        toast.success({
-          title: "Report export started",
-          description: "Situation report will download as PDF.",
-        });
+        window.open("/api/broadcast/fm/export/pdf", "_blank", "noopener,noreferrer");
         setOpen(false);
       },
     },
@@ -127,15 +115,23 @@ export function QuickActionDock() {
               <motion.li
                 key={action.id}
                 variants={{
-                  open: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 26 } },
+                  open: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { type: "spring", stiffness: 400, damping: 26 },
+                  },
                   closed: { opacity: 0, y: 12, transition: { duration: 0.12 } },
                 }}
                 className="group relative flex items-center"
               >
                 {/* Tooltip */}
                 <span className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg border border-white/10 bg-panel-deep/95 px-3 py-1.5 text-right opacity-0 shadow-lg backdrop-blur transition-opacity duration-150 group-hover:opacity-100">
-                  <span className="block text-xs font-semibold text-white">{action.label}</span>
-                  <span className="block text-[0.625rem] text-[var(--dl-text-muted)]">{action.hint}</span>
+                  <span className="block text-xs font-semibold text-white">
+                    {action.label}
+                  </span>
+                  <span className="block text-[0.625rem] text-[var(--dl-text-muted)]">
+                    {action.hint}
+                  </span>
                 </span>
                 <button
                   type="button"
@@ -164,7 +160,11 @@ export function QuickActionDock() {
             : "border-[var(--dl-blue-light)]/50 bg-[var(--dl-blue)]/25 text-[var(--dl-blue-light)] hover:bg-[var(--dl-blue)]/35"
         }`}
       >
-        {open ? <X aria-hidden="true" className="h-6 w-6" /> : <Plus aria-hidden="true" className="h-6 w-6" />}
+        {open ? (
+          <X aria-hidden="true" className="h-6 w-6" />
+        ) : (
+          <Plus aria-hidden="true" className="h-6 w-6" />
+        )}
       </button>
     </div>
   );

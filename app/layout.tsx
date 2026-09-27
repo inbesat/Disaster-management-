@@ -11,7 +11,6 @@ import DemoIndicators from "@/components/demo/DemoIndicators";
 import ScenarioSelector from "@/components/demo/ScenarioSelector";
 import ActionTriggersPanel from "@/components/demo/ActionTriggersPanel";
 import DemoMode from "@/components/demo/DemoMode";
-import ConversionBanner from "@/components/demo/ConversionBanner";
 import ImpactMetrics from "@/components/demo/ImpactMetrics";
 import LiveDemoQR from "@/components/demo/LiveDemoQR";
 import QADrawer from "@/components/demo/QADrawer";
@@ -120,9 +119,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const simulationActive = cookies().get(SIMULATION_COOKIE)?.value === "true";
-  // Phase 2 — dual demo sessions pin a `demo_mode` cookie (govDemoLogin /
-  // publicDemoLogin in app/actions/auth.ts). While active, the amber
-  // sandbox strip + scenario switcher render for every surface.
+  // Demo sessions retain their controls without covering the content on phones.
   const demoMode = cookies().get("demo_mode")?.value === "true";
   const demoRole = cookies().get("role")?.value;
   const demoIndicatorMode = demoRole === "public" ? "citizen" : "government";
@@ -149,35 +146,23 @@ export default function RootLayout({
           </div>
         )}
 
-        {/* Phase 2 · Steps 5–6 — persistent sandbox indicators + live
-            scenario switcher, shown only while a demo session is active.
-            The amber strip sticks to the very top; the scenario dropdown
-            sits an inch below it at the top-right; both render nothing
-            outside demo mode. */}
-        {demoMode && <DemoIndicators mode={demoIndicatorMode} />}
-        {demoMode && <ScenarioSelector />}
-
-        {/* Phase 2 · Steps 7 + 10 — God-Mode one-click action triggers
-            (right edge, below the scenario switcher) and the demo→real
-            conversion banner (bottom center). Both render nothing outside
-            demo mode. */}
-        {demoMode && <ActionTriggersPanel mode={demoIndicatorMode} />}
-        {demoMode && <ConversionBanner mode={demoIndicatorMode} />}
+        {/* Demo controls are available on larger screens without obscuring
+            the mobile dashboard. */}
+        {demoMode && (
+          <div className="hidden md:block">
+            <DemoIndicators mode={demoIndicatorMode} />
+            <ScenarioSelector />
+            <ActionTriggersPanel mode={demoIndicatorMode} />
+          </div>
+        )}
 
         {/* Phase 12 · Step 2 — Demo Mode: floating Demo Controls panel
             (left edge) + diagonal watermark, toggled from settings. Renders
             nothing unless the "Demo Mode" toggle is on. */}
         <DemoMode />
 
-        {/* SimulationToggle — bottom-LEFT so it never collides with the
-            fixed elements that own the bottom-right corner: the emergency
-            contact card (bottom-4 right-4 z-50, taller) used to fully cover
-            this toggle on desktop, and on phones the one-handed Restore
-            chip lives at bottom-[84px] right-3. Below md it clears the
-            fixed mobile BottomNav (72px + safe area); at md+ it sits in the
-            corner (no bottom nav there). Fixes the documented Phase-9/10
-            overlay issue (the nav is z-30, this stays z-50). */}
-        <div className="fixed bottom-[calc(72px+env(safe-area-inset-bottom)+12px)] left-4 z-50 md:bottom-4 md:left-4">
+        {/* Keep the simulation switch on desktop, clear of the mobile nav. */}
+        <div className="fixed bottom-4 left-4 z-50 hidden md:block">
           <SimulationToggle active={simulationActive} />
         </div>
 

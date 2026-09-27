@@ -11,6 +11,8 @@ import ShelterStatusWidget from "@/components/gov/dashboard/ShelterStatusWidget"
 import ResourceWidget from "@/components/gov/dashboard/ResourceWidget";
 import ResponderTracker from "@/components/gov/dashboard/ResponderTracker";
 import AISuggestionsWidget from "@/components/gov/dashboard/AISuggestionsWidget";
+import { prisma } from "@/server/prisma";
+import { resolveDemoScope } from "@/lib/demo/scope";
 
 // ---------------------------------------------------------------------
 // app/gov/dashboard/page.tsx — Phase 7 · Steps 1–4 · Gov Command Center
@@ -48,15 +50,42 @@ const STAT_CELLS: Array<{
   { label: "People at Risk", value: "12,480", tone: "text-amber-300" },
   { label: "Casualties / Injured", value: "42 / 128", tone: "text-red-400" },
   { label: "Reported Missing", value: "14", tone: "text-orange-300" },
-  { label: "Active NGOs", value: "8 Teams Deployed", tone: "text-sky-300" },
-  { label: "Responders Online", value: "45", tone: "text-emerald-300", mdFull: true },
 ];
 
-export default function GovDashboardPage() {
+export default async function GovDashboardPage() {
   // Reflect a still-active preview session if the official navigates back
   // here mid-preview (middleware allows gov users with view_as_public on
   // /gov/*), so the toggle never lies about the current state.
   const previewing = cookies().get("view_as_public")?.value === "true";
+  const scope = resolveDemoScope();
+  let teamStats: { ngos: string; available: string } = {
+    ngos: "Unavailable",
+    available: "Unavailable",
+  };
+  try {
+    const profiles = await prisma.responderProfile.findMany({
+      where: {
+        approvalStatus: "approved",
+        ...(scope.demo
+          ? { id: `demo:${scope.sessionId}` }
+          : { NOT: { id: { startsWith: "demo:" } } }),
+      },
+      select: { organizationType: true, availability: true },
+    });
+    teamStats = {
+      ngos: String(
+        profiles.filter(
+          (profile) =>
+            profile.organizationType === "ngo" && profile.availability === "available",
+        ).length,
+      ),
+      available: String(
+        profiles.filter((profile) => profile.availability === "available").length,
+      ),
+    };
+  } catch {
+    /* Show unavailable rather than a fabricated live count. */
+  }
 
   return (
     <main id="main-content" className="min-h-screen bg-primary text-foreground">
@@ -67,9 +96,7 @@ export default function GovDashboardPage() {
         {/* Page title strip */}
         <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-6 sm:px-6">
           <div>
-            <p className="eoc-label text-blue-400">
-              BIHAR · OPERATIONAL OVERVIEW · LIVE
-            </p>
+            <p className="eoc-label text-blue-400">BIHAR · OPERATIONAL OVERVIEW · LIVE</p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-white md:text-3xl">
               District Command Overview
             </h1>
@@ -130,7 +157,16 @@ export default function GovDashboardPage() {
           </div>
 
           {/* Baseline stat cells filling the remaining slots. */}
-          {STAT_CELLS.map((stat) => (
+          {[
+            ...STAT_CELLS,
+            { label: "Active NGOs", value: teamStats.ngos, tone: "text-sky-300" },
+            {
+              label: "Responders Available",
+              value: teamStats.available,
+              tone: "text-emerald-300",
+              mdFull: true,
+            },
+          ].map((stat) => (
             <div
               key={stat.label}
               className={`flex min-h-[150px] flex-col justify-between rounded-xl border border-white/10 bg-[#111827] p-5 backdrop-blur transition hover:border-white/20 ${
@@ -139,7 +175,11 @@ export default function GovDashboardPage() {
             >
               <p className="eoc-label text-slate-400">{stat.label}</p>
               <p className={`font-mono text-3xl font-bold ${stat.tone}`}>{stat.value}</p>
-              <p className="text-xs text-slate-500">Phase 7 · live feed</p>
+              <p className="text-xs text-slate-500">
+                {stat.label.includes("NGO") || stat.label.includes("Responders")
+                  ? "Field portal records"
+                  : "Overview estimate"}
+              </p>
             </div>
           ))}
         </div>

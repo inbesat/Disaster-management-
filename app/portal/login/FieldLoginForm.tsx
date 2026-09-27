@@ -30,7 +30,8 @@ export default function FieldLoginForm() {
         Email
         <input
           name="email"
-          type="email"
+          type="text"
+          inputMode="email"
           autoComplete="email"
           required
           className="mt-1 w-full rounded-xl border border-white/20 bg-slate-800 p-3"
