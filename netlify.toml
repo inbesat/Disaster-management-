@@ -1,0 +1,43 @@
+# Netlify build configuration.
+#
+# `command` and `publish` mirror the values that were previously set only in the
+# Netlify UI. Encoding them here makes the build reproducible from the repo and
+# keeps the UI and the file from drifting apart.
+
+[build]
+  command = "bun run build"
+  publish = ".next"
+
+# ---------------------------------------------------------------------------
+# Secrets scanning
+# ---------------------------------------------------------------------------
+# Netlify's scanner fails the build when it finds the value of an environment
+# variable flagged as a secret inside build output or repo files. It searches
+# the plaintext, base64 and URI-encoded forms of every flagged value.
+#
+# Every hit on this project is a false positive:
+#
+#   NEXT_PUBLIC_SUPABASE_URL /
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY   Inlined into client bundles by webpack. The
+#                                   Supabase anon key is designed to be public --
+#                                   it only grants access the RLS policies allow.
+#   NEXT_PUBLIC_SITE_URL             Baked into sitemap.xml / robots.txt at build
+#                                   time; it is the site's own origin.
+#   ML_SERVICE_URL, EONET_API_URL,   Public third-party endpoints. The Render
+#   OSRM_PUBLIC_URL,                 ML service is the same one documented in
+#   CAPACITOR_SERVER_URL             docs/DEMO_CHECKLIST.md.
+#   GROQ_MODEL, OPENROUTER_MODEL,    LLM model-name identifiers, e.g.
+#   BLUESMINDS_MODEL                 "openrouter/free".
+#   VAPID_SUBJECT                    A mailto: contact URI.
+#   SMTP_USER                        The support email address that is rendered on
+#                                   purpose in Footer / ContactForm /
+#                                   SupportButton, so it is public by design.
+#
+# The scan is kept ON rather than disabled, because it is genuinely useful here.
+# As of this commit none of the real credentials are reaching the build output --
+# SUPABASE_SERVICE_ROLE_KEY, ML_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY,
+# HF_TOKEN, SERPAPI_API_KEY, SMTP_PASS and CRON_SECRET were all absent from the
+# scan report, which is the desired outcome. If one of those ever does leak, we
+# want this to fail the build.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "CAPACITOR_SERVER_URL,ML_SERVICE_URL,SMTP_USER,NEXT_PUBLIC_SITE_URL,GROQ_MODEL,OPENROUTER_MODEL,BLUESMINDS_MODEL,VAPID_SUBJECT,EONET_API_URL,OSRM_PUBLIC_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_SUPABASE_URL"
