@@ -30,6 +30,8 @@ function makeStation(overrides: Partial<FmStation> = {}): FmStation {
     emailAddress: null,
     rdsEnabled: false,
     rdsApiEndpoint: null,
+    playoutEndpoint: null,
+    easAreaCode: null,
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),

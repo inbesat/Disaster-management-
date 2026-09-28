@@ -28,6 +28,21 @@ public interface SosEventDao {
     @Query("SELECT * FROM sos_events WHERE id = :id")
     LiveData<SosEventEntity> getById(String id);
 
+    /**
+     * Phase 3 — status write-back for radio receipts (SmsStatusReceiver) and
+     * the outbox drains. Synchronous: call from a background thread only.
+     */
+    @Query("UPDATE sos_events SET status = :status, resolution = :resolution WHERE id = :id")
+    void updateStatus(String id, String status, String resolution);
+
+    /**
+     * Phase 1 — synchronous outbox query for the SyncWorker drain (Worker
+     * threads are already background, so no LiveData). Picks up every event
+     * that was captured on-device but never handed to a transport.
+     */
+    @Query("SELECT * FROM sos_events WHERE status IN ('captured', 'queued') ORDER BY createdAt ASC")
+    java.util.List<SosEventEntity> getPendingSync();
+
     @Query("SELECT * FROM sos_events ORDER BY createdAt DESC")
     LiveData<List<SosEventEntity>> getAll();
 

@@ -35,17 +35,28 @@ pipeline with one tap — pre-load it before the pitch.
 ```
 AI Prediction ──► TTS Engine ──► CAP Builder ──► FM Dispatcher
   (ml-client)     (ElevenLabs →     (CAP v1.2 XML,      │
-   risk escalate    Azure → Google,   SHA-256 hashed,     ├─► API Push  (station webhook)
-   → auto-trigger)  Hindi + regional)  validated)         ├─► RDS Text  (scrolling, 64 chars)
+   risk escalate    Azure → Google,   SHA-256 hashed,     ├─► EAS SAME  (receiver interrupt, area-coded)
+   → auto-trigger)  Hindi + regional)  validated)         ├─► API Push  (station webhook)
+                                                          ├─► Playout   (Audemat/ENPS cart injection)
+                                                          ├─► Cell BC   (SMS-CB/ETWS, every handset)
+                                                          ├─► RDS Text  (scrolling, 64 chars)
                                                           ├─► FTP drop  (legacy studios)
                                                           ├─► Email     (studio inbox)
+                                                          ├─► Sirens    (outdoor towers, 2-person rule)
                                                           └─► IVR call  (control room fallback)
                                                                     │
                                                               Citizens' radios
 ```
 
 **Key line:** "Multi-strategy fallback ensures zero single point of failure —
-CAP API → RDS → FTP → email → IVR, with retries and a full audit trail."
+EAS → CAP API → playout → cell broadcast → RDS → FTP → email → sirens → IVR,
+with retries and a full audit trail."
+
+Public pull surface: `GET /api/cap/feed` (RSS/Atom) + `GET /api/cap/:alertId`
+raw CAP XML — broadcasters poll us as the source. Coverage is fail-closed
+(unknown geometry → zero stations, never nationwide), and the
+`/api/cron/broadcast-confirmation` sweep escalates accepted-but-never-aired
+stations to IVR.
 
 ---
 

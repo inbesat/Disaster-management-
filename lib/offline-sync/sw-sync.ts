@@ -35,6 +35,7 @@ export const SYNC_TAG = "disasterlink-sync";
 export const BG_SYNC_TAGS = {
   predictions: "sync-predictions",
   alerts: "sync-alerts",
+  sos: "sync-sos",
 } as const;
 
 export type BgSyncTag = (typeof BG_SYNC_TAGS)[keyof typeof BG_SYNC_TAGS];
@@ -69,16 +70,18 @@ export async function requestBackgroundSync(tag: BgSyncTag): Promise<boolean> {
 
 /**
  * Registers every background-sync job the app cares about (predictions +
- * alerts) and the periodic tag. Best-effort — resolves the per-tag booleans
- * so callers know which jobs are actually armed on this browser.
+ * alerts + SOS outbox replay) and the periodic tag. Best-effort — resolves
+ * the per-tag booleans so callers know which jobs are actually armed on
+ * this browser.
  */
 export async function registerSyncJobs(): Promise<Record<BgSyncKey | "periodic", boolean>> {
-  const [predictions, alerts, periodic] = await Promise.all([
+  const [predictions, alerts, sos, periodic] = await Promise.all([
     requestBackgroundSync(BG_SYNC_TAGS.predictions),
     requestBackgroundSync(BG_SYNC_TAGS.alerts),
+    requestBackgroundSync(BG_SYNC_TAGS.sos),
     requestPeriodicSync(),
   ]);
-  return { predictions, alerts, periodic };
+  return { predictions, alerts, sos, periodic };
 }
 
 /**

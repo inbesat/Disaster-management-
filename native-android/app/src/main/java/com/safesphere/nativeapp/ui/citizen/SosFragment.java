@@ -19,6 +19,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.safesphere.nativeapp.R;
 import com.safesphere.nativeapp.data.entity.SosEventEntity;
 import com.safesphere.nativeapp.data.repository.SosEventRepository;
+import com.safesphere.nativeapp.sync.SyncWorker;
 import com.safesphere.nativeapp.ui.base.BaseFragment;
 import com.safesphere.nativeapp.util.LocationHelper;
 
@@ -219,17 +220,27 @@ public class SosFragment extends BaseFragment {
             event.lat = Double.isNaN(lastLat) ? SafeSphereMapHelperFallback.DEMO_LAT : lastLat;
             event.lng = Double.isNaN(lastLng) ? SafeSphereMapHelperFallback.DEMO_LNG : lastLng;
             event.message = "SOS: " + type;
-            event.status = "sent";
+            // Phase 0 honesty fix: captured = on-device only, nothing transmitted yet.
+            // Phase 1+ transports (api/sms/mesh) promote this to queued → sent_*.
+            event.status = "captured";
             event.createdAt = utcNow();
 
             sosRepository.insertSosEvent(event);
             loadSosHistory();
+            // Phase 1: attempt the outbox drain immediately — when online this
+            // promotes captured → sent_api within seconds; when offline the
+            // periodic worker retries. Either way the Snackbar below stays honest.
+            try {
+                SyncWorker.triggerImmediateSync(requireContext());
+            } catch (Exception ignored) {
+                // Sync scheduling must never break SOS capture.
+            }
 
             String coordNote = Double.isNaN(lastLat)
                     ? "(no GPS — using district center)" : LocationHelper.formatCoord(lastLat, lastLng);
             com.google.android.material.snackbar.Snackbar
-                    .make(requireView(), "SOS sent: " + type + " · " + coordNote, com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-                    .setBackgroundTint(requireContext().getColor(R.color.colorSuccess))
+                    .make(requireView(), "SOS captured locally: " + type + " · " + coordNote + " · will relay when a channel is available", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                    .setBackgroundTint(requireContext().getColor(R.color.colorWarning))
                     .show();
         };
 

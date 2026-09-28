@@ -126,7 +126,7 @@ export default function PublicDashboardPage() {
         {/* Safety stack — live status (mock geo-fence) → hero card →
             contextual action → 3-day forecast (Phase 2 · Steps 2–5) */}
         <section className="mt-8">
-          <SafetyOverview demoDataEnabled={process.env.DEMO_DATA_ENABLED === "true"} />
+          <SafetyOverview />
         </section>
 
         {/* Lifelines — "Find Nearest Safe Shelter" (geolocation → map

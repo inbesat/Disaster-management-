@@ -59,6 +59,34 @@ export interface PendingTask {
   createdAt: string;
 }
 
+// --- SOS idempotency ----------------------------------------------------------
+// Phase 1 (offline SOS queue): every SOS carries a client-generated id so
+// Background Sync / outbox replays are idempotent — the server dedupes on it
+// (stored in CrowdsourcedReport.sessionId as `sos:<clientId>`, namespaced to
+// avoid demo-session collisions; a dedicated column is deferred to Phase 5).
+
+/** Generates a unique client SOS id (e.g. "sos-1719849600000-a1b2c"). */
+export function buildSosClientId(): string {
+  return `sos-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+/** Minimal SOS body shape shared by /api/sos and /api/field/sos queue entries. */
+export interface SosQueueBody {
+  clientId: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Enqueues an SOS payload for replay when connectivity returns. The body MUST
+ * carry `clientId` (use buildSosClientId()) so the server can dedupe replays.
+ */
+export function enqueueSos(
+  url: "/api/sos" | "/api/field/sos",
+  body: SosQueueBody,
+): void {
+  OfflineSyncQueue.enqueue({ url, method: "POST", body });
+}
+
 // --- storage ---------------------------------------------------------------
 function read<T>(key: string): T | null {
   if (typeof window === "undefined") return null;

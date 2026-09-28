@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Phone,
   MapPin,
@@ -11,6 +11,14 @@ import {
   Accessibility,
 } from "lucide-react";
 import PublicBackButton from "@/components/public/PublicBackButton";
+import SosCodecPanel from "@/components/public/SosCodecPanel";
+import { encodeSosCodec } from "@/lib/sos/codec";
+import {
+  OfflineSyncQueue,
+  buildSosClientId,
+  enqueueSos,
+} from "@/lib/field-offline";
+import { BG_SYNC_TAGS, requestBackgroundSync } from "@/lib/offline-sync/sw-sync";
 
 // ---------------------------------------------------------------------
 // app/(public)/sos/page.tsx — Standalone Emergency SOS Page
@@ -18,6 +26,12 @@ import PublicBackButton from "@/components/public/PublicBackButton";
 // Public, no-auth page for citizens to send an emergency SOS.
 // Includes PWD priority flag. Works on any device with a browser.
 // URL: /sos
+//
+// Phase 1 (offline SOS queue): GPS-first, network-second. The fix is
+// captured on mount, the POST carries a client-generated id for
+// replay-safe dedupe, and a network failure queues the SOS into
+// OfflineSyncQueue (flushed on `online` + Background Sync) instead of
+// discarding it. A queued SOS is labelled "queued locally", never "sent".
 // ---------------------------------------------------------------------
 
 type Gps = { lat: number; lng: number };
@@ -46,6 +60,11 @@ export default function SosPage() {
   const [submitted, setSubmitted] = useState(false);
   const [sosId, setSosId] = useState<string | null>(null);
   const [sosError, setSosError] = useState<string | null>(null);
+  // Phase 1: queued-locally state — the SOS is on-device only, not delivered.
+  const [queued, setQueued] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+  // Phase 2: compact relay code, frozen at tap time (coords + clock of the SOS).
+  const [codec, setCodec] = useState<string | null>(null);
 
   function captureLocation() {
     setGpsLoading(true);
@@ -72,22 +91,48 @@ export default function SosPage() {
     e.preventDefault();
     setSubmitting(true);
     setSosError(null);
+    // Phase 1: one client id per tap — replays of this body dedupe server-side.
+    const clientId = buildSosClientId();
+    // Phase 2: freeze the relay code at tap time (geolocation coords are
+    // always in range; guard anyway so a codec bug can never block an SOS).
+    try {
+      setCodec(
+        encodeSosCodec({ lat: gps?.lat ?? null, lng: gps?.lng ?? null, need: "R", isPwd }),
+      );
+    } catch {
+      setCodec(null);
+    }
+    const body = {
+      clientId,
+      name: name || "Unknown",
+      phone: phone || null,
+      message: message || "SOS — Emergency assistance needed",
+      lat: gps?.lat ?? null,
+      lng: gps?.lng ?? null,
+      isPwd,
+      pwdDetails: isPwd ? pwdDetails || "Person with disability" : null,
+    };
+    const queueOffline = () => {
+      enqueueSos("/api/sos", body);
+      setPendingCount(OfflineSyncQueue.count());
+      setQueued(true);
+      void requestBackgroundSync(BG_SYNC_TAGS.sos);
+    };
     try {
       const res = await fetch("/api/sos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name || "Unknown",
-          phone: phone || null,
-          message: message || "SOS — Emergency assistance needed",
-          lat: gps?.lat ?? null,
-          lng: gps?.lng ?? null,
-          isPwd,
-          pwdDetails: isPwd ? pwdDetails || "Person with disability" : null,
-        }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
+        // Offline or server-unreachable with a queued-capable body: keep the
+        // signal on-device instead of discarding it. Anything else surfaces
+        // the honest error (e.g. validation) without queueing.
+        if (!navigator.onLine || res.status === 503) {
+          queueOffline();
+          return;
+        }
         setSosError(
           data.error ??
             "SOS could not be recorded. Call your local emergency number now.",
@@ -97,11 +142,33 @@ export default function SosPage() {
       setSosId(data.sosId);
       setSubmitted(true);
     } catch {
-      setSosError("SOS could not be sent. Call your local emergency number now.");
+      // Network failure (airplane mode, backhaul cut): queue, don't drop.
+      queueOffline();
     } finally {
       setSubmitting(false);
     }
   }
+
+  // Phase 1: GPS-first — capture the fix on mount so the payload is ready
+  // before the user taps SEND. GPS is a receiver, not a subscriber: this
+  // works with zero connectivity.
+  useEffect(() => {
+    captureLocation();
+    setPendingCount(OfflineSyncQueue.count());
+    // Auto-flush the outbox the moment connectivity returns.
+    const flush = async () => {
+      const res = await OfflineSyncQueue.syncAll();
+      setPendingCount(OfflineSyncQueue.count());
+      if (res.synced > 0) {
+        setQueued(false);
+        setSubmitted(true);
+      }
+    };
+    const onOnline = () => void flush();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (submitted) {
     return (
@@ -129,9 +196,14 @@ export default function SosPage() {
               available if it is safe to do so.
             </p>
           </div>
+          {/* Phase 2: relay surfaces survive even a recorded SOS — the control
+              room may still be unreachable from the victim's side. */}
+          {codec && <SosCodecPanel code={codec} />}
           <button
             onClick={() => {
               setSubmitted(false);
+              setQueued(false);
+              setCodec(null);
               setSosId(null);
               setName("");
               setPhone("");
@@ -287,6 +359,25 @@ export default function SosPage() {
             </div>
             {gpsError && <p className="text-xs text-amber-400">{gpsError}</p>}
           </div>
+
+          {/* Phase 1: queued-locally banner — on-device only, NOT delivered. */}
+          {queued && !submitted && (
+            <div
+              role="status"
+              className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 space-y-1"
+            >
+              <p className="text-sm font-bold text-amber-300">
+                SOS queued on this device — not delivered yet.
+              </p>
+              <p className="text-xs text-amber-200/70">
+                {pendingCount > 0
+                  ? `${pendingCount} SOS waiting. It will send automatically when connectivity returns.`
+                  : "It will send automatically when connectivity returns."}{" "}
+                Call your local emergency number now if you can.
+              </p>
+            </div>
+          )}
+          {queued && !submitted && codec && <SosCodecPanel code={codec} />}
 
           {sosError && (
             <p

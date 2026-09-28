@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Siren, X, MapPin, User, Clock } from "lucide-react";
-import { OfflineSyncQueue } from "@/lib/field-offline";
+import { OfflineSyncQueue, buildSosClientId } from "@/lib/field-offline";
 
 const RESPONDER_NAME = "Sunita Das · Team Alpha";
 const HOLD_MS = 2000;
@@ -13,6 +13,7 @@ type SosPayload = {
   lat: number;
   lng: number;
   at: string;
+  clientId: string;
 };
 
 export default function SosPanicModal() {
@@ -82,6 +83,8 @@ export default function SosPanicModal() {
       lat: coords.lat,
       lng: coords.lng,
       at: new Date().toISOString(),
+      // Phase 1: replay-safe — outbox/Background-Sync retries dedupe server-side.
+      clientId: buildSosClientId(),
     };
     try {
       const res = await fetch("/api/field/sos", {

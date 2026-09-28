@@ -4,8 +4,17 @@
 
 import type { CapAlert, FmStation } from "@prisma/client";
 
-/** The four dispatch strategies + future IVR. */
-export type DispatchStrategyName = "cap_api" | "rds" | "ftp" | "email" | "ivr";
+/** The dispatch strategies: station APIs + area-wide emergency channels. */
+export type DispatchStrategyName =
+  | "cap_api"
+  | "rds"
+  | "ftp"
+  | "email"
+  | "ivr"
+  | "eas"
+  | "playout"
+  | "cell_broadcast"
+  | "siren";
 
 /** Outcome of a single strategy send attempt. */
 export interface DispatchResult {
@@ -35,6 +44,10 @@ export interface DispatchContext {
   headline: string;
   /** Short RDS-friendly one-liner built from the alert. */
   rdsText: string;
+  /** Affected district (from the DisasterEvent) — drives SAME area codes. */
+  district?: string;
+  /** Disaster type (from the DisasterEvent) — drives SAME event codes. */
+  disasterType?: string;
 }
 
 /** The strategy contract — one implementation per delivery channel. */

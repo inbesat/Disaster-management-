@@ -19,7 +19,6 @@ type CarouselCard = {
   riskLabel: string;
 };
 
-const PATNA = { lat: 25.5941, lng: 85.1376 };
 
 const CONDITION_ICON: Record<ForecastDay["condition"], LucideIcon> = {
   storm: CloudLightning,
@@ -41,17 +40,19 @@ function shortDate(iso: string): string {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
-export function WeatherCarousel() {
+export function WeatherCarousel({ lat = 25.5941, lng = 85.1376 }: { lat?: number; lng?: number }) {
   const [cards, setCards] = useState<CarouselCard[] | null>(null); // null = loading
   const [live, setLive] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    setCards(null);
+    setLive(false);
     async function load() {
       try {
         const res = await fetch(
-          `/api/weather/forecast?lat=${PATNA.lat}&lng=${PATNA.lng}`,
+          `/api/weather/forecast?lat=${lat}&lng=${lng}`,
           { signal: AbortSignal.timeout(12_000) },
         );
         const body = (await res.json().catch(() => ({}))) as {
@@ -87,7 +88,7 @@ export function WeatherCarousel() {
       if (timerRef.current) window.clearInterval(timerRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [lat, lng]);
 
   const heading = useMemo(
     () => (

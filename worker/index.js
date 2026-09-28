@@ -240,8 +240,8 @@ self.addEventListener("notificationclick", (event) => {
 const SYNC_TAG = "disasterlink-sync";
 const SYNC_MSG = "drip:sync:request";
 
-// One-shot background sync tags registered from the page (Phase 7).
-const BG_SYNC_TAGS = ["sync-predictions", "sync-alerts"];
+// One-shot background sync tags registered from the page (Phase 7 + offline SOS queue).
+const BG_SYNC_TAGS = ["sync-predictions", "sync-alerts", "sync-sos"];
 
 function relaySyncRequest() {
   self.clients

@@ -736,6 +736,11 @@ model FmStation {
   emailAddress          String?                               @map("email_address")
   rdsEnabled            Boolean                               @default(false) @map("rds_enabled")
   rdsApiEndpoint        String?                               @map("rds_api_endpoint")
+  // Playout injection (Strategy G) — per-station automation REST endpoint
+  // (Audemat/Axia, ENPS gateway). Null → shared PLAYOUT_GATEWAY_URL.
+  playoutEndpoint       String?                               @map("playout_endpoint")
+  // SAME area-code override for the EAS gateway (else derived from city).
+  easAreaCode           String?                               @map("eas_area_code")
   isActive              Boolean                               @default(true) @map("is_active")
   createdAt             DateTime                              @default(now()) @map("created_at") @db.Timestamptz
   updatedAt             DateTime                              @updatedAt @map("updated_at") @db.Timestamptz
@@ -825,6 +830,45 @@ model CapAlert {
   @@index([status])
   broadcastLogs       FmBroadcastLog[]
   @@map("cap_alerts")
+}
+
+// ---------------------------------------------------------------------
+// siren_towers + siren_activations — outdoor warning siren network.
+// Towers are district-scoped physical assets (GSM/relay controllers);
+// activations record every trigger with the two-person confirmation
+// count (network blasts require 2). Mirrors supabase migration 0035.
+// ---------------------------------------------------------------------
+model SirenTower {
+  id               String    @id @default(uuid()) @db.Uuid
+  name             String
+  location         String
+  district         String?
+  status           String    @default("online") // online | malfunction | sounding | offline
+  coverageRadiusM  Int       @default(500) @map("coverage_radius_m")
+  controllerPhone  String?   @map("controller_phone")
+  lat              Float?
+  lng              Float?
+  lastTestedAt     DateTime? @map("last_tested_at") @db.Timestamptz
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([district, status])
+  @@map("siren_towers")
+}
+
+model SirenActivation {
+  id            String   @id @default(uuid()) @db.Uuid
+  district      String?
+  towerIds      String[] @map("tower_ids")
+  status        String   @default("sounding") // sounding | partial | failed | stood_down
+  confirmations Int      @default(0)
+  decidedBy     String?  @map("decided_by") @db.Uuid
+  alertId       String?  @map("alert_id")
+  testMode      Boolean  @default(false) @map("test_mode")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([district, createdAt])
+  @@map("siren_activations")
 }
 
 // ---------------------------------------------------------------------

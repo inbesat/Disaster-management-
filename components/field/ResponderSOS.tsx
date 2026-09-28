@@ -20,7 +20,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Siren, Phone, ChevronRight, MapPin } from "lucide-react";
 import toast from "react-hot-toast";
 import { triggerCriticalHaptic, triggerLightHaptic } from "@/hooks/useHaptics";
-import { OfflineSyncQueue } from "@/lib/field-offline";
+import { OfflineSyncQueue, buildSosClientId } from "@/lib/field-offline";
 
 const RESPONDER = "Sunita Das · Team Alpha · NDRF";
 
@@ -89,6 +89,8 @@ export default function ResponderSOS() {
       lat: coords.lat,
       lng: coords.lng,
       at: new Date().toISOString(),
+      // Phase 1: replay-safe — outbox retries dedupe server-side.
+      clientId: buildSosClientId(),
     };
     try {
       const res = await fetch("/api/field/sos", {

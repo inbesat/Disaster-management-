@@ -17,6 +17,7 @@ import { ArrowRight, Bot, Sparkles } from "lucide-react";
 
 // Single edit point — pill copy ↔ ?q= prefill stay in sync.
 const PROMPTS = [
+  { text: "Build my complete safety plan", q: "Create my complete household flood preparedness and evacuation plan." },
   { text: "What should I pack?", q: "What should I pack?" },
   { text: "Is my route safe?", q: "Is my route safe?" },
 ];
@@ -46,8 +47,8 @@ export function AITeaser() {
             </span>
           </h2>
           <p className="mt-0.5 text-sm leading-relaxed text-[var(--dl-text-muted)]">
-            Ask the AI Safety Assistant about your area — packing, routes,
-            shelters. No question is too small.
+            Create a household plan using the local outlook: what to do now,
+            packing, shelter options, route checks and family needs.
           </p>
         </div>
       </div>

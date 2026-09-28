@@ -7,12 +7,17 @@
 //   2. Find the FM stations whose coverage reaches the disaster zone
 //      (Phase 1 geospatial lookup; district-centroid fallback).
 //   3. Reuse the generated CAP XML + voiced MP3 (Phases 2–3).
-//   4. Walk the digital channel chain per station (cap_api → rds → ftp →
-//      email), then escalate to a single IVR control-room call (Phase 5)
-//      when the whole digital chain fails — AIR stations always escalate.
+//   4. Walk the digital channel chain per station (eas → cap_api →
+//      playout → cell_broadcast → rds → ftp → email → siren), then
+//      escalate to a single IVR control-room call (Phase 5) when the
+//      whole digital chain fails — AIR stations always escalate.
 //   5. Dispatch every station in parallel (Promise.allSettled).
 //   6. Log each attempt to fm_broadcast_logs.
 //   7. Retry failed attempts (max 3, 2-minute backoff).
+//
+// Coverage is fail-closed: unknown geometry resolves to ZERO stations,
+// never to a nationwide blast. Resolution order is PostGIS epicenter →
+// district-centroid haversine → [] (see lib/fm/coverage.ts).
 //
 // Phase 5's fourth trigger — "no response from the station within 3
 // minutes" (a station that accepted but never confirmed) — needs a
@@ -26,13 +31,22 @@
 
 import { prisma } from "@/server/prisma";
 import type { CapAlert, DisasterEvent, FmStation, Prisma } from "@prisma/client";
-import { findStationsInRadius } from "@/lib/fm/find-stations";
 import { MOCK_FM_STATIONS } from "@/lib/fm/mock-stations";
+import {
+  districtCentroid,
+  filterByHaversine,
+  queryCoveringStationIds,
+  readEventEpicenter,
+} from "@/lib/fm/coverage";
 import { CapApiStrategy } from "@/lib/broadcast/strategies/cap-api";
 import { RdsPushStrategy } from "@/lib/broadcast/strategies/rds-push";
 import { FtpDropStrategy } from "@/lib/broadcast/strategies/ftp-drop";
 import { EmailStudioStrategy } from "@/lib/broadcast/strategies/email-studio";
 import { IvrCallStrategy } from "@/lib/broadcast/strategies/ivr-call";
+import { EasGatewayStrategy } from "@/lib/broadcast/strategies/eas-gateway";
+import { PlayoutInjectStrategy } from "@/lib/broadcast/strategies/playout-inject";
+import { CellBroadcastStrategy } from "@/lib/broadcast/strategies/cell-broadcast";
+import { SirenTriggerStrategy } from "@/lib/broadcast/strategies/siren-trigger";
 import { buildEmergencyRdsText, mapCapSeverity } from "@/lib/broadcast/rds-encoder";
 import { selectAllStrategies } from "@/lib/broadcast/strategy-selector";
 import { safeLog } from "@/lib/logger";
@@ -51,21 +65,8 @@ export { parseFtpUrl, type FtpCredentials } from "@/lib/broadcast/strategies/ftp
 const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2 * 60 * 1000;
 
-/** District centroids for the "stations in radius" fallback (WGS84). */
-const DISTRICT_CENTROIDS: Record<string, [number, number]> = {
-  patna: [85.14, 25.59],
-  puri: [85.82, 19.8],
-  bihar: [85.31, 25.1],
-  odisha: [84.35, 20.4],
-  bhagalpur: [86.98, 25.24],
-  muzaffarpur: [85.39, 26.12],
-  munger: [86.47, 25.38],
-  darbhanga: [85.9, 26.15],
-  chennai: [80.27, 13.08],
-  bengaluru: [77.59, 12.97],
-  mumbai: [72.88, 19.08],
-  kolkata: [88.36, 22.57],
-};
+/** Default geofence radius (km) for the PostGIS ST_DWithin lookup. */
+const COVERAGE_RADIUS_KM = 50;
 
 /** Internal shape for one station's finished dispatch (parallel loop). */
 interface StationAttempt {
@@ -159,8 +160,9 @@ export async function dispatchToStations(
   const attempts = await Promise.allSettled(
     stations.map(async (station): Promise<StationAttempt | null> => {
       // 1. Every supported digital channel in priority order
-      //    (cap_api → rds → ftp → email) — each with its own retry budget,
-      //    so a failed CAP API falls through to RDS, FTP, then email.
+      //    (eas → cap_api → playout → cell_broadcast → rds → ftp → email
+      //    → siren) — each with its own retry budget, so a failed EAS
+      //    push falls through to CAP API, playout, RDS, FTP, email…
       const digital = selectAllStrategies(station, strategies).filter(
         (s) => s.name !== "ivr",
       );
@@ -262,14 +264,22 @@ function dryRunResult(strategy: FMDispatchStrategy, _station: FmStation): Dispat
 
 function describeChannel(strategy: FMDispatchStrategy): string {
   switch (strategy.name) {
+    case "eas":
+      return "EAS SAME interrupt";
     case "cap_api":
       return "CAP API push";
+    case "playout":
+      return "playout injection";
+    case "cell_broadcast":
+      return "cell broadcast";
     case "rds":
       return "RDS text scrolling";
     case "ftp":
       return "FTP audio drop";
     case "email":
       return "studio email";
+    case "siren":
+      return "outdoor sirens";
     default:
       return "IVR callback";
   }
@@ -302,7 +312,7 @@ async function writeLog(
   }
 }
 
-/** Resolve station coverage for the event (district centroid fallback). */
+/** Resolve station coverage for the event (PostGIS → centroid → fail-closed). */
 async function findCoveringStations(event: DisasterEvent): Promise<FmStation[]> {
   let stations: FmStation[];
   try {
@@ -317,18 +327,43 @@ async function findCoveringStations(event: DisasterEvent): Promise<FmStation[]> 
     stations = MOCK_FM_STATIONS as unknown as FmStation[];
   }
 
-  // Prefer the district string when we can't read the PostGIS epicenter.
-  const districtKey = (event.district ?? "").trim().toLowerCase();
-  const centroid = DISTRICT_CENTROIDS[districtKey];
-  if (!centroid) return stations; // no geometry signal — all active stations
+  // 1. Best signal: the PostGIS epicenter against coverage_area polygons.
+  const epicenter = await readEventEpicenter(event.id);
+  if (epicenter) {
+    const ids = await queryCoveringStationIds(epicenter, COVERAGE_RADIUS_KM);
+    if (ids) {
+      // Query succeeded (possibly empty) — the index is authoritative.
+      const matchedIds = new Set(ids);
+      return stations.filter((s) => matchedIds.has(s.id));
+    }
+    // PostGIS failed — degrade to haversine around the epicenter.
+    return haversineFilter(stations, epicenter.lat, epicenter.lng);
+  }
 
+  // 2. District centroid fallback (offline/demo path).
+  const centroid = districtCentroid(event.district);
+  if (centroid) {
+    return haversineFilter(stations, centroid.lat, centroid.lng);
+  }
+
+  // 3. No geometry signal — FAIL CLOSED. Broadcasting to every active
+  // station from an unknown location notifies unrelated states; an
+  // operator must set the epicenter/district first. Previously this
+  // returned all stations (nationwide blast).
+  safeLog("warn", "[broadcast] No coverage geometry — failing closed (0 stations)", {
+    metadata: { district: event.district ?? null, eventId: event.id },
+  });
+  return [];
+}
+
+/** Haversine filter over loaded stations (turf great-circle). */
+function haversineFilter(stations: FmStation[], lat: number, lng: number): FmStation[] {
   const plain = stations.map((s) => ({
     ...s,
     lat: s.lat !== null ? Number(s.lat) : null,
     lng: s.lng !== null ? Number(s.lng) : null,
   }));
-
-  const matched = findStationsInRadius(centroid[1], centroid[0], plain, 50);
+  const matched = filterByHaversine(plain, { lat, lng, source: "district" }, COVERAGE_RADIUS_KM);
   const matchedIds = new Set(matched.map((s) => s.id));
   return stations.filter((s) => matchedIds.has(s.id));
 }
@@ -372,6 +407,8 @@ async function buildDispatchContext(
     alertId: capAlert.alertId,
     headline,
     rdsText,
+    district: event.district ?? undefined,
+    disasterType: event.type ?? undefined,
   };
 }
 
@@ -395,10 +432,14 @@ function parseCap(capXml: string): {
 /** The default strategy registry (also used by the route for inspection). */
 export function defaultStrategies(): FMDispatchStrategy[] {
   return [
+    new EasGatewayStrategy(),
     new CapApiStrategy(),
+    new PlayoutInjectStrategy(),
+    new CellBroadcastStrategy(),
     new RdsPushStrategy(),
     new FtpDropStrategy(),
     new EmailStudioStrategy(),
+    new SirenTriggerStrategy(),
     new IvrCallStrategy(),
   ];
 }

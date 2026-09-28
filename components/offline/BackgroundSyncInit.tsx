@@ -26,6 +26,7 @@
 import { useEffect } from "react";
 import { getSyncEngine } from "@/lib/offline-sync/sync-engine";
 import { onSyncRequest, registerSyncJobs } from "@/lib/offline-sync/sw-sync";
+import { OfflineSyncQueue } from "@/lib/field-offline";
 import { createBatteryGate } from "@/lib/perf/battery-gate";
 
 export default function BackgroundSyncInit() {
@@ -35,9 +36,16 @@ export default function BackgroundSyncInit() {
     // Phase 10 · battery-aware sync relay: skip full syncs below 20% charge.
     const gate = createBatteryGate();
 
-    // SW sync-tick relay → full page sync.
+    // SW sync-tick relay → full page sync + SOS outbox replay.
     const unsubscribe = onSyncRequest(async () => {
       if (gate.shouldPauseSync()) return; // dying battery — hold off
+      // Phase 1: a distress signal outranks datasets — replay queued SOS
+      // first so a reconnect delivers SOS before refreshing predictions.
+      try {
+        await OfflineSyncQueue.syncAll();
+      } catch {
+        /* outbox replay is best-effort; the engine sync still runs */
+      }
       await getSyncEngine().fullSync({ force: true });
     });
 

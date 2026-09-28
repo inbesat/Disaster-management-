@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, Bot } from "lucide-react";
 import BottomNav from "@/components/public/BottomNav";
-import ChatInterface from "@/components/ai/ChatInterface";
+import HouseholdPlanner from "@/components/public/HouseholdPlanner";
 
 // ---------------------------------------------------------------------
 // app/public/ai/page.tsx — Phase 2 · Step 9 · AI Safety Assistant,
@@ -14,7 +14,7 @@ import ChatInterface from "@/components/ai/ChatInterface";
 export default function PublicAiPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: { q?: string; district?: string };
 }) {
   const prompt = typeof searchParams.q === "string" ? searchParams.q : null;
 
@@ -43,7 +43,7 @@ export default function PublicAiPage({
             <div>
               <h1 className="text-sm font-bold text-white">AI Safety Assistant</h1>
               <p className="eoc-label text-[var(--dl-text-muted)]">
-                DUAL-MODE · CLOUD + OFFLINE
+                PERSONAL PREPARATION & EVACUATION PLAN
               </p>
             </div>
           </div>
@@ -55,10 +55,7 @@ export default function PublicAiPage({
           </p>
         )}
 
-        {/* Dual-mode chat */}
-        <section className="mt-4 flex h-[calc(100vh-200px)] supports-[height:100dvh]:h-[calc(100dvh-200px)] flex-col rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur">
-          <ChatInterface district="Patna" />
-        </section>
+        <HouseholdPlanner initialQuestion={prompt ?? undefined} initialDistrict={searchParams.district} />
       </div>
 
       <BottomNav />

@@ -7,10 +7,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.safesphere.nativeapp.data.repository.AlertRepository;
-import com.safesphere.nativeapp.data.repository.ResourceRepository;
-import com.safesphere.nativeapp.data.repository.ShelterRepository;
-import com.safesphere.nativeapp.data.repository.UserRepository;
+import com.safesphere.nativeapp.sos.SosSync;
 import com.safesphere.nativeapp.util.ConnectivityMonitor;
 
 import java.util.concurrent.TimeUnit;
@@ -28,14 +25,19 @@ public class SyncWorker extends Worker {
         }
 
         try {
-            // Sync data from server when online
-            // This is a placeholder - actual implementation would call API endpoints
-            // and update local Room database
-            
-            // For demo, we just log that sync ran
+            // Phase 1: drain the SOS outbox (captured/queued → sent_api) before
+            // anything else — a distress signal outranks every other dataset.
+            SosSync.DrainResult sos = SosSync.drainPending(getApplicationContext());
+            android.util.Log.d("SyncWorker",
+                    "SOS drain: delivered=" + sos.delivered
+                            + " failed=" + sos.failed
+                            + " remaining=" + sos.remaining);
+
+            // TODO (Phase 1+): drain remaining datasets (alerts, shelters,
+            // resources) through the same ladder. SOS goes first by design.
             android.util.Log.d("SyncWorker", "Periodic sync executed");
-            
-            return Result.success();
+
+            return sos.remaining > 0 ? Result.retry() : Result.success();
         } catch (Exception e) {
             android.util.Log.e("SyncWorker", "Sync failed", e);
             return Result.retry();
