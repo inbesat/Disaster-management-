@@ -19,27 +19,20 @@
 // ---------------------------------------------------------------------
 
 import {
-  Activity,
   BarChart3,
   Bell,
   Bot,
-  FileText,
-  Heart,
   HeartHandshake,
   LayoutDashboard,
-  Map,
   Monitor,
   PackageOpen,
   Route,
   Satellite,
   Settings,
-  Shield,
   Tent,
-  TriangleAlert,
   UserSearch,
   Users,
   UserCheck,
-  UserX,
   Stethoscope,
   Globe,
 } from "lucide-react";
