@@ -6,7 +6,7 @@
 // A floating, draggable "Dev Tools" window that drives the WHOLE demo from
 // one place — the hotkeys stay, this is the mouse-friendly override.
 //
-//   • Visible ONLY in development mode (NODE_ENV=development). Escape
+//   • Visible only when explicitly opened with ?devtools=1. Escape
 //     hatch: append ?devtools=1 to any URL to force it on in a production
 //     build for rehearsal.
 //   • Master toggles mirror the hidden hotkeys by dispatching the same
@@ -46,7 +46,10 @@ const SCRIPT = [
   { at: 195, text: "Q → QR modal: “Try the Citizen Experience” on their phone." },
   { at: 225, text: "Shift+4 → Q&A drawer: offline, privacy, AI — ready." },
   { at: 255, text: "Shift+0 → reset to the clean hero scenario for the next run." },
-  { at: 285, text: "Close: “Built for Bharat Shakti — prediction to rescue in minutes.”" },
+  {
+    at: 285,
+    text: "Close: “Built for Bharat Shakti — prediction to rescue in minutes.”",
+  },
 ];
 
 const TOTAL_SECONDS = 300;
@@ -71,11 +74,11 @@ export default function DemoOrchestrator({ className = "" }: DevToolsProps) {
   const promptRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  // Dev-only, with a ?devtools=1 escape hatch for rehearsals on a prod build.
+  // Opt-in so the floating panel never covers normal portal controls.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const forced = new URLSearchParams(window.location.search).get("devtools") === "1";
-    setVisible(process.env.NODE_ENV === "development" || forced);
+    setVisible(forced);
     setCollapsed(window.matchMedia("(max-width: 639px)").matches);
   }, [pathname]);
 
@@ -201,9 +204,24 @@ export default function DemoOrchestrator({ className = "" }: DevToolsProps) {
           <>
             {/* Master toggles */}
             <div className="grid grid-cols-2 gap-2 p-3">
-              {toggleButton("Metric Animation", <Activity className="h-3.5 w-3.5" aria-hidden />, metricsOn, () => fire("demo:toggle-impact"))}
-              {toggleButton("Show QR Code", <QrCode className="h-3.5 w-3.5" aria-hidden />, qrOn, () => fire("demo:toggle-qr"))}
-              {toggleButton("Q&A Drawer", <MessagesSquare className="h-3.5 w-3.5" aria-hidden />, qaOn, () => fire("demo:toggle-qa"))}
+              {toggleButton(
+                "Metric Animation",
+                <Activity className="h-3.5 w-3.5" aria-hidden />,
+                metricsOn,
+                () => fire("demo:toggle-impact"),
+              )}
+              {toggleButton(
+                "Show QR Code",
+                <QrCode className="h-3.5 w-3.5" aria-hidden />,
+                qrOn,
+                () => fire("demo:toggle-qr"),
+              )}
+              {toggleButton(
+                "Q&A Drawer",
+                <MessagesSquare className="h-3.5 w-3.5" aria-hidden />,
+                qaOn,
+                () => fire("demo:toggle-qa"),
+              )}
               <button
                 type="button"
                 onClick={() => fire("demo:reset")}
@@ -211,7 +229,10 @@ export default function DemoOrchestrator({ className = "" }: DevToolsProps) {
                 className="flex flex-col items-start gap-1 rounded-lg border border-rose-400/50 bg-rose-500/15 px-3 py-2.5 text-left text-rose-200 transition hover:bg-rose-500/25 active:scale-[0.97] disabled:opacity-60"
               >
                 <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide">
-                  <RotateCcw className={`h-3.5 w-3.5 ${resetting ? "animate-spin" : ""}`} aria-hidden />
+                  <RotateCcw
+                    className={`h-3.5 w-3.5 ${resetting ? "animate-spin" : ""}`}
+                    aria-hidden
+                  />
                   Reset DB
                 </span>
                 <span className="text-[9px] text-rose-300/70">

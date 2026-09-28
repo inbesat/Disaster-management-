@@ -167,7 +167,7 @@ describe("resolveNovaReply — cloud-first fallback chain", () => {
     // Explicitly ensure online
     Object.defineProperty(navigator, "onLine", { value: true, configurable: true });
 
-    const result = await resolveNovaReply(
+    await resolveNovaReply(
       "hello",
       history,
       undefined,

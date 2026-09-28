@@ -21,7 +21,8 @@ import SourcesAccordion, {
 import TypingIndicator from "@/components/ai/TypingIndicator";
 import MessageActions from "@/components/ai/MessageActions";
 import QuickActions from "@/components/ai/QuickActions";
-import { readStoredAiSettings } from "@/lib/settings/ai-settings";
+import { readChatPreferences } from "@/lib/settings/chat-preferences";
+import ChatInputBar from "@/components/ai/ChatInputBar";
 
 // ---------------------------------------------------------------------
 // Chat persistence — the evacuation plan must survive a page refresh.
@@ -336,12 +337,12 @@ function OperationContextPanel({ tokensLeft }: { tokensLeft: number }) {
 }
 
 export default function AiPlannerPage() {
-  const [loadedMessages] = useState<UIMessage[]>(() => loadStoredMessages());
+  const [historyReady, setHistoryReady] = useState(false);
   const { status, messages, setMessages, sendMessage, error } = useChat({
     // AI SDK v7: the endpoint is set on the transport (no top-level `api`).
     // Securely calling the local Next.js backend API route to bypass CORS and hide API keys
     transport: new DefaultChatTransport({ api: "/api/chat" }),
-    messages: loadedMessages,
+    messages: [],
     // Surface backend failures (missing API key → 500, rate limit → 429,
     // provider outage → 502) in the browser console instead of failing
     // silently in the UI.
@@ -350,14 +351,21 @@ export default function AiPlannerPage() {
     },
   });
 
-  // Persist every change to the conversation back to localStorage.
+  // Load after hydration so saved browser messages do not disagree with SSR.
   useEffect(() => {
+    setMessages(loadStoredMessages());
+    setHistoryReady(true);
+  }, [setMessages]);
+
+  // Do not overwrite saved history with the initial empty server render.
+  useEffect(() => {
+    if (!historyReady) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
     } catch {
       // storage full / unavailable — non-fatal
     }
-  }, [messages]);
+  }, [messages, historyReady]);
 
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -398,19 +406,18 @@ export default function AiPlannerPage() {
 
   const submit = (text: string) => {
     const value = text.trim();
-    if (!value || isLoading || rateLimited) return;
+    if (!historyReady || !value || isLoading || rateLimited) return;
     setQueriesRemaining((q) => Math.max(0, q - 1));
     // Step 8 — pass the currently-viewed district as hidden context so the
     // AI knows where the commander is looking. Settings · AI → provider
     // preference (non-secret) rides along so the planner honors the
     // operator-chosen provider on the server.
-    const stored = readStoredAiSettings();
     void sendMessage(
       { text: value },
       {
         body: {
           currentDistrict: CURRENT_DISTRICT,
-          provider: stored?.provider,
+          ...readChatPreferences(),
         },
       },
     );
@@ -419,8 +426,8 @@ export default function AiPlannerPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col gap-4 overflow-hidden p-4 lg:flex-row">
-      <main className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-xl shadow-black/40">
+    <div className="flex h-[calc(100dvh-64px)] flex-col gap-4 overflow-hidden p-4 lg:flex-row">
+      <main className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 shadow-xl shadow-black/40">
         <header className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
           <div className="flex items-center gap-3">
             <span className="relative flex h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_10px_2px_rgba(239,68,68,0.6)]" />
@@ -565,51 +572,18 @@ export default function AiPlannerPage() {
             </div>
           )}
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submit(input);
-            }}
-            className="flex items-end gap-3"
-          >
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  submit(input);
-                }
-              }}
-              rows={1}
-              disabled={rateLimited}
-              placeholder={
-                rateLimited
-                  ? "Rate limit reached — please wait…"
-                  : "Ask about flood zones, shelter capacity, or a 48-hour plan…"
-              }
-              className="max-h-40 min-h-[48px] flex-1 resize-none rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-red-500/60 focus:ring-2 focus:ring-red-500/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || rateLimited || !input.trim()}
-              className="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-xl bg-red-600 text-white shadow-lg shadow-red-600/30 transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M22 2 11 13" />
-                <path d="M22 2 15 22l-4-9-9-4Z" />
-              </svg>
-            </button>
-          </form>
+          <ChatInputBar
+            value={input}
+            onChange={setInput}
+            onSend={() => submit(input)}
+            isProcessing={isLoading}
+            disabled={rateLimited || !historyReady}
+            placeholder={
+              rateLimited
+                ? "Please wait before sending another request…"
+                : "Ask about flood zones, shelter capacity, or a 48-hour plan…"
+            }
+          />
 
           {error && (
             <p className="mt-2 text-[11px] text-red-400">{describePlannerError(error)}</p>

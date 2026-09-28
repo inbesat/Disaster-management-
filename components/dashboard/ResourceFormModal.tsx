@@ -2,25 +2,13 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
+import type { InventoryResource } from "@/app/actions/resources";
+import { useInventoryActions } from "./InventoryProvider";
 import {
-  addResource,
-  updateResource,
-  deleteResource,
-  type InventoryResource,
-} from "@/app/actions/resources";
-
-const CATEGORIES = [
-  "boat",
-  "food",
-  "medical",
-  "water",
-  "personnel",
-  "vehicle",
-  "communication",
-  "power",
-  "other",
-];
-const STATUSES = ["available", "deployed", "maintenance"];
+  RESOURCE_CATEGORIES as CATEGORIES,
+  RESOURCE_STATUSES as STATUSES,
+  resourceInputError,
+} from "@/lib/inventory/model";
 
 type ResourceFormModalProps = {
   onClose: () => void;
@@ -35,8 +23,10 @@ export default function ResourceFormModal({
   onDeleted,
   resource,
 }: ResourceFormModalProps) {
+  const { addResource, updateResource, deleteResource } = useInventoryActions();
   const editing = Boolean(resource);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     name: resource?.name ?? "",
     category: resource?.category ?? "boat",
@@ -53,10 +43,12 @@ export default function ResourceFormModal({
   }
 
   async function handleSubmit() {
-    if (!form.name.trim()) {
-      toast.error("Resource name is required.");
+    const validation = resourceInputError(form);
+    if (validation) {
+      setError(validation);
       return;
     }
+    setError("");
     setSaving(true);
     try {
       const ok = editing
@@ -67,8 +59,10 @@ export default function ResourceFormModal({
         onSaved();
         onClose();
       } else {
-        toast.error("Could not save the resource. Please try again.");
+        setError("Could not save the resource. Check the connection and try again.");
       }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save the resource.");
     } finally {
       setSaving(false);
     }
@@ -84,8 +78,10 @@ export default function ResourceFormModal({
         onDeleted?.();
         onClose();
       } else {
-        toast.error("Could not delete the resource.");
+        setError("Could not delete the resource. Please retry.");
       }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not delete the resource.");
     } finally {
       setSaving(false);
     }
@@ -96,8 +92,20 @@ export default function ResourceFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-eoc border border-border bg-surface p-6 shadow-2xl">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={() => !saving && onClose()}
+      />
+      <form
+        role="dialog"
+        aria-modal="true"
+        aria-label={editing ? "Edit resource" : "Add resource"}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit();
+        }}
+        className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-eoc border border-border bg-surface p-6 shadow-2xl"
+      >
         <div className="flex items-start justify-between">
           <div>
             <p className="eoc-label text-accent">
@@ -110,6 +118,7 @@ export default function ResourceFormModal({
           <button
             type="button"
             onClick={onClose}
+            disabled={saving}
             className="rounded-md border border-border px-2 py-1 text-xs text-slate-400 hover:text-foreground"
           >
             Close
@@ -118,8 +127,12 @@ export default function ResourceFormModal({
 
         <div className="mt-5 space-y-4">
           <div>
-            <label className="eoc-label mb-1 block">Resource name *</label>
+            <label htmlFor="resource-name" className="eoc-label mb-1 block">
+              Resource name *
+            </label>
             <input
+              id="resource-name"
+              required
               className={inputCls}
               value={form.name}
               onChange={(e) => set("name", e.target.value)}
@@ -129,8 +142,11 @@ export default function ResourceFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="eoc-label mb-1 block">Category</label>
+              <label htmlFor="resource-category" className="eoc-label mb-1 block">
+                Category
+              </label>
               <select
+                id="resource-category"
                 className={inputCls}
                 value={form.category}
                 onChange={(e) => set("category", e.target.value)}
@@ -143,8 +159,11 @@ export default function ResourceFormModal({
               </select>
             </div>
             <div>
-              <label className="eoc-label mb-1 block">Status</label>
+              <label htmlFor="resource-status" className="eoc-label mb-1 block">
+                Status
+              </label>
               <select
+                id="resource-status"
                 className={inputCls}
                 value={form.status}
                 onChange={(e) => set("status", e.target.value)}
@@ -160,8 +179,11 @@ export default function ResourceFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="eoc-label mb-1 block">Quantity</label>
+              <label htmlFor="resource-quantity" className="eoc-label mb-1 block">
+                Quantity
+              </label>
               <input
+                id="resource-quantity"
                 type="number"
                 min={0}
                 className={inputCls}
@@ -170,8 +192,11 @@ export default function ResourceFormModal({
               />
             </div>
             <div>
-              <label className="eoc-label mb-1 block">Unit</label>
+              <label htmlFor="resource-unit" className="eoc-label mb-1 block">
+                Unit
+              </label>
               <input
+                id="resource-unit"
                 className={inputCls}
                 value={form.unit}
                 onChange={(e) => set("unit", e.target.value)}
@@ -181,8 +206,11 @@ export default function ResourceFormModal({
           </div>
 
           <div>
-            <label className="eoc-label mb-1 block">Depot / location name</label>
+            <label htmlFor="resource-depot" className="eoc-label mb-1 block">
+              Depot / location name
+            </label>
             <input
+              id="resource-depot"
               className={inputCls}
               value={form.depotName}
               onChange={(e) => set("depotName", e.target.value)}
@@ -192,8 +220,11 @@ export default function ResourceFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="eoc-label mb-1 block">Latitude</label>
+              <label htmlFor="resource-lat" className="eoc-label mb-1 block">
+                Latitude
+              </label>
               <input
+                id="resource-lat"
                 type="number"
                 step="0.0001"
                 className={inputCls}
@@ -202,8 +233,11 @@ export default function ResourceFormModal({
               />
             </div>
             <div>
-              <label className="eoc-label mb-1 block">Longitude</label>
+              <label htmlFor="resource-lng" className="eoc-label mb-1 block">
+                Longitude
+              </label>
               <input
+                id="resource-lng"
                 type="number"
                 step="0.0001"
                 className={inputCls}
@@ -214,6 +248,11 @@ export default function ResourceFormModal({
           </div>
         </div>
 
+        {error && (
+          <p role="alert" className="mt-4 text-sm text-red-300">
+            {error}
+          </p>
+        )}
         <div className="mt-6 flex items-center gap-2">
           {editing && (
             <button
@@ -229,21 +268,21 @@ export default function ResourceFormModal({
             <button
               type="button"
               onClick={onClose}
+              disabled={saving}
               className="rounded-md border border-border px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-foreground"
             >
               Cancel
             </button>
             <button
-              type="button"
+              type="submit"
               disabled={saving}
-              onClick={() => void handleSubmit()}
               className="rounded-md bg-accent px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-glow transition hover:bg-sky-300 disabled:opacity-50"
             >
               {saving ? "Saving…" : editing ? "Save Changes" : "Add Resource"}
             </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

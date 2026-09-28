@@ -9,6 +9,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useCallback } from "react";
+import { readChatPreferences } from "@/lib/settings/chat-preferences";
 
 const WELCOME_CONTENT =
   "Ask me about flood risk, evacuation plans, resource allocation, or scenario modeling for your district.";
@@ -61,20 +62,14 @@ export function ChatThread({ onHistoryToggle }: { onHistoryToggle?: () => void }
   const handleSend = useCallback(() => {
     const text = draft.trim();
     if (!text || status === "submitted" || status === "streaming") return;
-    void sendMessage(
-      { text: text },
-      { body: { currentDistrict: undefined, provider: undefined } },
-    );
+    void sendMessage({ text: text }, { body: { ...readChatPreferences() } });
     setDraft("");
   }, [sendMessage, draft, status]);
 
   const handleToolPrompt = useCallback(
     (prompt: string) => {
       if (status === "submitted" || status === "streaming") return;
-      void sendMessage(
-        { text: prompt },
-        { body: { currentDistrict: undefined, provider: undefined } },
-      );
+      void sendMessage({ text: prompt }, { body: { ...readChatPreferences() } });
     },
     [sendMessage, status],
   );

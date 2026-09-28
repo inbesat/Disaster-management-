@@ -15,6 +15,7 @@
 
 import type { AIProvider, AIResponse, ChatContext, ProviderStatus } from "./types";
 import { estimateTokens } from "./estimate-tokens";
+import { readChatPreferences } from "@/lib/settings/chat-preferences";
 
 /** Default chat endpoint — same route the dashboard AI planner hits. */
 export const DEFAULT_CHAT_ENDPOINT = "/api/chat";
@@ -160,9 +161,10 @@ export class CloudAIProvider implements AIProvider {
         headers: { "Content-Type": "application/json" },
         signal: AbortSignal.timeout(60_000),
         body: JSON.stringify({
+          ...readChatPreferences(),
           messages,
           currentDistrict: context.currentDistrict,
-          provider: context.provider,
+          ...(context.provider ? { provider: context.provider } : {}),
         }),
       });
 

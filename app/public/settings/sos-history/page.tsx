@@ -1,38 +1,48 @@
 "use client";
 
-// ---------------------------------------------------------------------
-// app/public/settings/sos-history/page.tsx — Phase 5 · Step 7 · SOS
-// History & Resolution Log.
-//
-// Documentation of past emergencies for insurance or relief claims: a
-// simple newest-first timeline rendering the mock incidents from
-// lib/mock-data/sos-history.ts (date, incident type, resolution status,
-// location + one-line outcome), with a "Download PDF Report" placeholder
-// for post-disaster documentation.
-// ---------------------------------------------------------------------
-
 import Link from "next/link";
-import {
-  ArrowLeft,
-  CalendarDays,
-  CheckCircle2,
-  FileDown,
-  History,
-} from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, FileDown, History } from "lucide-react";
 import { showToast } from "@/components/ui/Toast";
 import BottomNav from "@/components/public/BottomNav";
-import {
-  SOS_HISTORY,
-  formatSosDate,
-} from "@/lib/mock-data/sos-history";
+import { SOS_HISTORY, formatSosDate } from "@/lib/mock-data/sos-history";
 
 export default function SosHistoryPage() {
-  const downloadPlaceholder = () => {
-    showToast("info", {
-      title: "PDF report coming soon",
-      description: "Your incident history is ready for official documentation.",
-    });
-  };
+  function printReport() {
+    const popup = window.open("", "_blank", "width=900,height=700");
+    if (!popup) {
+      showToast("error", { title: "Allow pop-ups to open the report" });
+      return;
+    }
+    const escape = (text: string) =>
+      text.replace(
+        /[&<>"']/g,
+        (c) =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+      );
+    popup.document.write(
+      '<!doctype html><html><head><title>SafeSphere · Sample SOS history</title><style>body{font:16px system-ui;margin:40px;line-height:1.6}article{break-inside:avoid;border-bottom:1px solid #ccc;padding:15px 0}@media print{button{display:none}}</style></head><body><h1>SafeSphere · Sample SOS history</h1><p>Illustrative incidents for portal preview. This is not a verified record for insurance or relief claims.</p><button id="print">Print / Save as PDF</button>' +
+        SOS_HISTORY.map(
+          (e) =>
+            "<article><h2>" +
+            escape(e.incidentType) +
+            "</h2><p>" +
+            escape(formatSosDate(e.date)) +
+            " · " +
+            escape(e.status) +
+            "</p><p>" +
+            escape(e.location) +
+            "</p><p>" +
+            escape(e.summary) +
+            "</p></article>",
+        ).join("") +
+        "</body></html>",
+    );
+    popup.document.close();
+    popup.document
+      .getElementById("print")
+      ?.addEventListener("click", () => popup.print());
+    popup.focus();
+  }
 
   return (
     <main className="relative flex min-h-screen flex-col bg-[var(--dl-navy)] pb-[100px] text-[var(--dl-text-on-navy)]">
@@ -55,23 +65,24 @@ export default function SosHistoryPage() {
             </Link>
             <div className="flex items-center gap-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F97316]/20 ring-1 ring-[#F97316]/40">
-                <History aria-hidden="true" className="h-4 w-4 text-[var(--brand-orangeLight)]" />
+                <History
+                  aria-hidden="true"
+                  className="h-4 w-4 text-[var(--brand-orangeLight)]"
+                />
               </span>
               <div>
                 <h1 className="text-base font-bold text-white">SOS History</h1>
-                <p className="eoc-label text-[var(--dl-text-muted)]">
-                  RESOLUTION LOG
-                </p>
+                <p className="eoc-label text-[var(--dl-text-muted)]">RESOLUTION LOG</p>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Download PDF placeholder */}
+        {/* Printable history */}
         <section className="mt-5">
           <button
             type="button"
-            onClick={downloadPlaceholder}
+            onClick={printReport}
             className="flex w-full items-center gap-3 rounded-[var(--dl-radius-sm)] border border-severity-green-500/40 bg-severity-green-500/10 px-4 py-3.5 text-left transition hover:bg-severity-green-500/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-severity-green-400"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-severity-green-500/15 ring-1 ring-severity-green-500/40">
@@ -79,10 +90,10 @@ export default function SosHistoryPage() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-bold text-white">
-                Download PDF Report
+                Print / Save PDF Report
               </span>
               <span className="block text-xs text-[var(--dl-text-muted)]">
-                Full incident history for insurance &amp; relief claims
+                Open a printable copy of the sample timeline
               </span>
             </span>
           </button>
@@ -90,7 +101,7 @@ export default function SosHistoryPage() {
 
         {/* Timeline */}
         <section className="mt-6">
-          <p className="eoc-label text-[var(--dl-text-muted)]">PAST INCIDENTS</p>
+          <p className="eoc-label text-[var(--dl-text-muted)]">SAMPLE INCIDENTS</p>
           <ol className="relative mt-3 space-y-3 border-l border-white/10 pl-5">
             {SOS_HISTORY.map((entry) => (
               <li key={entry.id} className="relative">
@@ -135,7 +146,7 @@ export default function SosHistoryPage() {
         </section>
 
         <p className="mt-6 text-center text-[0.6875rem] text-[var(--dl-text-muted)]">
-          Keep this log for insurance and relief documentation.
+          Sample incidents shown for preview; no verified SOS history has been loaded.
         </p>
       </div>
 

@@ -67,8 +67,8 @@ export function DashboardTopBar({
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-subtle bg-secondary px-4">
-      <div className="flex min-w-0 items-center gap-2">
+    <header className="sticky top-0 z-30 flex h-14 min-w-0 items-center justify-between gap-2 border-b border-subtle bg-secondary px-3 sm:px-4">
+      <div className="flex shrink-0 items-center gap-2">
         <BackButton />
       </div>
 
@@ -77,7 +77,7 @@ export function DashboardTopBar({
           clock alone lives on the admin-only /dashboard route). timeClassName
           keeps it readable when the top bar re-themes in day-ops. Hidden
           below md where the right utility cluster crowds it. */}
-      <div className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-4">
+      <div className="flex min-w-0 items-center gap-2 2xl:gap-3">
         {/* Identity — avatar + name (mirrors the old Navbar layout) */}
         <div className="flex items-center gap-2.5">
           {guest ? (
@@ -91,7 +91,7 @@ export function DashboardTopBar({
             <NavbarAvatar serverAvatarUrl={avatarUrl} displayName={displayName} />
           )}
 
-          <span className="hidden text-left leading-tight sm:block">
+          <span className="hidden max-w-44 truncate text-left leading-tight 2xl:block">
             <span className="block text-sm font-semibold text-primary">
               {displayName}
             </span>
@@ -105,12 +105,14 @@ export function DashboardTopBar({
           </span>
         </div>
 
-        <div className="hidden md:block">
+        <div className="hidden xl:block">
           <SyncStatus />
         </div>
-        <div className="hidden sm:block"><PresenceIndicators /></div>
+        <div className="hidden 2xl:block">
+          <PresenceIndicators />
+        </div>
         <NotificationCenter />
-        <div className="hidden md:block">
+        <div className="hidden xl:block">
           <PushNotificationToggle />
         </div>
 
@@ -125,8 +127,12 @@ export function DashboardTopBar({
         </Link>
 
         {/* Phase 25 · Step 4 — multilingual selector (23 languages) */}
-        <div className="sm:hidden"><LanguageSelector compact /></div>
-        <div className="hidden sm:block"><LanguageSelector /></div>
+        <div className="lg:hidden">
+          <LanguageSelector compact />
+        </div>
+        <div className="hidden lg:block">
+          <LanguageSelector />
+        </div>
 
         {/* ThemeToggle removed for demo day — dark mode is LOCKED via
             ThemeProvider forcedTheme="dark". */}
@@ -148,7 +154,7 @@ export function DashboardTopBar({
             e.preventDefault();
             void handleSignOut();
           }}
-          className="ml-1 hidden border-l border-border pl-4 sm:block"
+          className="ml-1 hidden border-l border-border pl-3 lg:block"
         >
           <button
             type="submit"

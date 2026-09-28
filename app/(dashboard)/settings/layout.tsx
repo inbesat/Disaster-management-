@@ -77,11 +77,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)] w-full bg-[var(--bg-primary)] text-foreground">
+    <div className="flex h-[calc(100dvh-56px)] min-w-0 w-full flex-col bg-[var(--bg-primary)] text-foreground">
       {/* Mobile: horizontal category tab bar */}
       <nav
         aria-label="Settings categories"
-        className="sticky top-0 z-20 flex gap-1.5 overflow-x-auto border-b border-subtle bg-[var(--bg-primary)] px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden"
+        className="sticky top-0 z-20 flex shrink-0 gap-1.5 overflow-x-auto border-b border-subtle bg-[var(--bg-primary)] px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden"
       >
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
@@ -105,7 +105,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       </nav>
 
       {/* Desktop: sticky sidebar */}
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 min-w-0 flex-1">
         <aside className="hidden w-72 shrink-0 flex-col border-r border-subtle bg-[var(--bg-primary)] lg:flex">
           <div className="border-b border-subtle px-4 py-4">
             <p className="text-xs font-bold uppercase tracking-widest text-muted">
@@ -132,7 +132,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
         </aside>
 
         {/* Content column */}
-        <main id="main-content" className="min-h-0 flex-1 overflow-y-auto">
+        <main id="main-content" className="min-h-0 min-w-0 flex-1 overflow-y-auto">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6 p-4 sm:p-6 lg:p-8">
             {children}
           </div>

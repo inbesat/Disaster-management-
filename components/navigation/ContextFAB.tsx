@@ -23,7 +23,7 @@
 // -------------------------------------------------------------------------
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckSquare, MapPinPlus, MessageSquare, type LucideIcon } from "lucide-react";
 import { triggerLightHaptic } from "@/hooks/useHaptics";
@@ -36,28 +36,27 @@ type FabTask = {
   icon: LucideIcon;
   /** Tooltip / aria label. */
   label: string;
-  /** Placeholder message until the real handler lands. */
-  message: string;
+  href: string;
 };
 
 const FAB_TASKS: FabTask[] = [
   {
     route: "/map",
     icon: MapPinPlus,
-    label: "Add Shelter",
-    message: "Add Shelter — opening form…",
+    label: "Update shelter",
+    href: "/shelter-update",
   },
   {
     route: "/team",
     icon: CheckSquare,
-    label: "Mark Attendance",
-    message: "Mark Attendance — opening roll-call…",
+    label: "Responder profile",
+    href: "/portal/profile",
   },
   {
     route: "/chat",
     icon: MessageSquare,
     label: "New Message",
-    message: "New Message — opening chat…",
+    href: "/ai-advisor",
   },
 ];
 
@@ -67,6 +66,7 @@ function taskForPath(pathname: string): FabTask | null {
 }
 
 export function ContextFAB() {
+  const router = useRouter();
   const pathname = usePathname() ?? "";
   const [active, setActive] = useState<FabTask | null>(null);
 
@@ -78,8 +78,7 @@ export function ContextFAB() {
   const trigger = () => {
     if (!active) return;
     triggerLightHaptic(); // physical confirmation of the tap
-    // Placeholder — the real action handlers land in a later route step.
-    window.alert(active.message);
+    router.push(active.href);
   };
 
   return (

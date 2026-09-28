@@ -725,3 +725,16 @@ Please make sure your database server is running at `db.yznlvqiivefxbpqiaxce.sup
     code: 'UND_ERR_CONNECT_TIMEOUT'
   }
 }
+Error: ENOENT: no such file or directory, open 'E:\Hackathons\disaster management\disaster-response-platform\.next\server\middleware\middleware-manifest.json'
+    at async open (node:internal/fs/promises:640:25)
+    at async readFile (node:internal/fs/promises:1283:14)
+    at async readPartialManifest (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\server\dev\turbopack\manifest-loader.js:28:23)
+    at async TurbopackManifestLoader.loadMiddlewareManifest (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\server\dev\turbopack\manifest-loader.js:237:155)
+    at async processMiddleware (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\server\dev\turbopack-utils.js:590:13)
+    at async handleEntrypoints (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\server\dev\turbopack-utils.js:600:9)
+    at async handleEntrypointsSubscription (E:\Hackathons\disaster management\disaster-response-platform\node_modules\.pnpm\next@14.2.35_@babel+core@7._0cfecabe793a3c51741eeb92ed2c3d83\node_modules\next\dist\server\dev\hot-reloader-turbopack.js:358:13) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'E:\\Hackathons\\disaster management\\disaster-response-platform\\.next\\server\\middleware\\middleware-manifest.json'
+}

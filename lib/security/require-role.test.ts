@@ -57,6 +57,10 @@ afterEach(() => {
 });
 
 describe("cookie-only demo mode (no Supabase env)", () => {
+  beforeEach(() => {
+    cookieStore.set("demo_mode", "true");
+    cookieStore.set("demo_session_id", "audit-demo-session");
+  });
   it("admits a gov role cookie against the allow-list", async () => {
     cookieStore.set("role", "district_admin");
     const result = await requireRole(GOV_ROLES);
@@ -98,6 +102,12 @@ describe("cookie-only demo mode (no Supabase env)", () => {
     cookieStore.set("role", "super_admin");
     expect((await requireRole(["super_admin"])).ok).toBe(true);
   });
+
+  it("requires the session cookie that demo login creates", async () => {
+    cookieStore.set("role", "district_admin");
+    cookieStore.delete("demo_session_id");
+    expect((await requireRole(GOV_ROLES)).ok).toBe(false);
+  });
 });
 
 describe("Supabase mode (env configured)", () => {
@@ -130,6 +140,8 @@ describe("Supabase mode (env configured)", () => {
 
   it("admits an explicitly enabled demo cookie session", async () => {
     vi.stubEnv("DEMO_AUTH_ENABLED", "true");
+    cookieStore.set("demo_mode", "true");
+    cookieStore.set("demo_session_id", "audit-demo-session");
     // govDemoLogin / govLogin write only cookies; the middleware and admin
     // layout accept that session, so the API guard must too.
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });

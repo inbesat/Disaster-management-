@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useChartVisibility } from "@/lib/perf/chart-utils";
+import { useMemo } from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -15,7 +14,8 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { getInventory, type InventoryResource } from "@/app/actions/resources";
+import type { InventoryResource } from "@/app/actions/resources";
+import { inventoryChartData } from "@/lib/inventory/model";
 
 const CATEGORY_COLORS: Record<string, string> = {
   boat: "#38bdf8",
@@ -26,79 +26,61 @@ const CATEGORY_COLORS: Record<string, string> = {
   vehicle: "#34d399",
   communication: "#22d3ee",
   power: "#fb923c",
+  shelter: "#c084fc",
 };
 
 const STATUS_COLORS: Record<string, string> = {
   available: "#34d399",
   deployed: "#fbbf24",
   maintenance: "#f87171",
+  retired: "#64748b",
 };
 
-type CategorySlice = { name: string; value: number };
-type CategoryBars = {
-  category: string;
-  available: number;
-  deployed: number;
-  maintenance: number;
-};
-
-/** Aggregate resources into category → slice / status-stacked shapes. */
-function buildChartData(
-  resources: { category: string; quantity: number; status: string }[],
-) {
-  const buckets: Record<string, CategoryBars> = {};
-  for (const r of resources) {
-    const key = r.category;
-    const bucket = buckets[key] ?? {
-      category: r.category,
-      available: 0,
-      deployed: 0,
-      maintenance: 0,
-    };
-    if (r.status === "deployed") bucket.deployed += r.quantity;
-    else if (r.status === "maintenance") bucket.maintenance += r.quantity;
-    else bucket.available += r.quantity;
-    buckets[key] = bucket;
-  }
-  const bars: CategoryBars[] = Object.values(buckets).map((b) => ({
-    ...b,
-    category: b.category.charAt(0).toUpperCase() + b.category.slice(1),
-  }));
-  const pie: CategorySlice[] = bars.map((b) => ({
-    name: b.category,
-    value: b.available + b.deployed + b.maintenance,
-  }));
-  return { pie, bars };
-}
-
-export default function InventoryCharts() {
-  const [pie, setPie] = useState<CategorySlice[]>([]);
-  const [bars, setBars] = useState<CategoryBars[]>([]);
-  const isTabVisible = useChartVisibility();
-
-  useEffect(() => {
-    let active = true;
-    getInventory()
-      .then((rows) => {
-        if (!active) return;
-        const { pie: p, bars: b } = buildChartData(rows as InventoryResource[]);
-        setPie(p);
-        setBars(b);
-      })
-      .catch(() => undefined);
-    return () => {
-      active = false;
-    };
-  }, []);
+export default function InventoryCharts({
+  resources,
+  loading = false,
+  unavailable = false,
+}: {
+  resources: InventoryResource[];
+  loading?: boolean;
+  unavailable?: boolean;
+}) {
+  const { pie, bars } = useMemo(() => inventoryChartData(resources), [resources]);
 
   const sliceColor = (name: string) => CATEGORY_COLORS[name.toLowerCase()] ?? "#94a3b8";
+  if (loading || unavailable || pie.length === 0)
+    return (
+      <div className="grid gap-4 md:grid-cols-2">
+        {["Inventory Composition", "Available vs Deployed"].map((title) => (
+          <section
+            key={title}
+            className="rounded-eoc border border-border bg-surface p-5"
+          >
+            <h3 className="text-sm font-bold">{title}</h3>
+            <p
+              role="status"
+              className="flex h-64 items-center justify-center text-sm text-slate-400"
+            >
+              {loading
+                ? "Loading charts…"
+                : unavailable
+                  ? "Charts will return when inventory is available."
+                  : "No stock matches these filters."}
+            </p>
+          </section>
+        ))}
+      </div>
+    );
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="rounded-eoc border border-border bg-surface p-5">
+      <div
+        className="min-w-0 rounded-eoc border border-border bg-surface p-5"
+        aria-label="Inventory composition chart"
+      >
         <p className="eoc-label text-accent">RESOURCES BY CATEGORY</p>
         <h3 className="mt-1 text-sm font-bold">Inventory Composition</h3>
-        <div className="mt-3 h-64">
+        <div className="mt-3 h-80">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -109,7 +91,7 @@ export default function InventoryCharts() {
                 outerRadius={88}
                 paddingAngle={2}
                 stroke="#0b0f19"
-                isAnimationActive={isTabVisible}
+                isAnimationActive={false}
               >
                 {pie.map((entry) => (
                   <Cell key={entry.name} fill={sliceColor(entry.name)} />
@@ -129,19 +111,32 @@ export default function InventoryCharts() {
         </div>
       </div>
 
-      <div className="rounded-eoc border border-border bg-surface p-5">
+      <div
+        className="min-w-0 rounded-eoc border border-border bg-surface p-5"
+        aria-label="Inventory availability chart"
+      >
         <p className="eoc-label text-accent">AVAILABILITY BY CATEGORY</p>
         <h3 className="mt-1 text-sm font-bold">Available vs Deployed</h3>
-        <div className="mt-3 h-64">
+        <div className="mt-3 h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={bars} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+            <BarChart
+              data={bars}
+              layout="vertical"
+              margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis
-                dataKey="category"
+                type="number"
                 stroke="#64748b"
                 tick={{ fill: "#94a3b8", fontSize: 11 }}
               />
-              <YAxis stroke="#64748b" tick={{ fill: "#94a3b8", fontSize: 11 }} />
+              <YAxis
+                type="category"
+                dataKey="category"
+                width={100}
+                stroke="#64748b"
+                tick={{ fill: "#94a3b8", fontSize: 10 }}
+              />
               <Tooltip
                 cursor={{ fill: "rgba(255,255,255,0.04)" }}
                 contentStyle={{
@@ -157,21 +152,28 @@ export default function InventoryCharts() {
                 stackId="a"
                 fill={STATUS_COLORS.available}
                 name="Available"
-                isAnimationActive={isTabVisible}
+                isAnimationActive={false}
               />
               <Bar
                 dataKey="deployed"
                 stackId="a"
                 fill={STATUS_COLORS.deployed}
                 name="Deployed"
-                isAnimationActive={isTabVisible}
+                isAnimationActive={false}
               />
               <Bar
                 dataKey="maintenance"
                 stackId="a"
                 fill={STATUS_COLORS.maintenance}
                 name="Maintenance"
-                isAnimationActive={isTabVisible}
+                isAnimationActive={false}
+              />
+              <Bar
+                dataKey="retired"
+                stackId="a"
+                fill={STATUS_COLORS.retired}
+                name="Retired"
+                isAnimationActive={false}
               />
             </BarChart>
           </ResponsiveContainer>
