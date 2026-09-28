@@ -11,11 +11,11 @@
 // All wrapped in SettingsSection with a red "Admin Only" badge on the title.
 // ---------------------------------------------------------------------
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Building2, MapPin, ShieldAlert, Users, Package } from "lucide-react";
 import SettingsSection from "@/components/settings/SettingsSection";
 import Toggle from "@/components/settings/Toggle";
-import { showToast } from "@/components/ui/Toast";
+import Link from "next/link";
 
 type District = {
   id: string;
@@ -59,7 +59,7 @@ const ACTIONS = [
   "Dispatch boats",
   "Modify thresholds",
   "Read audit log",
-  "Invoke 2FA reset",
+  "Review field reports",
 ] as const;
 
 // baseRoles: role index → allowed action flags
@@ -131,6 +131,74 @@ export default function OrganizationSettingsPage() {
   const [districts, setDistricts] = useState<District[]>(DEFAULT_DISTRICTS);
   const [matrix, setMatrix] = useState<boolean[][]>(DEFAULT_MATRIX);
 
+  const [shelterWarning, setShelterWarning] = useState(80);
+  const [lowStock, setLowStock] = useState(20);
+  const [escalation, setEscalation] = useState(30);
+  const [notice, setNotice] = useState("");
+  const [error, setError] = useState("");
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem("safesphere:operations") || "null");
+      if (!data) return;
+      if (
+        Array.isArray(data.districts) &&
+        data.districts.length === DEFAULT_DISTRICTS.length &&
+        data.districts.every(
+          (d: District) =>
+            typeof d.name === "string" &&
+            Number.isFinite(d.warning) &&
+            Number.isFinite(d.critical),
+        )
+      )
+        setDistricts(data.districts);
+      if (
+        Array.isArray(data.matrix) &&
+        data.matrix.length === ROLES.length &&
+        data.matrix.every(
+          (row: unknown) =>
+            Array.isArray(row) &&
+            row.length === ACTIONS.length &&
+            row.every((v) => typeof v === "boolean"),
+        )
+      )
+        setMatrix(data.matrix);
+      if (Number.isFinite(data.lowStock) && data.lowStock >= 5 && data.lowStock <= 50)
+        setLowStock(data.lowStock);
+      if (
+        Number.isFinite(data.shelterWarning) &&
+        data.shelterWarning >= 50 &&
+        data.shelterWarning <= 100
+      )
+        setShelterWarning(data.shelterWarning);
+      if (
+        Number.isFinite(data.escalation) &&
+        data.escalation >= 5 &&
+        data.escalation <= 120
+      )
+        setEscalation(data.escalation);
+    } catch {
+      setError("Saved planning preferences could not be loaded.");
+    }
+  }, []);
+  function save() {
+    if (districts.some((d) => d.warning >= d.critical)) {
+      setError("Each danger mark must be above its warning mark.");
+      return;
+    }
+    try {
+      localStorage.setItem(
+        "safesphere:operations",
+        JSON.stringify({ districts, matrix, shelterWarning, lowStock, escalation }),
+      );
+      setNotice(
+        "Planning preferences saved on this device. The low-stock threshold is applied in Inventory.",
+      );
+      setError("");
+    } catch {
+      setError("Preferences could not be saved. Check browser storage and retry.");
+    }
+  }
+
   const updateDistrict = (id: string, patch: Partial<District>) => {
     setDistricts((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
   };
@@ -156,7 +224,7 @@ export default function OrganizationSettingsPage() {
             </span>
           </span>
         }
-        description="High-level operational parameters — thresholds and role permissions."
+        description="Planning references saved on this device. Saving does not send alerts, dispatch resources or change login access."
         icon={Building2}
       >
         <div>
@@ -220,91 +288,103 @@ export default function OrganizationSettingsPage() {
         </div>
       </SettingsSection>
 
+      {error && (
+        <p role="alert" className="text-sm text-red-300">
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" className="text-sm text-emerald-300">
+          {notice}
+        </p>
+      )}
       {/* Team Member Grid */}
       <SettingsSection
         title="Team Members"
-        description="Assign roles to responders in your organization."
+        description="View the shared responder directory and profile details."
         icon={Users}
       >
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { name: "Aarav Sharma", role: "Incident Cmdr", district: "Patna", status: "active" },
-            { name: "Priya Patel", role: "Admin", district: "Patna", status: "active" },
-            { name: "Rohit Kumar", role: "Responder", district: "Purba Champaran", status: "active" },
-            { name: "Sunita Devi", role: "Responder", district: "Patna", status: "away" },
-            { name: "Amit Singh", role: "Viewer", district: "Ernakulam", status: "offline" },
-          ].map((member) => (
-            <div key={member.name} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-purple-400/10 text-xs font-bold text-purple-300">
-                {member.name.split(" ").map((n) => n[0]).join("")}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-slate-200">{member.name}</p>
-                <p className="text-[11px] text-slate-500">{member.role} · {member.district}</p>
-              </div>
-              <span className={`h-2 w-2 rounded-full ${
-                member.status === "active" ? "bg-green-400" : member.status === "away" ? "bg-amber-400" : "bg-slate-600"
-              }`} />
-            </div>
-          ))}
-        </div>
+        <Link
+          href="/directory"
+          className="inline-block rounded-lg border border-cyan-400/40 px-4 py-3 text-cyan-200"
+        >
+          Open Team &amp; Responders →
+        </Link>
       </SettingsSection>
 
       {/* Operational Parameters */}
       <SettingsSection
         title="Operational Parameters"
-        description="System-wide thresholds for alerts and resource management."
+        description="Inventory uses the low-stock threshold. Shelter and escalation values are planning references for manual review."
         icon={Package}
       >
         <div className="space-y-5">
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-300">Shelter capacity warning</span>
-              <span className="text-sm font-mono font-bold text-purple-300">80%</span>
+              <span className="text-sm font-mono font-bold text-purple-300">
+                {shelterWarning}%
+              </span>
             </div>
             <input
               type="range"
               min={50}
               max={100}
               step={5}
-              defaultValue={80}
+              value={shelterWarning}
+              aria-label="Shelter capacity warning"
+              onChange={(e) => setShelterWarning(Number(e.target.value))}
               className="w-full accent-purple-500"
             />
-            <p className="mt-1 text-[11px] text-slate-500">Alert when shelter occupancy reaches this threshold.</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              Reference occupancy for a manual capacity review.
+            </p>
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-300">Low-stock threshold</span>
-              <span className="text-sm font-mono font-bold text-purple-300">20 units</span>
+              <span className="text-sm font-mono font-bold text-purple-300">
+                {lowStock} units
+              </span>
             </div>
             <input
               type="range"
               min={5}
               max={50}
               step={5}
-              defaultValue={20}
+              value={lowStock}
+              aria-label="Low-stock threshold"
+              onChange={(e) => setLowStock(Number(e.target.value))}
               className="w-full accent-purple-500"
             />
-            <p className="mt-1 text-[11px] text-slate-500">Trigger restock request when resource count drops below this.</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              Highlight available inventory rows below this quantity.
+            </p>
           </div>
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-300">Auto-escalation time</span>
-              <span className="text-sm font-mono font-bold text-purple-300">30 min</span>
+              <span className="text-sm text-slate-300">Escalation review time</span>
+              <span className="text-sm font-mono font-bold text-purple-300">
+                {escalation} min
+              </span>
             </div>
             <input
               type="range"
               min={5}
               max={120}
               step={5}
-              defaultValue={30}
+              value={escalation}
+              aria-label="Escalation review time"
+              onChange={(e) => setEscalation(Number(e.target.value))}
               className="w-full accent-purple-500"
             />
-            <p className="mt-1 text-[11px] text-slate-500">Minutes before unresolved alerts escalate to the next authority level.</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              Suggested interval before a coordinator reviews unresolved alerts.
+            </p>
           </div>
           <button
             type="button"
-            onClick={() => showToast("success", { title: "Parameters saved", description: "Operational thresholds updated." })}
+            onClick={save}
             className="rounded-lg bg-purple-500 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-purple-400 active:scale-[0.98]"
           >
             Save Parameters
@@ -315,20 +395,22 @@ export default function OrganizationSettingsPage() {
       <SettingsSection
         title={
           <span className="flex items-center gap-2">
-            Role × Action Permissions
+            Role × Action Planning
             <span className="flex items-center gap-1 rounded-full border border-accent-danger/40 bg-accent-danger/10 px-2 py-0.5 text-eoc-tiny font-bold uppercase tracking-widest text-accent-danger">
               Admin Only
             </span>
           </span>
         }
-        description="What each role may action without escalation."
+        description="A saved planning worksheet for responsibilities; it does not grant or revoke access."
         icon={ShieldAlert}
       >
         <div className="max-h-80 w-full overflow-auto rounded-lg border border-white/10">
           <table className="w-full min-w-[640px] border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-[#0a0f1a]">
               <tr className="text-left text-eoc-tiny uppercase tracking-wider text-slate-500">
-                <th className="border-b border-white/10 px-3 py-3 font-semibold">Action</th>
+                <th className="border-b border-white/10 px-3 py-3 font-semibold">
+                  Action
+                </th>
                 {ROLES.map((role) => (
                   <th
                     key={role}
@@ -388,8 +470,8 @@ export default function OrganizationSettingsPage() {
           </table>
         </div>
         <p className="mt-3 text-[11px] text-slate-500">
-          Super Admin cells are locked. Toggling updates the corresponding role/action at
-          runtime.
+          Super Admin cells are fixed in this worksheet. Use Save Parameters to keep your
+          changes.
         </p>
       </SettingsSection>
     </div>

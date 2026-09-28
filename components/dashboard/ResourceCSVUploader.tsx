@@ -3,17 +3,20 @@
 import { useRef, useState } from "react";
 import Papa from "papaparse";
 import toast from "react-hot-toast";
-import { bulkImportResources } from "@/app/actions/resources";
+import { useInventoryActions } from "./InventoryProvider";
+import { resourceInputError } from "@/lib/inventory/model";
+import type { CsvResourceRow } from "@/app/actions/resources";
 
-type ParsedRow = {
-  name: string;
-  category: string;
-  quantity: number;
-  lat: number;
-  lng: number;
-};
+type ParsedRow = CsvResourceRow;
 
-export default function ResourceCSVUploader({ onClose }: { onClose: () => void }) {
+export default function ResourceCSVUploader({
+  onClose,
+  onSaved,
+}: {
+  onClose: () => void;
+  onSaved?: () => void;
+}) {
+  const { bulkImportResources } = useInventoryActions();
   const [dragOver, setDragOver] = useState(false);
   const [rows, setRows] = useState<ParsedRow[]>([]);
   const [parsing, setParsing] = useState(false);
@@ -22,7 +25,12 @@ export default function ResourceCSVUploader({ onClose }: { onClose: () => void }
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleFile(file: File | undefined | null) {
-    if (!file) return;
+    if (!file || importing || parsing) return;
+    setRows([]);
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Choose a CSV smaller than 5 MB.");
+      return;
+    }
     setError(null);
     setParsing(true);
     Papa.parse<Record<string, string>>(file, {
@@ -36,22 +44,37 @@ export default function ResourceCSVUploader({ onClose }: { onClose: () => void }
           return;
         }
         const parsed: ParsedRow[] = [];
-        for (const raw of result.data) {
+        for (const [index, raw] of result.data.entries()) {
           const name = (raw.name ?? "").trim();
           const category = (raw.category ?? "").trim().toLowerCase();
           const quantity = Number(raw.quantity);
           const lat = Number(raw.lat);
           const lng = Number(raw.lng);
+          const optional = {
+            unit: raw.unit?.trim() || null,
+            status: raw.status?.trim().toLowerCase() || "available",
+            depotName: raw.depotName?.trim() || null,
+          };
+          const validation = resourceInputError({
+            name,
+            category,
+            quantity,
+            lat,
+            lng,
+            ...optional,
+          });
           if (
-            !name ||
-            !category ||
-            Number.isNaN(quantity) ||
-            Number.isNaN(lat) ||
-            Number.isNaN(lng)
+            validation ||
+            !raw.quantity?.trim() ||
+            !raw.lat?.trim() ||
+            !raw.lng?.trim()
           ) {
-            continue;
+            setError(
+              `Row ${index + 2}: ${validation ?? "Quantity, latitude and longitude are required."}`,
+            );
+            return;
           }
-          parsed.push({ name, category, quantity, lat, lng });
+          parsed.push({ name, category, quantity, lat, lng, ...optional });
         }
         if (!parsed.length) {
           setError(
@@ -76,13 +99,17 @@ export default function ResourceCSVUploader({ onClose }: { onClose: () => void }
   async function confirmImport() {
     if (!rows.length) return;
     setImporting(true);
-    const result = await bulkImportResources(rows);
-    setImporting(false);
-    if (result.ok) {
+    setError(null);
+    try {
+      const result = await bulkImportResources(rows);
+      if (!result.ok) throw new Error("Import failed. Check the connection and retry.");
       toast.success(`Imported ${result.count} resource${result.count === 1 ? "" : "s"}.`);
+      onSaved?.();
       onClose();
-    } else {
-      toast.error("Import failed. Please retry.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Import failed. Please retry.");
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -93,12 +120,14 @@ export default function ResourceCSVUploader({ onClose }: { onClose: () => void }
           <p className="eoc-label text-accent">BULK UPLOAD</p>
           <h2 className="mt-1 text-lg font-bold">Import Resources</h2>
           <p className="mt-1 text-xs text-slate-500">
-            Expected columns: name, category, quantity, lat, lng.
+            Required: name, category, quantity, lat, lng. Optional: unit, status,
+            depotName. Import adds new records.
           </p>
         </div>
         <button
           type="button"
           onClick={onClose}
+          disabled={importing}
           className="rounded-md border border-border px-2 py-1 text-xs text-slate-400 hover:text-foreground"
         >
           Close

@@ -33,7 +33,8 @@ export const SOS_HISTORY: SosHistoryEntry[] = [
     incidentType: "Flood Rescue",
     status: "Resolved by NDRF Unit 4",
     location: "Kankarbagh, Patna",
-    summary: "12 residents evacuated by boat from a rooftop after river water entered the lane.",
+    summary:
+      "12 residents evacuated by boat from a rooftop after river water entered the lane.",
   },
   {
     id: "sos-2026-07-19",
@@ -73,9 +74,10 @@ export const SOS_HISTORY: SosHistoryEntry[] = [
 export function formatSosDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   });
 }

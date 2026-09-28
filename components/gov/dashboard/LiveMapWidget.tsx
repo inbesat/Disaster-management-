@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Compass, Layers, Minus, Plus, Maximize2, Clock } from "lucide-react";
 
 // ---------------------------------------------------------------------
@@ -22,7 +23,13 @@ const ZOOM_LEVELS = [1, 1.25, 1.6] as const;
 const LIVE_MARKERS = [
   { label: "SOS · Sector 4", status: "Critical", x: "34%", y: "30%", tone: "bg-red-400" },
   { label: "Responder 12", status: "En route", x: "56%", y: "52%", tone: "bg-blue-400" },
-  { label: "Shelter · KHS", status: "75% full", x: "72%", y: "38%", tone: "bg-emerald-400" },
+  {
+    label: "Shelter · KHS",
+    status: "75% full",
+    x: "72%",
+    y: "38%",
+    tone: "bg-emerald-400",
+  },
   { label: "Road closed", status: "Blocked", x: "46%", y: "72%", tone: "bg-amber-400" },
 ] as const;
 
@@ -38,7 +45,7 @@ export function LiveMapWidget() {
   const [zoomIdx, setZoomIdx] = useState(0);
   const [hoveredMarker, setHoveredMarker] = useState<string | null>(null);
   const [activeLayers, setActiveLayers] = useState<Set<string>>(
-    new Set(LAYERS.map((l) => l.id))
+    new Set(LAYERS.map((l) => l.id)),
   );
 
   const zoom = ZOOM_LEVELS[zoomIdx];
@@ -82,22 +89,24 @@ export function LiveMapWidget() {
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                <span className={`h-2 w-2 rounded-full ${layer.color} ${
-                  activeLayers.has(layer.id) ? "opacity-100" : "opacity-30"
-                }`} />
+                <span
+                  className={`h-2 w-2 rounded-full ${layer.color} ${
+                    activeLayers.has(layer.id) ? "opacity-100" : "opacity-30"
+                  }`}
+                />
                 {layer.label}
               </button>
             ))}
           </div>
 
           {/* Expand button */}
-          <button
-            type="button"
+          <Link
+            href="/gov/map"
             aria-label="Expand to full map"
             className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
           >
             <Maximize2 className="h-4 w-4" />
-          </button>
+          </Link>
 
           {/* Decorative zoom controls */}
           <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-black/30 p-0.5">
@@ -137,15 +146,21 @@ export function LiveMapWidget() {
         >
           {/* District base */}
           <rect width="640" height="420" fill="#0d1526" />
-          <rect
-            width="640"
-            height="420"
-            fill="url(#gov-map-grid)"
-            opacity="0.6"
-          />
+          <rect width="640" height="420" fill="url(#gov-map-grid)" opacity="0.6" />
           <defs>
-            <pattern id="gov-map-grid" width="80" height="70" patternUnits="userSpaceOnUse">
-              <path d="M80 0H0V70" fill="none" stroke="#ffffff" strokeOpacity="0.05" strokeWidth="1" />
+            <pattern
+              id="gov-map-grid"
+              width="80"
+              height="70"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M80 0H0V70"
+                fill="none"
+                stroke="#ffffff"
+                strokeOpacity="0.05"
+                strokeWidth="1"
+              />
             </pattern>
           </defs>
 
@@ -179,8 +194,22 @@ export function LiveMapWidget() {
           />
 
           {/* Flood hazard zones */}
-          <polygon points="90,60 230,48 260,150 120,170" fill="#ef4444" fillOpacity="0.12" stroke="#ef4444" strokeOpacity="0.45" strokeWidth="1.5" />
-          <polygon points="380,300 520,288 560,380 400,398" fill="#ef4444" fillOpacity="0.10" stroke="#ef4444" strokeOpacity="0.35" strokeWidth="1.5" />
+          <polygon
+            points="90,60 230,48 260,150 120,170"
+            fill="#ef4444"
+            fillOpacity="0.12"
+            stroke="#ef4444"
+            strokeOpacity="0.45"
+            strokeWidth="1.5"
+          />
+          <polygon
+            points="380,300 520,288 560,380 400,398"
+            fill="#ef4444"
+            fillOpacity="0.10"
+            stroke="#ef4444"
+            strokeOpacity="0.35"
+            strokeWidth="1.5"
+          />
 
           {/* Shelters */}
           <rect x="468" y="130" width="12" height="12" fill="#10b981" opacity="0.9" />
@@ -191,7 +220,15 @@ export function LiveMapWidget() {
             <circle r="22" fill="#0a0f1a" stroke="#ffffff" strokeOpacity="0.25" />
             <path d="M0 -16 L5 6 L0 2 L-5 6 Z" fill="#f87171" />
             <path d="M0 16 L5 -6 L0 -2 L-5 -6 Z" fill="#e2e8f0" />
-            <text y="-28" textAnchor="middle" fill="#94a3b8" fontSize="11" fontWeight="700">N</text>
+            <text
+              y="-28"
+              textAnchor="middle"
+              fill="#94a3b8"
+              fontSize="11"
+              fontWeight="700"
+            >
+              N
+            </text>
           </g>
         </svg>
 
@@ -205,8 +242,12 @@ export function LiveMapWidget() {
             onMouseLeave={() => setHoveredMarker(null)}
           >
             <span className="relative flex h-3 w-3">
-              <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${m.tone} opacity-60`} />
-              <span className={`relative inline-flex h-3 w-3 rounded-full ${m.tone} cursor-pointer`} />
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full ${m.tone} opacity-60`}
+              />
+              <span
+                className={`relative inline-flex h-3 w-3 rounded-full ${m.tone} cursor-pointer`}
+              />
             </span>
             {/* Tooltip */}
             {hoveredMarker === m.label && (

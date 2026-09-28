@@ -21,15 +21,9 @@
 // ---------------------------------------------------------------------
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  ArrowUp,
-  Bell,
-  ChevronDown,
-  MapPin,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { ArrowUp, Bell, ChevronDown, MapPin, ShieldCheck, User } from "lucide-react";
 import PresenceBar from "@/components/gov/dashboard/PresenceBar";
 
 /** Districts the gov command center can switch between. */
@@ -177,7 +171,9 @@ function DistrictSelect() {
                     setOpen(false);
                   }}
                 >
-                  {active && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />}
+                  {active && (
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+                  )}
                   <span className="truncate">{d}</span>
                 </button>
               </li>
@@ -192,11 +188,13 @@ function DistrictSelect() {
 export function SituationHeader() {
   // Re-sync (and blink) every 30s; tick every second so the relative label
   // ("Just now" → "12s ago") stays honest between resyncs.
-  const lastSyncRef = useRef<number>(Date.now());
-  const [clock, setClock] = useState(() => new Date());
+  const lastSyncRef = useRef(0);
+  const [clock, setClock] = useState<Date | null>(null);
   const [blink, setBlink] = useState(0);
 
   useEffect(() => {
+    lastSyncRef.current = Date.now();
+    setClock(new Date());
     const id = window.setInterval(() => {
       if (document.hidden) return;
       setClock(new Date());
@@ -209,8 +207,9 @@ export function SituationHeader() {
     return () => window.clearInterval(id);
   }, []);
 
-  const elapsed = Date.now() - lastSyncRef.current;
-  const syncLabel = elapsed < JUST_NOW_MS ? "Just now" : `${Math.floor(elapsed / 1000)}s ago`;
+  const elapsed = clock ? clock.getTime() - lastSyncRef.current : 0;
+  const syncLabel =
+    elapsed < JUST_NOW_MS ? "Just now" : `${Math.floor(elapsed / 1000)}s ago`;
 
   return (
     <header className="sticky top-14 z-30 border-b border-white/10 bg-[#0a0f1a]/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.3)]">
@@ -227,11 +226,13 @@ export function SituationHeader() {
         <div className="hidden lg:flex flex-col items-center ml-auto">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xl font-bold text-white tabular-nums tracking-wider">
-              {formatIST(clock)}
+              {clock ? formatIST(clock) : "--:--:--"}
             </span>
             <span className="text-xs text-slate-400">IST</span>
           </div>
-          <span className="text-[0.625rem] text-slate-500">{formatDateIST(clock)}</span>
+          <span className="text-[0.625rem] text-slate-500">
+            {clock ? formatDateIST(clock) : "Loading date"}
+          </span>
         </div>
 
         {/* Right — Status badges + Stats + Presence */}
@@ -246,16 +247,13 @@ export function SituationHeader() {
           </div>
 
           {/* Notification bell with unread count */}
-          <button
-            type="button"
-            aria-label="Notifications — 5 unread"
+          <Link
+            href="/settings/notifications/history"
+            aria-label="Open notifications"
             className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
           >
             <Bell className="h-4 w-4" />
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[0.5rem] font-bold text-white">
-              5
-            </span>
-          </button>
+          </Link>
 
           {/* User avatar with role chip */}
           <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5">
@@ -275,11 +273,17 @@ export function SituationHeader() {
                 <span
                   className={`absolute inline-flex h-full w-full animate-ping rounded-full ${stat.dot} opacity-60`}
                 />
-                <span className={`relative inline-flex h-2 w-2 rounded-full ${stat.dot}`} />
+                <span
+                  className={`relative inline-flex h-2 w-2 rounded-full ${stat.dot}`}
+                />
               </span>
               <div>
-                <p className={`flex items-center gap-0.5 font-mono text-sm font-bold leading-none ${stat.tone}`}>
-                  {stat.trend && <ArrowUp className="h-3 w-3" strokeWidth={2.5} aria-hidden />}
+                <p
+                  className={`flex items-center gap-0.5 font-mono text-sm font-bold leading-none ${stat.tone}`}
+                >
+                  {stat.trend && (
+                    <ArrowUp className="h-3 w-3" strokeWidth={2.5} aria-hidden />
+                  )}
                   {stat.value}
                 </p>
                 <p className="eoc-label mt-0.5 text-[0.625rem] text-slate-400">

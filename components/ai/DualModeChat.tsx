@@ -23,13 +23,14 @@ import {
   ClipboardCopy,
   Cloud,
   Flag,
-  Mic,
   RefreshCw,
   Send,
   Wifi,
   WifiOff,
 } from "lucide-react";
 import { useDisasterChat, type DisasterChatMessage } from "@/hooks/useDisasterChat";
+import VoiceInputButton from "@/components/ui/VoiceInputButton";
+import { showToast } from "@/components/ui/Toast";
 
 interface DualModeChatProps {
   district?: string;
@@ -38,8 +39,15 @@ interface DualModeChatProps {
 }
 
 export function DualModeChat({ district, stream = true }: DualModeChatProps) {
-  const { messages, isLoading, aiMode, lastFailed, sendMessage, sendMessageStreaming, retry } =
-    useDisasterChat({ district });
+  const {
+    messages,
+    isLoading,
+    aiMode,
+    lastFailed,
+    sendMessage,
+    sendMessageStreaming,
+    retry,
+  } = useDisasterChat({ district });
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -68,8 +76,8 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
             <Bot className="h-10 w-10 text-accent-purple/60" aria-hidden />
             <p className="text-sm font-semibold text-slate-300">SafeSphere AI</p>
             <p className="max-w-xs text-xs text-muted">
-              Ask about flood risk, shelters, or evacuation routes. Works the same
-              online and offline.
+              Ask about flood risk, shelters, or evacuation routes. Works the same online
+              and offline.
             </p>
           </div>
         )}
@@ -97,13 +105,11 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
                 : "border-border bg-[var(--bg-secondary)]"
             }`}
           >
-            <button
-              type="button"
-              aria-label="Voice input"
-              className="rounded-md p-1.5 text-muted transition hover:bg-tertiary hover:text-slate-200"
-            >
-              <Mic className="h-4 w-4" aria-hidden />
-            </button>
+            <VoiceInputButton
+              label="Voice input"
+              disabled={isLoading}
+              onTranscription={(text) => setDraft((d) => `${d}${d ? " " : ""}${text}`)}
+            />
             <input
               type="text"
               value={draft}
@@ -112,7 +118,9 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
                 if (e.key === "Enter") handleSend();
               }}
               placeholder={
-                aiMode !== "cloud" ? "Offline — local model ready…" : "Message SafeSphere AI…"
+                aiMode !== "cloud"
+                  ? "Offline — local model ready…"
+                  : "Message SafeSphere AI…"
               }
               className="min-w-0 flex-1 bg-transparent text-sm text-slate-50 outline-none placeholder:text-muted"
             />
@@ -142,13 +150,37 @@ export function DualModeChat({ district, stream = true }: DualModeChatProps) {
   );
 }
 
-function ModeBar({ aiMode, onRetry }: { aiMode: "cloud" | "local" | "fallback"; onRetry: () => void }) {
+function ModeBar({
+  aiMode,
+  onRetry,
+}: {
+  aiMode: "cloud" | "local" | "fallback";
+  onRetry: () => void;
+}) {
   const palette =
     aiMode === "cloud"
-      ? { bg: "bg-emerald-500/10", text: "text-emerald-300", border: "border-emerald-500/40", dot: "bg-emerald-400", label: "Online — Cloud" }
+      ? {
+          bg: "bg-emerald-500/10",
+          text: "text-emerald-300",
+          border: "border-emerald-500/40",
+          dot: "bg-emerald-400",
+          label: "Online — Cloud",
+        }
       : aiMode === "local"
-        ? { bg: "bg-amber-500/10", text: "text-amber-300", border: "border-amber-500/40", dot: "bg-amber-400", label: "Offline — Gemma Local" }
-        : { bg: "bg-red-500/10", text: "text-red-300", border: "border-red-500/40", dot: "bg-red-400", label: "No AI Available" };
+        ? {
+            bg: "bg-amber-500/10",
+            text: "text-amber-300",
+            border: "border-amber-500/40",
+            dot: "bg-amber-400",
+            label: "Offline — Gemma Local",
+          }
+        : {
+            bg: "bg-red-500/10",
+            text: "text-red-300",
+            border: "border-red-500/40",
+            dot: "bg-red-400",
+            label: "No AI Available",
+          };
   const Icon = aiMode === "cloud" ? Wifi : aiMode === "local" ? WifiOff : RefreshCw;
 
   return (
@@ -166,7 +198,10 @@ function ModeBar({ aiMode, onRetry }: { aiMode: "cloud" | "local" | "fallback"; 
         <span
           className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${palette.bg} ${palette.border} ${palette.text}`}
         >
-          <span className={`h-1.5 w-1.5 animate-pulse rounded-full ${palette.dot}`} aria-hidden />
+          <span
+            className={`h-1.5 w-1.5 animate-pulse rounded-full ${palette.dot}`}
+            aria-hidden
+          />
           <Icon className="h-3 w-3" aria-hidden />
           {palette.label}
         </span>
@@ -194,7 +229,10 @@ function MessageBubble({ message }: { message: DisasterChatMessage }) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      // clipboard blocked — ignore
+      showToast("error", {
+        title: "Could not copy",
+        description: "Select the message text and copy it manually.",
+      });
     }
   };
 
@@ -227,7 +265,9 @@ function MessageBubble({ message }: { message: DisasterChatMessage }) {
             {isStreaming ? "Gemma streaming…" : "AI Advisor"}
           </span>
         )}
-        <p className={`whitespace-pre-wrap text-sm leading-relaxed ${isStreaming ? "streaming-caret" : ""}`}>
+        <p
+          className={`whitespace-pre-wrap text-sm leading-relaxed ${isStreaming ? "streaming-caret" : ""}`}
+        >
           {message.content || "…"}
         </p>
       </div>
@@ -250,9 +290,11 @@ function MessageBubble({ message }: { message: DisasterChatMessage }) {
           </span>
         )}
         <span className="text-[10px] tabular-nums text-muted">
-          {new Intl.DateTimeFormat("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }).format(
-            new Date(message.timestamp),
-          )}
+          {new Intl.DateTimeFormat("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }).format(new Date(message.timestamp))}
         </span>
         {!isUser && (
           <>
@@ -272,6 +314,30 @@ function MessageBubble({ message }: { message: DisasterChatMessage }) {
             <button
               type="button"
               aria-label="Report incorrect"
+              onClick={() => {
+                const reason = window.prompt(
+                  "What was incorrect? Feedback is saved on this device.",
+                );
+                if (!reason?.trim()) return;
+                try {
+                  const key = "safesphere:ai-feedback";
+                  const history = JSON.parse(localStorage.getItem(key) || "[]");
+                  localStorage.setItem(
+                    key,
+                    JSON.stringify([
+                      ...history,
+                      {
+                        message: message.content,
+                        reason: reason.trim(),
+                        createdAt: new Date().toISOString(),
+                      },
+                    ]),
+                  );
+                  showToast("success", { title: "Feedback saved on this device" });
+                } catch {
+                  showToast("error", { title: "Feedback could not be saved" });
+                }
+              }}
               title="Report incorrect"
               className="rounded p-1 text-muted transition hover:bg-tertiary hover:text-red-400"
             >

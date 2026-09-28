@@ -18,7 +18,7 @@ const NAV_LINKS = [
 ];
 
 /** Path-based links rendered beside the CTA buttons (scroll-spy skips these). */
-const PATH_LINKS = [{ label: "Help", href: "https://help.safesphere.com" }];
+const PATH_LINKS = [{ label: "Help", href: "/help" }];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -40,7 +40,7 @@ export default function Navbar() {
           if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -73,7 +73,7 @@ export default function Navbar() {
         }`}
       >
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
+        <a href="/" className="flex items-center gap-3 group">
           <Logo className="h-9 w-9 transition-transform duration-200 group-hover:scale-105" />
           <span className="whitespace-nowrap text-white font-bold text-lg tracking-tight">
             SafeSphere

@@ -4,10 +4,7 @@ import {
   sanitizeFilename,
   sanitizeInput,
 } from "@/lib/security/sanitize";
-import {
-  validateUploadFile,
-  validateMagicNumbers,
-} from "@/lib/security/upload-security";
+import { validateUploadFile, validateMagicNumbers } from "@/lib/security/upload-security";
 import { rateLimit } from "@/lib/security/rate-limit";
 import { requireRole } from "@/lib/security/require-role";
 import {
@@ -88,7 +85,11 @@ describe("Security Regression Tests (Prompt 19.2)", () => {
   describe("3. Government API Authorization Guard", () => {
     it("rejects public citizen session when accessing government endpoints", async () => {
       cookieStore.set("role", "public");
-      const result = await requireRole(["district_admin", "super_admin", "field_responder"]);
+      const result = await requireRole([
+        "district_admin",
+        "super_admin",
+        "field_responder",
+      ]);
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.status).toBe(401);
@@ -106,6 +107,8 @@ describe("Security Regression Tests (Prompt 19.2)", () => {
     });
 
     it("allows authorized government role (district_admin)", async () => {
+      cookieStore.set("demo_mode", "true");
+      cookieStore.set("demo_session_id", "audit-demo-session");
       cookieStore.set("role", "district_admin");
       const result = await requireRole(["district_admin", "super_admin"]);
       expect(result.ok).toBe(true);
@@ -155,6 +158,8 @@ describe("Security Regression Tests (Prompt 19.2)", () => {
   // 5. Role Escalation
   describe("5. Self Role Escalation Prevention", () => {
     it("prevents non-super_admin from requesting super_admin role permissions", async () => {
+      cookieStore.set("demo_mode", "true");
+      cookieStore.set("demo_session_id", "audit-demo-session");
       cookieStore.set("role", "district_admin");
       const result = await requireRole(["super_admin"]);
       expect(result.ok).toBe(false);
@@ -165,15 +170,23 @@ describe("Security Regression Tests (Prompt 19.2)", () => {
   describe("6. Executable File Upload Security", () => {
     it("rejects executable file signatures and forbidden MIME types", () => {
       // Fake executable binary / HTML payload
-      const exeBuffer = new TextEncoder().encode("MZ binary executable content <script>alert(1)</script>");
-      const validation = validateUploadFile(exeBuffer, "application/x-msdownload", "document");
+      const exeBuffer = new TextEncoder().encode(
+        "MZ binary executable content <script>alert(1)</script>",
+      );
+      const validation = validateUploadFile(
+        exeBuffer,
+        "application/x-msdownload",
+        "document",
+      );
 
       expect(validation.valid).toBe(false);
       expect(validation.reason).toMatch(/Invalid MIME type|magic number/i);
     });
 
     it("rejects SVG/HTML scriptable content disguised as image or document", () => {
-      const htmlBuffer = new TextEncoder().encode("<!DOCTYPE html><html><script>alert('xss')</script></html>");
+      const htmlBuffer = new TextEncoder().encode(
+        "<!DOCTYPE html><html><script>alert('xss')</script></html>",
+      );
       const magicCheck = validateMagicNumbers(htmlBuffer);
 
       expect(magicCheck.valid).toBe(false);

@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/prisma";
 import { requireSession } from "@/lib/security/require-role";
 import { sanitizeInput } from "@/lib/security/sanitize";
+import {
+  resourceInputError as validateResourceInput,
+  movementInputError,
+} from "@/lib/inventory/model";
 
 // ---------------------------------------------------------------------
 // Security: every mutating server action below is gated by requireSession().
@@ -174,6 +178,9 @@ export type CsvResourceRow = {
   quantity: number;
   lat: number;
   lng: number;
+  unit?: string | null;
+  status?: string;
+  depotName?: string | null;
 };
 
 /**
@@ -184,18 +191,19 @@ export async function bulkImportResources(
 ): Promise<{ ok: boolean; count: number }> {
   const authError = await assertWriteAccess();
   if (authError) return { ok: false, count: 0 };
-  if (!rows.length) return { ok: false, count: 0 };
+  if (!rows.length || rows.some((row) => validateResourceInput(row)))
+    return { ok: false, count: 0 };
   try {
     await prisma.resource.createMany({
       data: rows.map((r) => ({
         name: sanitizeInput(String(r.name ?? "")).slice(0, 200) || "Imported resource",
         category: sanitizeInput(String(r.category ?? "other")).slice(0, 100),
         quantity: r.quantity,
-        unit: null,
+        unit: r.unit ? sanitizeInput(r.unit).slice(0, 100) : null,
         lat: r.lat,
         lng: r.lng,
-        status: "available",
-        depotName: null,
+        status: r.status || "available",
+        depotName: r.depotName ? sanitizeInput(r.depotName).slice(0, 200) : null,
       })),
     });
     revalidatePath("/inventory");
@@ -286,62 +294,7 @@ export type UpdateResourceInput = NewResourceInput & { id: string };
 
 const MOCK_COORDINATES = { lat: 25.61, lng: 85.14 }; // Patna centre fallback.
 
-const VALID_CATEGORIES = [
-  "boat",
-  "medical",
-  "water",
-  "food",
-  "personnel",
-  "power",
-  "shelter",
-  "communication",
-  "other",
-];
-const VALID_STATUSES = ["available", "deployed", "maintenance", "retired"];
 const MAX_NAME_LENGTH = 200;
-const MAX_RESOURCE_QUANTITY = 1000000;
-
-function validateResourceInput(input: NewResourceInput): string | null {
-  if (!input.name || typeof input.name !== "string" || input.name.trim().length === 0) {
-    return "Resource name is required.";
-  }
-  if (input.name.length > MAX_NAME_LENGTH) {
-    return `Resource name must be under ${MAX_NAME_LENGTH} characters.`;
-  }
-  if (!input.category || !VALID_CATEGORIES.includes(input.category)) {
-    return `Invalid category. Must be one of: ${VALID_CATEGORIES.join(", ")}`;
-  }
-  if (
-    typeof input.quantity !== "number" ||
-    !Number.isFinite(input.quantity) ||
-    input.quantity < 0 ||
-    input.quantity > MAX_RESOURCE_QUANTITY
-  ) {
-    return `Quantity must be between 0 and ${MAX_RESOURCE_QUANTITY}.`;
-  }
-  if (
-    input.lat !== undefined &&
-    (typeof input.lat !== "number" ||
-      !Number.isFinite(input.lat) ||
-      input.lat < -90 ||
-      input.lat > 90)
-  ) {
-    return "Invalid latitude value.";
-  }
-  if (
-    input.lng !== undefined &&
-    (typeof input.lng !== "number" ||
-      !Number.isFinite(input.lng) ||
-      input.lng < -180 ||
-      input.lng > 180)
-  ) {
-    return "Invalid longitude value.";
-  }
-  if (input.status && !VALID_STATUSES.includes(input.status)) {
-    return `Invalid status. Must be one of: ${VALID_STATUSES.join(", ")}`;
-  }
-  return null;
-}
 
 /**
  * Create a resource and return its saved ID.
@@ -399,13 +352,11 @@ export async function updateResource(input: UpdateResourceInput): Promise<boolea
         name: sanitizeInput(input.name.trim()).slice(0, MAX_NAME_LENGTH),
         category: input.category,
         quantity: Math.max(0, Math.floor(input.quantity)),
-        unit: input.unit ? sanitizeInput(input.unit).slice(0, 100) : undefined,
+        unit: input.unit ? sanitizeInput(input.unit).slice(0, 100) : null,
         status: input.status || undefined,
         lat: input.lat ?? MOCK_COORDINATES.lat,
         lng: input.lng ?? MOCK_COORDINATES.lng,
-        depotName: input.depotName
-          ? sanitizeInput(input.depotName).slice(0, 200)
-          : undefined,
+        depotName: input.depotName ? sanitizeInput(input.depotName).slice(0, 200) : null,
       },
     });
     revalidatePath("/inventory");
@@ -496,7 +447,6 @@ export async function getResourceMovements(limit = 15): Promise<ResourceMovement
 /**
  * Record a resource movement (manual log / dispatch trail).
  */
-const MOVEMENT_ACTIONS = ["dispatched", "delivered", "returned", "adjusted"];
 
 /**
  * Record a resource movement (manual log / dispatch trail).
@@ -506,18 +456,18 @@ export async function logResourceMovement(
 ): Promise<{ ok: boolean; id: string }> {
   const authError = await assertWriteAccess();
   if (authError) return { ok: false, id: "" };
+  if (movementInputError(input)) return { ok: false, id: "" };
   try {
     const created = await prisma.resourceMovement.create({
       data: {
         resourceId: null,
         resourceName: sanitizeInput(input.resourceName).slice(0, 200),
-        // Sanitize: clamp unknown action strings to the known vocabulary.
-        action: MOVEMENT_ACTIONS.includes(input.action) ? input.action : "adjusted",
+        action: input.action,
         fromLabel: input.fromLabel ? sanitizeInput(input.fromLabel).slice(0, 200) : null,
         toLabel: sanitizeInput(input.toLabel).slice(0, 200),
         toLat: input.toLat,
         toLng: input.toLng,
-        quantity: Math.max(0, input.quantity || 0),
+        quantity: input.quantity!,
         note: input.note ? sanitizeInput(input.note).slice(0, 2000) : null,
       },
     });

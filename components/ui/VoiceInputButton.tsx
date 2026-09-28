@@ -18,9 +18,7 @@
 //   • The Web Speech API types are not shipped by TypeScript, so the window
 //     surface (SRWindow) and instance shape (SRInstance) are declared here —
 //     matching the project's existing VoiceNoteReporter pattern.
-//   • Unsupported browsers get a graceful fallback: the button stays
-//     enabled and simulating a short canned transcription (also useful for
-//     demos where the mic permission is blocked).
+//   • Unsupported browsers explain that typed input is required.
 //   • The whole control is `use client` and never touches SSR.
 // -------------------------------------------------------------------------
 
@@ -28,6 +26,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Mic, MicOff, X } from "lucide-react";
 import { triggerLightHaptic } from "@/hooks/useHaptics";
+import { showToast } from "@/components/ui/Toast";
 
 /* ---------------------------------------------------------------------
    Minimal Web Speech API typings (kept in sync with VoiceNoteReporter).
@@ -77,9 +76,7 @@ export function VoiceInputButton({
   const [recording, setRecording] = useState(false);
   const [interim, setInterim] = useState("");
   const [final, setFinal] = useState("");
-  const [unsupported, setUnsupported] = useState(false);
   const recRef = useRef<SRInstance | null>(null);
-  const timeoutRef = useRef<number | null>(null);
   // Refs mirror the transcript so the recognition callbacks (bound once)
   // always read the freshest accumulated text without stale closures.
   const finalRef = useRef("");
@@ -126,7 +123,7 @@ export function VoiceInputButton({
     rec.interimResults = true;
     rec.continuous = true;
     rec.onresult = (e) => {
-      let live = interimRef.current;
+      let live = "";
       let done = finalRef.current;
       for (let i = e.resultIndex; i < e.results.length; i++) {
         const res = e.results[i];
@@ -142,14 +139,18 @@ export function VoiceInputButton({
       setInterim(live);
     };
     rec.onerror = () => {
-      deliver(""); // no error surfaced; overlay just closes cleanly
+      deliver("");
+      showToast("error", {
+        title: "Voice input unavailable",
+        description: "Check microphone permission or type your message.",
+      });
     };
     rec.onend = () => {
       // continuous=true ⇒ fires on stop() — ship whatever we captured.
-      stopAndDeliver();
+      deliver(`${finalRef.current} ${interimRef.current}`);
     };
     return rec;
-  }, [lang, deliver, stopAndDeliver]);
+  }, [lang, deliver]);
 
   const startSpeaking = () => {
     if (disabled) return;
@@ -159,18 +160,14 @@ export function VoiceInputButton({
     finalRef.current = "";
     interimRef.current = "";
     if (!supported) {
-      // No Web Speech API — simulate for demos / unsupported browsers.
-      setUnsupported(true);
-      timeoutRef.current = window.setTimeout(() => {
-        const canned = "Water level rising near the bridge, requesting two rescue boats.";
-        deliver(canned);
-        setUnsupported(false);
-      }, 1200);
+      showToast("info", {
+        title: "Voice input is not supported here",
+        description: "Use a browser with speech recognition, or type your message.",
+      });
       return;
     }
     const rec = makeRecognition();
     if (!rec) {
-      setUnsupported(true);
       return;
     }
     recRef.current = rec;
@@ -180,6 +177,10 @@ export function VoiceInputButton({
       rec.start();
     } catch {
       setRecording(false);
+      showToast("error", {
+        title: "Microphone could not start",
+        description: "Allow microphone access and retry.",
+      });
     }
   };
 
@@ -191,8 +192,9 @@ export function VoiceInputButton({
 
   useEffect(() => {
     return () => {
+      deliveredRef.current = true;
+      if (recRef.current) recRef.current.onend = null;
       recRef.current?.stop();
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -236,7 +238,11 @@ export function VoiceInputButton({
               </div>
               <button
                 type="button"
-                onClick={stopSpeaking}
+                onClick={() => {
+                  deliveredRef.current = true;
+                  recRef.current?.stop();
+                  setRecording(false);
+                }}
                 aria-label="Cancel dictation"
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white"
               >
@@ -252,13 +258,6 @@ export function VoiceInputButton({
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Unsupported / simulated fallback toast-in-place. */}
-      {unsupported && (
-        <span className="sr-only" role="status">
-          Voice input simulated — microphone not available.
-        </span>
-      )}
     </>
   );
 }

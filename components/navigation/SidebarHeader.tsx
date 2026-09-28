@@ -39,14 +39,10 @@ export function SidebarHeader({
   className = "",
 }: SidebarHeaderProps) {
   const statusDot =
-    districtStatus === "critical"
-      ? "bg-red-400 animate-pulse"
-      : "bg-emerald-400";
+    districtStatus === "critical" ? "bg-red-400 animate-pulse" : "bg-emerald-400";
 
   return (
-    <div
-      className={`flex shrink-0 flex-col border-b border-white/5 ${className}`}
-    >
+    <div className={`flex shrink-0 flex-col border-b border-white/5 ${className}`}>
       {/* Brand row */}
       <div className="flex h-16 items-center gap-3 px-3">
         {/* Shield logo with status dot */}
@@ -65,7 +61,7 @@ export function SidebarHeader({
           }`}
         >
           <p className="whitespace-nowrap text-sm font-bold tracking-widest text-white">
-            DRIP
+            SafeSphere
           </p>
           <p className="whitespace-nowrap text-[0.625rem] font-medium uppercase tracking-widest text-slate-500">
             Command Center

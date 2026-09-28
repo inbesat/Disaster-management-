@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, RefreshCw, RotateCcw, SlidersHorizontal } from "lucide-react";
-import toast from "react-hot-toast";
 import {
-  getResourceMovements,
-  logResourceMovement,
-  type ResourceMovement,
-} from "@/app/actions/resources";
+  ArrowDownRight,
+  ArrowUpRight,
+  RefreshCw,
+  RotateCcw,
+  SlidersHorizontal,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import type { ResourceMovement } from "@/app/actions/resources";
+import { useInventoryActions } from "./InventoryProvider";
+import { movementInputError } from "@/lib/inventory/model";
 
 // ---------------------------------------------------------------------
 // components/dashboard/ResourceMovementsPanel.tsx
@@ -16,11 +20,23 @@ import {
 // latest movements and lets admins log new ones from the inventory page.
 // ---------------------------------------------------------------------
 
-const ACTION_BADGE: Record<string, { className: string; icon: "dispatch" | "deliver" | "return" | "adjust" }> = {
-  dispatched: { className: "bg-amber-500/10 text-amber-300 border-amber-500/40", icon: "dispatch" },
-  delivered: { className: "bg-emerald-500/10 text-emerald-300 border-emerald-500/40", icon: "deliver" },
+const ACTION_BADGE: Record<
+  string,
+  { className: string; icon: "dispatch" | "deliver" | "return" | "adjust" }
+> = {
+  dispatched: {
+    className: "bg-amber-500/10 text-amber-300 border-amber-500/40",
+    icon: "dispatch",
+  },
+  delivered: {
+    className: "bg-emerald-500/10 text-emerald-300 border-emerald-500/40",
+    icon: "deliver",
+  },
   returned: { className: "bg-sky-500/10 text-sky-300 border-sky-500/40", icon: "return" },
-  adjusted: { className: "bg-slate-500/10 text-slate-300 border-slate-500/40", icon: "adjust" },
+  adjusted: {
+    className: "bg-slate-500/10 text-slate-300 border-slate-500/40",
+    icon: "adjust",
+  },
 };
 
 const ACTIONS = ["dispatched", "delivered", "returned", "adjusted"];
@@ -66,16 +82,24 @@ const EMPTY_FORM = {
 };
 
 export default function ResourceMovementsPanel() {
+  const { getResourceMovements, logResourceMovement } = useInventoryActions();
   const [movements, setMovements] = useState<ResourceMovement[]>([]);
   const [loading, setLoading] = useState(true);
   const [recording, setRecording] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [error, setError] = useState("");
 
   async function load() {
-    const rows = await getResourceMovements();
-    setMovements(rows);
-    setLoading(false);
+    setLoading(true);
+    setError("");
+    try {
+      setMovements(await getResourceMovements());
+    } catch {
+      setError("Movement history could not be loaded. Please retry.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -93,24 +117,36 @@ export default function ResourceMovementsPanel() {
       return;
     }
     setSaving(true);
-    const lat = Number(form.lat) || PATNA_CENTER.lat;
-    const lng = Number(form.lng) || PATNA_CENTER.lng;
-    const res = await logResourceMovement({
-      resourceName: form.resourceName.trim(),
-      action: form.action,
-      fromLabel: form.fromLabel.trim() || null,
-      toLabel: form.toLabel.trim(),
-      toLat: lat,
-      toLng: lng,
-      quantity: Number(form.quantity) || 0,
-      note: form.note.trim() || null,
-    });
-    setSaving(false);
-    if (res.ok) {
-      toast.success("Movement recorded.");
-      setRecording(false);
-      setForm(EMPTY_FORM);
-      void load();
+    setError("");
+    const lat = form.lat.trim() ? Number(form.lat) : PATNA_CENTER.lat;
+    const lng = form.lng.trim() ? Number(form.lng) : PATNA_CENTER.lng;
+    try {
+      const input = {
+        resourceName: form.resourceName.trim(),
+        action: form.action,
+        fromLabel: form.fromLabel.trim() || null,
+        toLabel: form.toLabel.trim(),
+        toLat: lat,
+        toLng: lng,
+        quantity: Number(form.quantity),
+        note: form.note.trim() || null,
+      };
+      const validation = movementInputError(input);
+      if (validation) {
+        setError(validation);
+        return;
+      }
+      const res = await logResourceMovement(input);
+      if (res.ok) {
+        toast.success("Movement recorded.");
+        setRecording(false);
+        setForm(EMPTY_FORM);
+        void load();
+      } else setError("Movement could not be saved. Check the connection and retry.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Movement could not be saved.");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -132,6 +168,7 @@ export default function ResourceMovementsPanel() {
           </button>
           <button
             type="button"
+            disabled={saving}
             onClick={() => setRecording((r) => !r)}
             className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-950 transition hover:bg-sky-300"
           >
@@ -141,6 +178,11 @@ export default function ResourceMovementsPanel() {
       </div>
 
       {/* Record Movement form */}
+      {error && (
+        <p role="alert" className="m-4 text-sm text-red-300">
+          {error}
+        </p>
+      )}
       {recording && (
         <form
           onSubmit={(e) => void submit(e)}
@@ -191,10 +233,12 @@ export default function ResourceMovementsPanel() {
             Qty
             <input
               type="number"
-              min={0}
+              min={1}
+              max={1000000}
+              required
               value={form.quantity}
               onChange={(e) => setField("quantity", e.target.value)}
-              placeholder="0"
+              placeholder="1"
               className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
             />
           </label>
@@ -246,7 +290,7 @@ export default function ResourceMovementsPanel() {
             Loading movements…
           </p>
         )}
-        {!loading && movements.length === 0 && (
+        {!loading && !error && movements.length === 0 && (
           <p className="px-4 py-8 text-center text-sm text-slate-500">
             No movements recorded yet.
           </p>
